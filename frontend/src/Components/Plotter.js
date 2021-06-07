@@ -79,6 +79,7 @@ class Plotter extends Component {
     selectedCategory: this.context.selectedCategory,
     referencePoints: this.context.refs,
     selectedRef: this.context.refs[0],
+    selectedFile: '',
     datasets: [],
     plotData: [],
     data: [],
@@ -293,6 +294,28 @@ class Plotter extends Component {
     // add fasta
   };
 
+  handleSubmit = async event => {
+    await this.setState({ selectedFile: event.target.files[0] });
+
+    const file = new FormData()
+    file.append('file', this.state.selectedFile)
+    console.warn(this.state.selectedFile);
+
+    var object = {};
+    file.forEach((value, key) => object[key] = value);
+    var json = JSON.stringify(object);
+    console.log(json);
+
+    axios.post(`http://localhost:8081/datasets/fasta`, {'plotData': [{'data': [{'x':0.1,'y':-0.1}]}]})
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }
+
   handleReset = async () => {
     await this.setState({
       categories: this.context.categories,
@@ -458,6 +481,21 @@ class Plotter extends Component {
         <br />
         <Typography gutterBottom>
           No.of Datasets plotted : {plotted.length}
+          <Button
+            color="primary"
+            variant="outlined"
+            component="label"
+            size="small"
+            style={{ marginLeft: 20 }}
+          >
+            Upload file
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={this.handleSubmit}
+            />
+          </Button>
           <Button
             color="secondary"
             variant="outlined"
