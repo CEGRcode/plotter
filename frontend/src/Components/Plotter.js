@@ -294,27 +294,72 @@ class Plotter extends Component {
     // add fasta
   };
 
-  handleSubmit = async event => {
-    await this.setState({ selectedFile: event.target.files[0] });
+	handleSubmitFasta = async event => {
+		var files = document.getElementById('selectFasta').files;
+		console.log(files);
+		if (files.length <= 0) {
+			return false;
+		}
+		var fr = new FileReader();
+		fr.onload = function(e) {
+			console.log(e);
+			var result = JSON.parse(e.target.result);
+			var formatted = JSON.stringify(result, null, 2);
+			document.getElementById('resultFasta').value = formatted;
+			console.log(result);
+			// Assume JSON formatted like sample data
+			var i;
+			for(i = 0; i<result.length; i++){
+				//URL will have to be generalized later (see requestOne and requestTwo for examples)
+				axios.post(`http://localhost:8081/datasets/fasta/`, result[i])
+					.then(res => {
+						console.log(res);
+						console.log(res.data);
+					})
+					.catch(function (err) {
+						console.log(err);
+				});
+			}
+		}
+		fr.readAsText(files.item(0));
 
-    const file = new FormData()
-    file.append('file', this.state.selectedFile)
-    console.warn(this.state.selectedFile);
+		// fetchDataset
+		this.fetchDataset();
+	};
 
-    var object = {};
-    file.forEach((value, key) => object[key] = value);
-    var json = JSON.stringify(object);
-    console.log(json);
+	// Handle submit composite not fully tested by confirming POST requests added to backend successfully
+	handleSubmitComposite = async event => {
+		var files = document.getElementById('selectComposite').files;
+		console.log(files);
+		if (files.length <= 0) {
+			return false;
+		}
+		var fr = new FileReader();
+		fr.onload = function(e) {
+			console.log(e);
+			var result = JSON.parse(e.target.result);
+			var formatted = JSON.stringify(result, null, 2);
+			document.getElementById('resultComposite').value = formatted;
+			console.log(result);
+			// Assume JSON formatted like sample data
+			var i;
+			for(i = 0; i<result.length; i++){
+				//URL will have to be generalized later (see requestOne and requestTwo for examples)
+				axios.post(`http://localhost:8081/datasets/`, result[i])
+					.then(response => {
+						console.log(response);
+						console.log(response.data);
+					})
+					.catch(function (error) {
+						console.log(error);
+				});
+			}
+		}
+		fr.readAsText(files.item(0));
 
-    axios.post(`http://localhost:8081/datasets/fasta`, {'plotData': [{'data': [{'x':0.1,'y':-0.1}]}]})
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  }
+		// fetchDataset
+		this.fetchDataset();
+	};
 
   handleReset = async () => {
     await this.setState({
@@ -488,14 +533,35 @@ class Plotter extends Component {
             size="small"
             style={{ marginLeft: 20 }}
           >
-            Upload file
+            Upload FASTA file
             <input
               type="file"
+							id="selectFasta"
               accept=".json"
               hidden
-              onChange={this.handleSubmit}
+              onChange={this.handleSubmitFasta}
             />
           </Button>
+					<textarea id="resultFasta">
+					</textarea>
+					<Button
+            color="primary"
+            variant="outlined"
+            component="label"
+            size="small"
+            style={{ marginLeft: 20 }}
+          >
+            Upload Composite file
+            <input
+              type="file"
+							id="selectComposite"
+              accept=".json"
+              hidden
+              onChange={this.handleSubmitComposite}
+            />
+          </Button>
+					<textarea id="resultComposite">
+					</textarea>
           <Button
             color="secondary"
             variant="outlined"
