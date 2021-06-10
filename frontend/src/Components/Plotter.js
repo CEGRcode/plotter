@@ -303,15 +303,17 @@ class Plotter extends Component {
 		var fr = new FileReader();
 		fr.onload = function(e) {
 			console.log(e);
+			// Adjust code here to parse FASTA file instead of JSON
 			var result = JSON.parse(e.target.result);
 			var formatted = JSON.stringify(result, null, 2);
 			document.getElementById('resultFasta').value = formatted;
 			console.log(result);
 			// Assume JSON formatted like sample data
+			var keys = Object.keys(result);
 			var i;
-			for(i = 0; i<result.length; i++){
+			for(i = 0; i<keys.length; i++){
 				//URL will have to be generalized later (see requestOne and requestTwo for examples)
-				axios.post(`http://localhost:8081/datasets/fasta/`, result[i])
+				axios.post(`http://localhost:8081/datasets/fasta`, result[keys[0]])
 					.then(res => {
 						console.log(res);
 						console.log(res.data);
@@ -337,15 +339,17 @@ class Plotter extends Component {
 		var fr = new FileReader();
 		fr.onload = function(e) {
 			console.log(e);
+			// Adjust code here to parse composite file instead of JSON
 			var result = JSON.parse(e.target.result);
 			var formatted = JSON.stringify(result, null, 2);
 			document.getElementById('resultComposite').value = formatted;
 			console.log(result);
 			// Assume JSON formatted like sample data
+			var keys = Object.keys(result);
 			var i;
-			for(i = 0; i<result.length; i++){
+			for(i = 0; i<keys.length; i++){
 				//URL will have to be generalized later (see requestOne and requestTwo for examples)
-				axios.post(`http://localhost:8081/datasets/`, result[i])
+				axios.post(`http://localhost:8081/datasets/`, result[keys[0]])
 					.then(response => {
 						console.log(response);
 						console.log(response.data);
