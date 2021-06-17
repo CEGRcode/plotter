@@ -9,7 +9,11 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
 
 **MacOS installation instructions**
 
-- Install xcode-select before installing brew
+- Install xcode-select to install brew
+
+  ```
+  xcode-select --install
+  ```
 
 - _Setting up mongoDB using [homebrew](https://brew.sh/)_
 
