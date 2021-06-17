@@ -31,7 +31,7 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
   mkdir -p ~/Desktop/data/db
   ```
 
-  - Might neeed to export the dbpath
+  - Might need to export the dbpath
 
   ```
   export PATH="$PATH:/usr/local/mongodb/bin”
