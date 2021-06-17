@@ -294,76 +294,81 @@ class Plotter extends Component {
     // add fasta
   };
 
-	handleSubmitFasta = async event => {
-		var files = document.getElementById('selectFasta').files;
-		console.log(files);
-		if (files.length <= 0) {
-			return false;
-		}
-		var fr = new FileReader();
-		fr.onload = function(e) {
-			console.log(e);
-			// Adjust code here to parse FASTA file instead of JSON
-			var result = JSON.parse(e.target.result);
-			var formatted = JSON.stringify(result, null, 2);
-			document.getElementById('resultFasta').value = formatted;
-			console.log(result);
-			// Assume JSON formatted like sample data
-			var keys = Object.keys(result);
-			var i;
-			for(i = 0; i<keys.length; i++){
-				//URL will have to be generalized later (see requestOne and requestTwo for examples)
-				axios.post(`http://localhost:8081/datasets/fasta`, result[keys[0]])
-					.then(res => {
-						console.log(res);
-						console.log(res.data);
-					})
-					.catch(function (err) {
-						console.log(err);
-				});
-			}
-		}
-		fr.readAsText(files.item(0));
+  handleSubmitFasta = async event => {
+    let files = document.getElementById('selectFasta').files;
+    console.log(files);
+    if (files.length <= 0) {
+      return false;
+    }
+    let fr = new FileReader();
+    fr.onload = function(e) {
+      console.log(e);
+      // Adjust code here to parse FASTA file instead of JSON
+      let result = JSON.parse(e.target.result);
+      // var formatted = JSON.stringify(result, null, 2);
+      // document.getElementById('resultFasta').value = formatted;
+      console.log(result);
 
-		// fetchDataset
-		this.fetchDataset();
-	};
+      // Assume JSON formatted like sample data
+      let keys = Object.keys(result);
+      let i;
+      for(i = 0; i<keys.length; i++){
+        //URL will have to be generalized later (see requestOne and requestTwo for examples)
+        axios.post(`http://localhost:8081/datasets/fasta`, result[keys[i]])
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+          })
+          .then(() => {
+            console.log('fetching');
+            this.fetchDataset();
+          })
+          .catch(function (err) {
+            console.log(err);
+        });
+      }
+    }.bind(this)
 
-	// Handle submit composite not fully tested by confirming POST requests added to backend successfully
-	handleSubmitComposite = async event => {
-		var files = document.getElementById('selectComposite').files;
-		console.log(files);
-		if (files.length <= 0) {
-			return false;
-		}
-		var fr = new FileReader();
-		fr.onload = function(e) {
-			console.log(e);
-			// Adjust code here to parse composite file instead of JSON
-			var result = JSON.parse(e.target.result);
-			var formatted = JSON.stringify(result, null, 2);
-			document.getElementById('resultComposite').value = formatted;
-			console.log(result);
-			// Assume JSON formatted like sample data
-			var keys = Object.keys(result);
-			var i;
-			for(i = 0; i<keys.length; i++){
-				//URL will have to be generalized later (see requestOne and requestTwo for examples)
-				axios.post(`http://localhost:8081/datasets/`, result[keys[0]])
-					.then(response => {
-						console.log(response);
-						console.log(response.data);
-					})
-					.catch(function (error) {
-						console.log(error);
-				});
-			}
-		}
-		fr.readAsText(files.item(0));
+    fr.readAsText(files.item(0));
+  };
 
-		// fetchDataset
-		this.fetchDataset();
-	};
+  // Handle submit composite not fully tested by confirming POST requests added to backend successfully
+  handleSubmitComposite = async event => {
+    let files = document.getElementById('selectComposite').files;
+    console.log(files);
+    if (files.length <= 0) {
+      return false;
+    }
+    let fr = new FileReader();
+    fr.onload = function(e) {
+      console.log(e);
+      // Adjust code here to parse composite file instead of JSON
+      let result = JSON.parse(e.target.result);
+      // var formatted = JSON.stringify(result, null, 2);
+      // document.getElementById('resultComposite').value = formatted;
+      console.log(result);
+      // Assume JSON formatted like sample data
+      let keys = Object.keys(result);
+      let i;
+      for(i = 0; i<keys.length; i++){
+        //URL will have to be generalized later (see requestOne and requestTwo for examples)
+        axios.post(`http://localhost:8081/datasets/`, result[keys[i]])
+          .then(response => {
+            console.log(response);
+            console.log(response.data);
+          })
+          .then(() => {
+            console.log('fetching');
+            this.fetchDataset();
+          })
+          .catch(function (error) {
+            console.log(error);
+        });
+      }
+    }.bind(this)
+
+    fr.readAsText(files.item(0));
+  };
 
   handleReset = async () => {
     await this.setState({
@@ -546,9 +551,7 @@ class Plotter extends Component {
               onChange={this.handleSubmitFasta}
             />
           </Button>
-					<textarea id="resultFasta">
-					</textarea>
-					<Button
+          <Button
             color="primary"
             variant="outlined"
             component="label"
@@ -558,14 +561,12 @@ class Plotter extends Component {
             Upload Composite file
             <input
               type="file"
-							id="selectComposite"
+              id="selectComposite"
               accept=".json"
               hidden
               onChange={this.handleSubmitComposite}
             />
           </Button>
-					<textarea id="resultComposite">
-					</textarea>
           <Button
             color="secondary"
             variant="outlined"
