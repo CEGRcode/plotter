@@ -9,6 +9,8 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
 
 **MacOS installation instructions**
 
+- Install xcode-select before installing brew
+
 - _Setting up mongoDB using [homebrew](https://brew.sh/)_
 
   - Add mongoDB Homebrew Tap
@@ -27,6 +29,12 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
 
   ```
   mkdir -p ~/Desktop/data/db
+  ```
+
+  - Might neeed to export the dbpath
+
+  ```
+  export PATH="$PATH:/usr/local/mongodb/bin”
   ```
 
   - To start your mongodb server
