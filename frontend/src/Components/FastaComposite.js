@@ -56,7 +56,7 @@ class FastaComposite extends React.Component {
       yScale: {
         type: "linear",
         stacked: false,
-        max: 1.5
+        max: 1
       },
       markers: [
         {
@@ -79,6 +79,9 @@ class FastaComposite extends React.Component {
           }
         }
       ],
+      // gridYValues: {
+      //   [0,0.2,0.4,0.6,0.8,1]
+      // },
       axisBottom: {
         orient: "bottom",
         tickSize: 5,
@@ -88,7 +91,9 @@ class FastaComposite extends React.Component {
         legendOffset: 46,
         legendPosition: "middle"
       },
-      axisLeft: {},
+      axisLeft: {
+        tickValues: 5
+      },
       theme: {
         fontSize: 14,
         fontFamily: "Roboto Slab",
