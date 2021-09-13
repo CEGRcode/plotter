@@ -80,8 +80,6 @@ NODE_PORT=8081
 | Endpoint                                              | Request Type | Description                                                                   |
 | ----------------------------------------------------- | ------------ | ----------------------------------------------------------------------------- |
 | `/`                                                   | `POST`       | Create a new dataset.                                                         |
-| `/fasta`                                              | `POST`       | Create a new fasta sequence.                                                  |
 | `/datasets`                                           | `GET`        | Retrieve all the unique gene categories                                       |
 | `/datasets/refs?category=<category>`                  | `GET`        | Retrieve all the unique reference points for the given `<category>`           |
-| `/datasets/fasta?category=<category>&ref=<reference>` | `GET`        | Retrieve the fasta sequence for the given `<category>` and `<reference>`      |
 | `/datasets/data?category=<category>&ref=<reference>`  | `GET`        | Retrieve the datasets to overlay for the given `<category>` and `<reference>` |

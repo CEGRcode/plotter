@@ -22,8 +22,7 @@ All the configurations are available in `Config.js` file. The configuration file
 const settings = {
   categories: "http://localhost:8081/datasets",
   refs: "http://localhost:8081/datasets/refs",
-  datasets: "http://localhost:8081/datasets/data",
-  fasta: "http://localhost:8081/datasets/fasta"
+  datasets: "http://localhost:8081/datasets/data"
 };
 ```
 
@@ -39,8 +38,7 @@ const settings = {
 const settings = {
   categories: "http://pluto.vmhost.psu.edu:8080/datasets",
   refs: "http://pluto.vmhost.psu.edu:8080/datasets/refs",
-  datasets: "http://pluto.vmhost.psu.edu:8080/datasets/data",
-  fasta: "http://pluto.vmhost.psu.edu:8080/datasets/fasta"
+  datasets: "http://pluto.vmhost.psu.edu:8080/datasets/data"
 };
 ```
 
