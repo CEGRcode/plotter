@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+// let a='Hello World a';
+import hello from "./generateJson.js";
 
 // material-ui imports
 import PropTypes from "prop-types";
@@ -267,6 +269,8 @@ class Plotter extends Component {
 
   // Handle submit composite not fully tested by confirming POST requests added to backend successfully
   handleSubmitData = async event => {
+    hello();
+
     let files = document.getElementById('selectData').files;
     console.log(files);
     if (files.length <= 0) {
