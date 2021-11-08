@@ -6,7 +6,6 @@ require("dotenv").config();
 
 // requiring the model files
 const Dataset = require("../models/datasetModel");
-const Fasta = require("../models/fastaModel");
 
 // API FUNCTIONS
 exports.getCategories = (req, res, next) => {
@@ -94,53 +93,6 @@ exports.createDataset = (req, res, next) => {
         message: "Created the Dataset",
         result: result
       });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
-};
-
-// ####################################################
-// Create Fasta sequence
-// ####################################################
-exports.createFasta = (req, res, next) => {
-  // creating a new object
-  const fasta = new Fasta({
-    _id: new mongoose.Types.ObjectId(),
-    geneCategory: req.body.geneCategory,
-    referencePoint: req.body.referencePoint,
-    plotData: req.body.plotData
-  });
-  // saving the item into the database using promises
-  fasta
-    .save()
-    .then(result => {
-      res.status(201).json({
-        message: "Created the Fasta sequence",
-        result: result
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
-};
-
-exports.getFastaSequence = (req, res, next) => {
-  Fasta.find({
-    geneCategory: req.query.category,
-    referencePoint: req.query.ref
-  })
-    .exec()
-    .then(docs => {
-      // creating the response object
-      const response = {
-        count: docs.length,
-        data: docs
-      };
-      // sending response
-      res.status(200).json(response);
     })
     .catch(err => {
       console.log(err);

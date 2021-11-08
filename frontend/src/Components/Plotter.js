@@ -28,7 +28,6 @@ import {
 } from "@material-ui/core";
 
 import CompositePlot from "./FeatureCompositePlot";
-import FastaComposite from "./FastaComposite";
 import { SketchPicker } from "react-color";
 
 // ContextAPI
@@ -87,13 +86,11 @@ class Plotter extends Component {
     data: [],
     plotted: [],
     plotColor: "",
-    fastaData: [],
     xWidth: 250,
     yWidth: 1,
     plotStyle: "monotoneX",
     areaEnabled: true,
     areaOpacity: 0.2,
-    enableFasta: true,
     enableScaling: true
   };
 
@@ -112,20 +109,11 @@ class Plotter extends Component {
 
     const sortedItems = items.sort();
 
-    let requestTwo =
-      Config.settings.fasta +
-      "?category=" +
-      this.context.selectedCategory +
-      "&ref=" +
-      this.context.refs[0];
-    const responseTwo = await axios.get(requestTwo);
-
     // console.log(responseOne, responseTwo.data.data[0].plotData);
 
     this.setState({
       datasets: sortedItems,
-      plotData: responseOne.data.datasets,
-      fastaData: responseTwo.data.data[0].plotData
+      plotData: responseOne.data.datasets
     });
   }
 
@@ -144,20 +132,10 @@ class Plotter extends Component {
 
     const sortedItems = items.sort();
 
-    let requestTwo =
-      Config.settings.fasta +
-      "?category=" +
-      this.state.selectedCategory +
-      "&ref=" +
-      this.state.selectedRef;
-    const responseTwo = await axios.get(requestTwo);
-
-    // console.log(responseOne, responseTwo.data.data[0].plotData);
 
     this.setState({
       datasets: sortedItems,
-      plotData: responseOne.data.datasets,
-      fastaData: responseTwo.data.data[0].plotData
+      plotData: responseOne.data.datasets
     });
   };
 
@@ -202,10 +180,6 @@ class Plotter extends Component {
   handleScaling = event => {
     // let value = event.target.checked ? true : false;
     this.setState({ enableScaling: event.target.checked });
-  };
-
-  handleFasta = event => {
-    this.setState({ enableFasta: event.target.checked });
   };
 
   // Handle data loading
@@ -265,13 +239,12 @@ class Plotter extends Component {
   };
 
   handleCategory = async event => {
-    // When category changes, fetch references -> datasets -> fasta
+    // When category changes, fetch references -> datasets
     await this.setState({
       selectedCategory: event.target.value,
       referencePoints: [],
       selectedRef: "",
       datasets: [],
-      fastaData: [],
       data: [],
       plotted: []
     });
@@ -287,63 +260,18 @@ class Plotter extends Component {
       datasets: [],
       data: [],
       plotData: [],
-      plotted: [],
-      fastaData: []
+      plotted: []
     });
 
     // add datasets
     this.fetchDataset();
-    // add fasta
-  };
-
-  handleSubmitFasta = async event => {
-    let files = document.getElementById('selectFasta').files;
-    console.log(files);
-    if (files.length <= 0) {
-      return false;
-    }
-    let fr = new FileReader();
-    fr.onload = function(e) {
-      console.log(e);
-      // Adjust code here to parse FASTA file instead of JSON
-      let result = JSON.parse(e.target.result);
-      // var formatted = JSON.stringify(result, null, 2);
-      // document.getElementById('resultFasta').value = formatted;
-      console.log(result);
-
-      // Assume JSON formatted like sample data
-      let keys = Object.keys(result);
-      let i;
-      for(i = 0; i<keys.length; i++){
-        //URL will have to be generalized later (see requestOne and requestTwo for examples)
-        axios.post(`http://localhost:8081/datasets/fasta`, result[keys[i]])
-          .then(res => {
-            console.log(res);
-            console.log(res.data);
-          })
-          .then(() => {
-            console.log('fetching');
-            this.fetchDataset();
-          })
-          .catch(function (err) {
-            console.log(err);
-        });
-      }
-    }.bind(this)
-
-    fr.readAsText(files.item(0));
   };
 
   // Handle submit composite not fully tested by confirming POST requests added to backend successfully
-<<<<<<< Updated upstream
-  handleSubmitComposite = async event => {
-    let files = document.getElementById('selectComposite').files;
-=======
   handleSubmitData = async event => {
     hello();
 
     let files = document.getElementById('selectData').files;
->>>>>>> Stashed changes
     console.log(files);
     if (files.length <= 0) {
       return false;
@@ -389,8 +317,7 @@ class Plotter extends Component {
       plotData: [],
       data: [],
       plotted: [],
-      plotColor: "",
-      fastaData: []
+      plotColor: ""
     });
 
     // fetchDataset
@@ -424,9 +351,7 @@ class Plotter extends Component {
       yWidth,
       plotStyle,
       areaEnabled,
-      fastaData,
       areaOpacity,
-      enableFasta,
       enableScaling
     } = this.state;
 
@@ -504,21 +429,6 @@ class Plotter extends Component {
                   control={
                     <Checkbox
                       color="primary"
-                      name="enableFasta"
-                      checked={enableFasta}
-                      onClick={this.handleFasta}
-                    />
-                  }
-                  label="Show Fasta Sequence"
-                />
-              </FormGroup>
-            </Grid>
-            <Grid item>
-              <FormGroup row>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="primary"
                       name="enableScaling"
                       checked={enableScaling}
                       onClick={this.handleScaling}
@@ -540,7 +450,6 @@ class Plotter extends Component {
           areaEnabled={areaEnabled}
           areaOpacity={areaOpacity}
         />
-        {enableFasta ? <FastaComposite data={fastaData} xWidth={xWidth} /> : ""}
         <br />
         <Typography gutterBottom>
           No.of Datasets plotted : {plotted.length}
@@ -551,29 +460,13 @@ class Plotter extends Component {
             size="small"
             style={{ marginLeft: 20 }}
           >
-            Upload FASTA file
+            Upload Dataset
             <input
               type="file"
-							id="selectFasta"
+              id="selectData"
               accept=".json"
               hidden
-              onChange={this.handleSubmitFasta}
-            />
-          </Button>
-          <Button
-            color="primary"
-            variant="outlined"
-            component="label"
-            size="small"
-            style={{ marginLeft: 20 }}
-          >
-            Upload Composite file
-            <input
-              type="file"
-              id="selectComposite"
-              accept=".json"
-              hidden
-              onChange={this.handleSubmitComposite}
+              onChange={this.handleSubmitData}
             />
           </Button>
           <Button

@@ -9,6 +9,12 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
 
 **MacOS installation instructions**
 
+- Install xcode-select to install brew
+
+  ```
+  xcode-select --install
+  ```
+
 - _Setting up mongoDB using [homebrew](https://brew.sh/)_
 
   - Add mongoDB Homebrew Tap
@@ -27,6 +33,12 @@ This is a node app that serves as a REST API backend to plotter. Built using `ex
 
   ```
   mkdir -p ~/Desktop/data/db
+  ```
+
+  - Might need to export the dbpath
+
+  ```
+  export PATH="$PATH:/usr/local/mongodb/bin”
   ```
 
   - To start your mongodb server
@@ -80,8 +92,6 @@ NODE_PORT=8081
 | Endpoint                                              | Request Type | Description                                                                   |
 | ----------------------------------------------------- | ------------ | ----------------------------------------------------------------------------- |
 | `/`                                                   | `POST`       | Create a new dataset.                                                         |
-| `/fasta`                                              | `POST`       | Create a new fasta sequence.                                                  |
 | `/datasets`                                           | `GET`        | Retrieve all the unique gene categories                                       |
 | `/datasets/refs?category=<category>`                  | `GET`        | Retrieve all the unique reference points for the given `<category>`           |
-| `/datasets/fasta?category=<category>&ref=<reference>` | `GET`        | Retrieve the fasta sequence for the given `<category>` and `<reference>`      |
 | `/datasets/data?category=<category>&ref=<reference>`  | `GET`        | Retrieve the datasets to overlay for the given `<category>` and `<reference>` |
