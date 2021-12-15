@@ -1,0 +1,4 @@
+
+# Generate sample data using defaults
+python random_composite_json.py
+python ../plotter/backend/utils/postData.py sample_composite_data.json

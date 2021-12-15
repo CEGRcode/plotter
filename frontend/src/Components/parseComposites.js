@@ -5,6 +5,9 @@ module.exports = (file) => {
 	console.log("HELLO " + file.name);
 
 	let compositeJSON;
+	var dict = {};
+	var subdict = {};
+	var dat = {};
 
 	let fr = new FileReader();
 	// Parse text content of file
@@ -35,10 +38,34 @@ module.exports = (file) => {
 					continue;
 				}
 				// Parse y values (access by fieldname)
+				// split fieldname into dataset + strand
+				// update datalist[fieldname][strand] = []
 				dataLists[fieldname] = tokens.slice(1);
 				console.log(dataLists[fieldname]);
-			}
 
+				//format dictionary to JSON structure
+				for (let i = 0; i<dataLists['X'].length; i++){
+					dat[i]={
+						x:dataLists['X'][i],
+						y:dataLists[fieldname][i]
+					}
+				}
+				subdict[l-1]={
+					color:'#ff8c00',
+					data:dat,
+					id:fieldname
+				}
+				dict[0]={
+					tags:'',
+					totalTagScaling:1,
+					geneCategory:'Group0',
+					plotData:subdict,
+					proteinName:'Protein1',
+					referencePoint:'Reference0'
+				}
+			}
+			// dict[0]plotData[0][data]=dat
+			console.log(dict)
 			// Format each array in dataLists to POST data object structure
 			// for each y dataset...
 				// parse out sense/anti, dataset ID, etc from filename

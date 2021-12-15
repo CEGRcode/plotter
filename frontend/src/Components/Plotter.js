@@ -91,7 +91,9 @@ class Plotter extends Component {
     plotStyle: "monotoneX",
     areaEnabled: true,
     areaOpacity: 0.2,
-    enableScaling: true
+    enableScaling: true,
+    presetColors: ['#BFBFBF', '#000000', '#FF0000', '#FF9100', '#D7D700', '#07E200', '#00B0F0',
+     '#0007FF', '#A700FF', '#FF00D0']
   };
 
   async componentDidMount() {
@@ -521,6 +523,7 @@ class Plotter extends Component {
               color={plotColor}
               onChange={this.handleSketchChange}
               disableAlpha={false}
+              presetColors={this.state.presetColors}
             />
             <h4 style={{ textAlign: "center" }}>Pick Plot Color</h4>
           </Grid>
