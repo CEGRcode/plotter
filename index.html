@@ -1324,6 +1324,10 @@
                                             if (i === true) {
                                                 this.opacity = opacity;
                                                 $("#settings-table").settings_table("plot_all_composites")
+                                            } else if (opacity === false) {
+                                                this._elements.composites[i].select(".composite-gradient")
+                                                    .selectAll("stop")
+                                                        .attr("stop-opacity", (d, i) => (1 - i % 2) * this.opacity)
                                             } else {
                                                 this._elements.composites[i].select(".composite-gradient")
                                                     .selectAll("stop")
@@ -2205,8 +2209,14 @@
                                 },
 
                                 change_scale: function(new_scale, plot=true) {
-                                    if (new_scale === "" || isNaN(new_scale)) {
-                                        d3.select(this.element.context).select("td.scale-col").select("input").node().value = this.scale;
+                                    if (new_scale === "") {
+                                        this.scale = false;
+                                        d3.select(this.element.context).select("td.scale-col").select("input").node().value = "";
+                                        if (plot) {
+                                            this.plot_composite()
+                                        }
+                                    } else if (isNaN(new_scale)) {
+                                        d3.select(this.element.context).select("td.scale-col").select("input").node().value = this.scale
                                     } else {
                                         this.scale = new_scale;
                                         d3.select(this.element.context).select("td.scale-col").select("input").node().value = new_scale;
@@ -2217,8 +2227,14 @@
                                 },
 
                                 change_opacity: function(new_opacity, plot=true) {
-                                    if (new_opacity === "" || isNaN(new_opacity) || new_opacity === false) {
-                                        d3.select(this.element.context).select("td.opacity-col").select("input").node().value = this.opacity === false ? "" : this.opacity
+                                    if (new_opacity === "" || new_opacity === false) {
+                                        this.opacity = false;
+                                        d3.select(this.element.context).select("td.opacity-col").select("input").node().value = "";
+                                        if (plot) {
+                                            $("#main-plot").main_plot("change_opacity", this.options.idx, false)
+                                        }
+                                    } else if (isNaN(new_opacity)) {
+                                        d3.select(this.element.context).select("td.opacity-col").select("input").node().value = this.opacity
                                     } else {
                                         new_opacity = Math.min(Math.max(parseFloat(new_opacity), 0), 1);
                                         this.opacity = new_opacity;
@@ -2230,8 +2246,14 @@
                                 },
 
                                 change_smoothing: function(new_smoothing, plot=true) {
-                                    if (new_smoothing === "" || isNaN(new_smoothing) || new_smoothing === false) {
-                                        d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = this.smoothing === false ? "" : this.smoothing;
+                                    if (new_smoothing === "" || new_smoothing === false) {
+                                        this.smoothing = false;
+                                        d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = "";
+                                        if (plot) {
+                                            this.plot_composite()
+                                        }
+                                    } else if (isNaN(new_smoothing)) {
+                                        d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = this.smoothing
                                     } else {
                                         new_smoothing = Math.max(parseInt(new_smoothing), 1);
                                         this.smoothing = new_smoothing;
@@ -2243,8 +2265,14 @@
                                 },
 
                                 change_bp_shift: function(new_bp_shift, plot=true) {
-                                    if (new_bp_shift === "" || isNaN(new_bp_shift) || new_bp_shift === false) {
-                                        d3.select(this.element.context).select("td.shift-col").select("input").node().value = this.bp_shift === false ? "" : this.bp_shift;
+                                    if (new_bp_shift === "" || new_bp_shift === false) {
+                                        this.bp_shift = false;
+                                        d3.select(this.element.context).select("td.shift-col").select("input").node().value = "";
+                                        if (plot) {
+                                            this.plot_composite()
+                                        }
+                                    } else if (isNaN(new_bp_shift)) {
+                                        d3.select(this.element.context).select("td.shift-col").select("input").node().value = this.bp_shift
                                     } else {
                                         new_bp_shift = parseInt(new_bp_shift);
                                         this.bp_shift = new_bp_shift;
