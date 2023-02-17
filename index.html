@@ -2098,7 +2098,7 @@
                                         await new Promise(function(resolve) {
                                             let file = file_list[i],
                                                 reader = new FileReader(),
-                                                id = file.name.split("_")[0];
+                                                id = file.name.split(/[_.]/)[0];
 
                                             $("#metadata-table").metadata_table("add_id", widg.options.idx, id);
                                             widg.add_id(id);
