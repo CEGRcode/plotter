@@ -20,7 +20,7 @@
         }
 
         input[type=range] {
-            width: 120px
+            width: 100px
         }
 
         .slider-text {
@@ -965,9 +965,9 @@
 
                 </div>
                 <div class="col-8">
-                    <div class="row">
-                        <div class="col">
-                            <svg id="main-plot" baseProfile="full" viewBox="0 0 550 300" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: visible; display: inline-block;"></svg>
+                    <div class="row" style="display:flex; align-items:center;">
+                        <div style="max-width:calc(100% - 270px);">
+                            <svg id="main-plot" baseProfile="full" viewBox="0 0 550 300" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: visible;"></svg>
                             <script>
                                 $(function() {
                                     // Main plot widget
@@ -1507,173 +1507,170 @@
                                 });
                             </script>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div id="opacity-input" class="col-3"></div>
-                        <script>
-                            $(function() {
-                                $.widget("composite_plot.opacity_input", {
-                                    opacity: 0.7,
+                        <div style="width:270px;">
+                            <div id="opacity-input"></div>
+                            <script>
+                                $(function() {
+                                    $.widget("composite_plot.opacity_input", {
+                                        opacity: 0.7,
 
-                                    _elements: {
-                                        slider: null,
-                                        text: null
-                                    },
+                                        _elements: {
+                                            slider: null,
+                                            text: null
+                                        },
 
-                                    _create: function() {
-                                        let container = d3.select(this.element.context),
-                                            label = container.append("label")
-                                                .attr("for", "opacity-slider")
-                                                .text("Opacity:"),
-                                            slider = container.append("input")
-                                                .attr("type", "range")
-                                                .attr("id", "opacity-slider")
-                                                .attr("value", this.opacity * 100)
-                                                .attr("min", 0)
-                                                .attr("max", 100)
-                                                .on("input", function() {$("#opacity-input").opacity_input("change_opacity", parseInt(this.value) / 100)}),
-                                            text = container.append("input")
-                                                .attr("type", "text")
-                                                .attr("id", "opacity-text")
-                                                .attr("class", "slider-text")
-                                                .attr("value", this.opacity)
-                                                .on("change", function() {$("#opacity-input").opacity_input("change_opacity", parseFloat(this.value))});
+                                        _create: function() {
+                                            let container = d3.select(this.element.context),
+                                                label = container.append("label")
+                                                    .attr("for", "opacity-slider")
+                                                    .text("Opacity:"),
+                                                slider = container.append("input")
+                                                    .attr("type", "range")
+                                                    .attr("id", "opacity-slider")
+                                                    .attr("value", this.opacity * 100)
+                                                    .attr("min", 0)
+                                                    .attr("max", 100)
+                                                    .on("input", function() {$("#opacity-input").opacity_input("change_opacity", parseInt(this.value) / 100)}),
+                                                text = container.append("input")
+                                                    .attr("type", "text")
+                                                    .attr("id", "opacity-text")
+                                                    .attr("class", "slider-text")
+                                                    .attr("value", this.opacity)
+                                                    .on("change", function() {$("#opacity-input").opacity_input("change_opacity", parseFloat(this.value))});
 
-                                        this._elements.slider = slider;
-                                        this._elements.text = text
-                                    },
+                                            this._elements.slider = slider;
+                                            this._elements.text = text
+                                        },
 
-                                    change_opacity: function(new_opacity) {
-                                        this.opacity = new_opacity;
-                                        this._elements.slider.node().value = new_opacity * 100;
-                                        this._elements.text.node().value = new_opacity;
-                                        $("#main-plot").main_plot("change_opacity", true, new_opacity)
-                                    }
-                                });
+                                        change_opacity: function(new_opacity) {
+                                            this.opacity = new_opacity;
+                                            this._elements.slider.node().value = new_opacity * 100;
+                                            this._elements.text.node().value = new_opacity;
+                                            $("#main-plot").main_plot("change_opacity", true, new_opacity)
+                                        }
+                                    });
 
-                                $("#opacity-input").opacity_input()
-                            })
-                        </script>
-                        <div id="smoothing-input" class="col-3"></div>
-                        <script>
-                            $(function() {
-                                $.widget("composite_plot.smoothing_input", {
-                                    sliding_window: 7,
+                                    $("#opacity-input").opacity_input()
+                                })
+                            </script>
+                            <div id="smoothing-input"></div>
+                            <script>
+                                $(function() {
+                                    $.widget("composite_plot.smoothing_input", {
+                                        sliding_window: 7,
 
-                                    _elements: {
-                                        slider: null,
-                                        text: null
-                                    },
+                                        _elements: {
+                                            slider: null,
+                                            text: null
+                                        },
 
-                                    _create: function() {
-                                        let container = d3.select(this.element.context),
-                                            label = container.append("label")
-                                                .attr("for", "smoothing-slider")
-                                                .text("Smoothing:"),
-                                            slider = container.append("input")
-                                                .attr("type", "range")
-                                                .attr("id", "smoothing-slider")
-                                                .attr("value", this.sliding_window)
-                                                .attr("min", 1)
-                                                .attr("max", 30)
-                                                .on("input", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))}),
-                                            text = container.append("input")
-                                                .attr("type", "text")
-                                                .attr("id", "smoothing-text")
-                                                .attr("class", "slider-text")
-                                                .attr("value", this.sliding_window)
-                                                .on("change", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))});
+                                        _create: function() {
+                                            let container = d3.select(this.element.context),
+                                                label = container.append("label")
+                                                    .attr("for", "smoothing-slider")
+                                                    .text("Smoothing:"),
+                                                slider = container.append("input")
+                                                    .attr("type", "range")
+                                                    .attr("id", "smoothing-slider")
+                                                    .attr("value", this.sliding_window)
+                                                    .attr("min", 1)
+                                                    .attr("max", 30)
+                                                    .on("input", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))}),
+                                                text = container.append("input")
+                                                    .attr("type", "text")
+                                                    .attr("id", "smoothing-text")
+                                                    .attr("class", "slider-text")
+                                                    .attr("value", this.sliding_window)
+                                                    .on("change", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))});
 
-                                        this._elements.slider = slider;
-                                        this._elements.text = text
-                                    },
+                                            this._elements.slider = slider;
+                                            this._elements.text = text
+                                        },
 
-                                    change_smoothing: function(new_window) {
-                                        this.sliding_window = new_window;
-                                        this._elements.slider.node().value = new_window;
-                                        this._elements.text.node().value = new_window;
-                                        $("#main-plot").main_plot("change_smoothing", new_window)
-                                    }
-                                });
+                                        change_smoothing: function(new_window) {
+                                            this.sliding_window = new_window;
+                                            this._elements.slider.node().value = new_window;
+                                            this._elements.text.node().value = new_window;
+                                            $("#main-plot").main_plot("change_smoothing", new_window)
+                                        }
+                                    });
 
-                                $("#smoothing-input").smoothing_input()
-                            })
-                        </script>
-                        <div id="shift-input" class="col-3"></div>
-                        <script>
-                            $(function() {
-                                $.widget("composite_plot.shift_input", {
-                                    bp_shift: 0,
+                                    $("#smoothing-input").smoothing_input()
+                                })
+                            </script>
+                            <div id="shift-input"></div>
+                            <script>
+                                $(function() {
+                                    $.widget("composite_plot.shift_input", {
+                                        bp_shift: 0,
 
-                                    _elements: {
-                                        slider: null,
-                                        text: null
-                                    },
+                                        _elements: {
+                                            slider: null,
+                                            text: null
+                                        },
 
-                                    _create: function() {
-                                        let container = d3.select(this.element.context),
-                                            label = container.append("label")
-                                                .attr("for", "shift-slider")
-                                                .text("BP shift:"),
-                                            slider = container.append("input")
-                                                .attr("type", "range")
-                                                .attr("id", "shift-slider")
-                                                .attr("value", this.bp_shift)
-                                                .attr("min", -50)
-                                                .attr("max", 50)
-                                                .on("input", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))})
-                                            text = container.append("input")
-                                                .attr("type", "text")
-                                                .attr("id", "shift-text")
-                                                .attr("class", "slider-text")
-                                                .attr("value", this.bp_shift)
-                                                .on("change", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))});
+                                        _create: function() {
+                                            let container = d3.select(this.element.context),
+                                                label = container.append("label")
+                                                    .attr("for", "shift-slider")
+                                                    .text("BP shift:"),
+                                                slider = container.append("input")
+                                                    .attr("type", "range")
+                                                    .attr("id", "shift-slider")
+                                                    .attr("value", this.bp_shift)
+                                                    .attr("min", -50)
+                                                    .attr("max", 50)
+                                                    .on("input", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))})
+                                                text = container.append("input")
+                                                    .attr("type", "text")
+                                                    .attr("id", "shift-text")
+                                                    .attr("class", "slider-text")
+                                                    .attr("value", this.bp_shift)
+                                                    .on("change", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))});
 
-                                        this._elements.slider = slider;
-                                        this._elements.text = text
-                                    },
+                                            this._elements.slider = slider;
+                                            this._elements.text = text
+                                        },
 
-                                    change_shift: function(new_shift) {
-                                        this.bp_shift = new_shift;
-                                        this._elements.slider.node().value = new_shift;
-                                        this._elements.text.node().value = new_shift;
-                                        $("#main-plot").main_plot("change_bp_shift", new_shift)
-                                    }
-                                });
+                                        change_shift: function(new_shift) {
+                                            this.bp_shift = new_shift;
+                                            this._elements.slider.node().value = new_shift;
+                                            this._elements.text.node().value = new_shift;
+                                            $("#main-plot").main_plot("change_bp_shift", new_shift)
+                                        }
+                                    });
 
-                                $("#shift-input").shift_input()
-                            })
-                        </script>
-                        <div class="col-3">
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="combined-checkbox">Combined</label>
-                                    <input id="combined-checkbox" type="checkbox">
-                                    <script>
-                                        $(function() {
-                                            $("#combined-checkbox").on("change", function() {
-                                                $("#main-plot").main_plot("toggle_combined", this.checked)
-                                            })
+                                    $("#shift-input").shift_input()
+                                })
+                            </script>
+                            <div>
+                                <label for="combined-checkbox">Combined</label>
+                                <input id="combined-checkbox" type="checkbox">
+                                <script>
+                                    $(function() {
+                                        $("#combined-checkbox").on("change", function() {
+                                            $("#main-plot").main_plot("toggle_combined", this.checked)
                                         })
-                                    </script>
-                                </div>
-                                <div class="col-6">
-                                    <input type="button" id="download-svg-button" value="Download as SVG">
-                                    <script>
-                                        $(function() {
-                                            $("#download-svg-button").on("click", function() {
-                                                $("#main-plot").main_plot("download_as_svg")
-                                            })
+                                    })
+                                </script>
+                            </div>
+                            <div>
+                                <input type="button" id="download-svg-button" value="Download as SVG">
+                                <script>
+                                    $(function() {
+                                        $("#download-svg-button").on("click", function() {
+                                            $("#main-plot").main_plot("download_as_svg")
                                         })
-                                    </script>
-                                </div>
+                                    })
+                                </script>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div class="row">
-                <div class="col" style="overflow:auto; height:calc(50vh - 120px);">
+                <div class="col" style="overflow:auto; height:calc(50vh - 80px);">
                     <h4>Composite settings</h4>
                     <table id="settings-table" class="table"></table>
                     <script>
