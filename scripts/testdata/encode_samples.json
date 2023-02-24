@@ -1,0 +1,86 @@
+{
+    "ENCFF014UUB": {
+        "ENCBS": "None", 
+        "strain": "K562", 
+        "run_type": "single-ended", 
+        "ENCLB": "None", 
+        "assay": "TF ChIP-seq", 
+        "target": "/targets/JUN-human/", 
+        "file_size": "764029946", 
+        "read_length": "36", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR000EFS/"
+    }, 
+    "ENCFF889QPQ": {
+        "ENCBS": "None", 
+        "strain": "GM18907", 
+        "run_type": "paired-ended", 
+        "ENCLB": "None", 
+        "assay": "ATAC-seq", 
+        "target": "None", 
+        "file_size": "19946885673", 
+        "read_length": "80", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR487QSB/"
+    }, 
+    "ENCFF498RZG": {
+        "ENCBS": "None", 
+        "strain": "head of caudate nucleus", 
+        "run_type": "paired-ended", 
+        "ENCLB": "None", 
+        "assay": "DNase-seq", 
+        "target": "None", 
+        "file_size": "10951817649", 
+        "read_length": "20", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR271QID/"
+    }, 
+    "ENCFF268YMC": {
+        "ENCBS": "None", 
+        "strain": "K562", 
+        "run_type": "single-ended", 
+        "ENCLB": "None", 
+        "assay": "TF ChIP-seq", 
+        "target": "/targets/STAT6-human/", 
+        "file_size": "2831478701", 
+        "read_length": "100", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR338UQU/"
+    }, 
+    "ENCFF873QGZ": {
+        "ENCBS": "None", 
+        "strain": "naive thymus-derived CD4-positive, alpha-beta T cell", 
+        "run_type": "paired-ended", 
+        "ENCLB": "None", 
+        "assay": "Mint-ChIP-seq", 
+        "target": "/targets/H3K4me3-human/", 
+        "file_size": "2820503558", 
+        "read_length": "76", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR710SZV/"
+    }, 
+    "ENCFF597SLV": {
+        "ENCBS": "/biosamples/ENCBS586UFT/", 
+        "strain": "A549", 
+        "run_type": "single-ended", 
+        "ENCLB": "ENCLB768JUJ", 
+        "assay": "ATAC-seq", 
+        "target": "None", 
+        "file_size": "1131793941", 
+        "read_length": "51", 
+        "assembly": "GRCh38", 
+        "ENCSR": "/experiments/ENCSR220ASC/"
+    }, 
+    "ENCFF539XMC": {
+        "ENCBS": "None", 
+        "strain": "DND-41", 
+        "run_type": "single-ended", 
+        "ENCLB": "None", 
+        "assay": "Histone ChIP-seq", 
+        "target": "/targets/H3K36me3-human/", 
+        "file_size": "794575746", 
+        "read_length": "36", 
+        "assembly": "hg19", 
+        "ENCSR": "/experiments/ENCSR000AQX/"
+    }
+}
