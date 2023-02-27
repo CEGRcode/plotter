@@ -217,7 +217,8 @@
 
                                                 if (!data.plot.title || !data.plot.xlabel || !data.plot || isNaN(data.plot.xmin) ||
                                                     isNaN(data.plot.xmax) || isNaN(data.plot.ymax) || isNaN(data.plot.opacity) ||
-                                                    !data.plot.smoothing || isNaN(data.plot.bp_shift) || isNaN(data.plot.combined)) {
+                                                    !data.plot.smoothing || isNaN(data.plot.bp_shift) || isNaN(data.plot.combined) ||
+                                                    isNaN(data.plot.locked)) {
                                                     return false
                                                 };
 
@@ -355,6 +356,18 @@
                                             $("#main-plot").main_plot("scale_axes", this.xmin, this.xmax, this.ymax);
                                             $("#settings-table").settings_table("plot_all_composites")
                                         }
+                                    },
+
+                                    toggle_locked: function(locked) {
+                                        this._elements.xmin_text
+                                            .property("disabled", locked)
+                                            .style("background-color", locked ? "#DDDDDD" : "white");
+                                        this._elements.xmax_text
+                                            .property("disabled", locked)
+                                            .style("background-color", locked ? "#DDDDDD" : "white");
+                                        this._elements.ymax_text
+                                            .property("disabled", locked)
+                                            .style("background-color", locked ? "#DDDDDD" : "white")
                                     }
                                 });
 
@@ -362,14 +375,32 @@
                             })
                         </script>
                         <div class="col-4 text-right">
-                            <input type="button" id="autoscale-axes-button" value="Autoscale axes">
-                            <script>
-                                $(function() {
-                                    d3.select("#autoscale-axes-button").on("click", function() {
-                                        $("#settings-table").settings_table("autoscale_axes")
-                                    })
-                                })
-                            </script>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="button" id="autoscale-axes-button" value="Autoscale axes">
+                                    <script>
+                                        $(function() {
+                                            d3.select("#autoscale-axes-button").on("click", function() {
+                                                $("#settings-table").settings_table("autoscale_axes")
+                                            })
+                                        })
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="checkbox" id="lock-axes-checkbox">
+                                    <label for="lock-axes-checkbox">Lock axes</label>
+                                    <script>
+                                        $(function() {
+                                            d3.select("#lock-axes-checkbox").on("change", function() {
+                                                $("#main-plot").main_plot("toggle_locked", this.checked);
+                                                $("#axes-input").axes_input("toggle_locked", this.checked)
+                                            })
+                                        })
+                                    </script>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -987,6 +1018,7 @@
                                         smoothing: 7,
                                         bp_shift: 0,
                                         combined: false,
+                                        locked: false,
 
                                         _elements: {
                                             main_plot: null,
@@ -1000,6 +1032,8 @@
                                             ylabel_suffix: "",
                                             midaxis_top: null,
                                             midaxis_bottom: null,
+                                            refline: null,
+                                            reflabel: null,
                                             tooltip: null,
                                             composites: [],
                                             legend: null,
@@ -1036,32 +1070,41 @@
                                             this._elements.midaxis_top = main_plot.append("g")
                                                 .attr("transform", "translate(0 " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
                                                 .call(d3.axisTop(xscale).tickFormat(""));
+                                            this._elements.refline = main_plot.append("line")
+                                                .attr("x1", xscale(0))
+                                                .attr("x2", xscale(0))
+                                                .attr("y1", yscale(-this.ymax))
+                                                .attr("y2", yscale(this.ymax))
+                                                .attr("stroke", "gray")
+                                                .attr("stroke-width", 1)
+                                                .attr("stroke-dasharray", "5,5")
+                                                .attr("opacity", .5);
                                             this._elements.xmin = main_plot.append("text")
                                                 .attr("x", this.margins.left)
                                                 .attr("y", this.height - this.margins.bottom + 15)
                                                 .style("text-anchor", "middle")
                                                 .attr("font-size", "10px")
-                                                .text(this.xmin)
+                                                .text(this.xmin);
                                             this._elements.xmax = main_plot.append("text")
                                                 .attr("x", this.width - this.margins.right)
                                                 .attr("y", this.height - this.margins.bottom + 15)
                                                 .style("text-anchor", "middle")
                                                 .attr("font-size", "10px")
-                                                .text(this.xmax)
+                                                .text(this.xmax);
                                             this._elements.ymin = main_plot.append("text")
                                                 .attr("x", 20)
                                                 .attr("y", this.height - this.margins.bottom)
                                                 .attr("transform", "rotate(-90 20 " + (this.height - this.margins.bottom) + ")")
                                                 .style("text-anchor", "middle")
                                                 .attr("font-size", "10px")
-                                                .text(-this.ymax)
+                                                .text(-this.ymax);
                                             this._elements.ymax = main_plot.append("text")
                                                 .attr("x", 20)
                                                 .attr("y", this.margins.top)
                                                 .attr("transform", "rotate(-90 20 " + (this.margins.top) + ")")
                                                 .style("text-anchor", "middle")
                                                 .attr("font-size", "10px")
-                                                .text(this.ymax)
+                                                .text(this.ymax);
                                             this._elements.title = main_plot.append("g");
                                             $(this._elements.title.node()).editable_svg_text({
                                                 label: "title",
@@ -1250,6 +1293,10 @@
                                         },
 
                                         scale_axes: function(xmin, xmax, ymax, allow_shrink=true, change_input=false) {
+                                            if (this.locked) {
+                                                return
+                                            };
+
                                             if (xmin !== undefined && xmax !== undefined && ymax !== undefined) {
                                                 if (allow_shrink) {
                                                     this.xmin = xmin;
@@ -1283,6 +1330,13 @@
                                             this.yscale = d3.scaleLinear()
                                                 .domain([-this.ymax * !this.combined, this.ymax * ymax_factor])
                                                 .range([this.height - this.margins.bottom, this.margins.top]);
+
+                                            this._elements.refline
+                                                .attr("x1", this.xscale(0))
+                                                .attr("x2", this.xscale(0))
+                                                .attr("y1", this.yscale(this.combined ? 0 : -this.ymax))
+                                                .attr("y2", this.yscale(this.ymax * ymax_factor))
+                                                .style("display", this.xmin < 0 && this.xmax > 0 ? null : "none");
 
                                             this._elements.ylabel.select("text").html(this.ylabel + this._elements.ylabel_suffix);
 
@@ -1389,6 +1443,10 @@
                                             $("#settings-table").settings_table("plot_all_composites")
                                         },
 
+                                        toggle_locked: function(locked) {
+                                            this.locked = locked
+                                        },
+
                                         download_as_svg: function() {
                                             let b64doc = btoa(unescape(encodeURIComponent(this.element.context.outerHTML))),
                                                 a = document.createElement("a"),
@@ -1401,7 +1459,7 @@
                                         export: function() {
                                             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                                                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
-                                                ymax: this.ymax, combined: this.combined}
+                                                ymax: this.ymax, combined: this.combined, locked: this.locked}
                                         },
 
                                         import: function(data) {
@@ -1415,7 +1473,11 @@
 
                                             $(this._elements.title.node()).editable_svg_text("change_label", data.title);
                                             $(this._elements.xlabel.node()).editable_svg_text("change_label", data.xlabel);
-                                            $(this._elements.ylabel.node()).editable_svg_text("change_label", data.ylabel)
+                                            $(this._elements.ylabel.node()).editable_svg_text("change_label", data.ylabel);
+
+                                            this.locked = data.locked;
+                                            d3.select("#lock-axes-checkbox").property("checked", data.locked);
+                                            $("#axes-input").axes_input("toggle_locked", data.locked)
                                         },
 
                                         reset: function() {
