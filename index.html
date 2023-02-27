@@ -268,7 +268,7 @@
                                             a = document.createElement("a"),
                                             e = new MouseEvent("click");
                                         a.download = "composite_plot_config.json";
-                                        a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+                                        a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 4));
                                         a.dispatchEvent(e)
                                     })
                                 })
