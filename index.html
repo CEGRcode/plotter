@@ -998,7 +998,7 @@
                 <div class="col-8">
                     <div class="row" style="display:flex; align-items:center;">
                         <div style="max-width:calc(100% - 270px);">
-                            <svg id="main-plot" baseProfile="full" viewBox="0 0 550 300" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: visible;"></svg>
+                            <svg id="main-plot" baseProfile="full" viewBox="0 0 550 300" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: hide;"></svg>
                             <script>
                                 $(function() {
                                     // Main plot widget
@@ -1035,6 +1035,7 @@
                                             refline: null,
                                             reflabel: null,
                                             tooltip: null,
+                                            composite_group: null,
                                             composites: [],
                                             legend: null,
                                             legend_items: []
@@ -1131,11 +1132,21 @@
                                                 rotation: "vertical"
                                             });
 
+                                            this._elements.composite_group = main_plot.append("g");
+
                                             this._elements.legend = main_plot.append("g")
                                                 .attr("transform", "translate(" + (this.width - this.margins.right + 25) + " " + this.margins.top + ")");
 
                                             this._elements.tooltip = main_plot.append("g")
-                                                .attr("id", "composite-plot-tooltip")
+                                                .attr("id", "composite-plot-tooltip");
+
+                                            main_plot.on("mousemove", function(e) {
+                                                let data = $("#settings-table").settings_table("export");
+                                                $("#main-plot").main_plot("move_tooltip", e, data)
+                                            });
+                                            main_plot.on("mouseleave", function() {
+                                                $("#main-plot").main_plot("hide_tooltip")
+                                            });
                                         },
 
                                         _destroy: function() {
@@ -1143,7 +1154,7 @@
                                         },
 
                                         add_composite: function(name, color) {
-                                            let composite = this._elements.main_plot.insert("g", "g.composite")
+                                            let composite = this._elements.composite_group.insert("g", "g.composite")
                                                 .classed("composite", true);
 
                                             composite.append("defs")
@@ -1447,6 +1458,51 @@
                                             this.locked = locked
                                         },
 
+                                        move_tooltip: function(ev, data) {
+                                            let {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
+                                                mouse_x = (ev.clientX - plot_x) * this.width / width,
+                                                mouse_y = (ev.clientY - plot_y) * this.height / height;
+
+                                            if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
+                                                mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
+                                                let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x)),
+                                                    mouse_bp_pos = mouse_x_scaled - this.xmin;
+
+                                                this._elements.tooltip
+                                                    .style("display", null)
+                                                    .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
+
+                                                let tooltip_border = this._elements.tooltip.selectAll("path")
+                                                    .data([null])
+                                                    .join("path")
+                                                        .attr("fill", "white")
+                                                        .attr("stroke", "black"),
+                                                    tooltip_text = this._elements.tooltip.selectAll("text")
+                                                    .data([null])
+                                                    .join("text")
+                                                        .attr("font-size", "8px");
+
+                                                tooltip_text.selectAll("tspan")
+                                                    .data([mouse_x_scaled, ...data])
+                                                    .join("tspan")
+                                                        .attr("x", 0)
+                                                        .attr("y", (_, i) => (i * 1.1) + "em")
+                                                        .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
+                                                        .attr("fill", (d, i) => i === 0 ? "black" : d.color)
+                                                        .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_bp_pos] + d.anti[mouse_bp_pos]).toPrecision(2))
+                                                            : parseFloat(d.sense[mouse_bp_pos].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_bp_pos].toPrecision(2))));
+                                                let {y, width: w, height: h} = tooltip_text.node().getBBox();
+                                                tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
+                                                tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
+                                            } else {
+                                                this._elements.tooltip.style("display", "none")
+                                            }
+                                        },
+
+                                        hide_tooltip: function() {
+                                            this._elements.tooltip.style("display", "none")
+                                        },
+
                                         download_as_svg: function() {
                                             let b64doc = btoa(unescape(encodeURIComponent(this.element.context.outerHTML))),
                                                 a = document.createElement("a"),
@@ -1523,16 +1579,18 @@
                                                 .style("text-anchor", "middle")
                                                 .style("cursor", "pointer")
                                                 .text(this.options.text)
-                                                .on("click", function() {$(label_group.node()).editable_svg_text("toggle_input")});
+                                                .on("click", function() {$(label_group.node()).editable_svg_text("toggle_input")})
+                                                .on("mouseover", function() {d3.select(this).attr("fill", "#6D98E6")})
+                                                .on("mouseleave", function() {d3.select(this).attr("fill", "#000000")});
                                         },
 
                                         toggle_input: function(ev) {
                                             let label_group = d3.select(this.element.context);
                                             this.text_label.style("display", "none");
                                             this.foreign_object = label_group.append("foreignObject")
-                                                .attr("x", this.options.x - 50)
+                                                .attr("x", this.options.x - 200)
                                                 .attr("y", this.options.y - 20)
-                                                .attr("width", 100)
+                                                .attr("width", 400)
                                                 .attr("height", 40)
                                                 .attr("transform", "rotate(" + (this.options.rotation === "horizontal" ? 0 : -90 + " " + this.options.x + " " + this.options.y) + ")")
                                                 .style("text-align", "center");
@@ -1556,6 +1614,8 @@
 
                                                 if (ev.target.value.trim().length !== 0) {
                                                     this.change_label(ev.target.value)
+                                                } else {
+                                                    this.text_label.style("display", null)
                                                 }
                                             }
                                         },
