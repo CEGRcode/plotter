@@ -1141,7 +1141,7 @@
                                                 .attr("id", "composite-plot-tooltip");
 
                                             main_plot.on("mousemove", function(e) {
-                                                let data = $("#settings-table").settings_table("export");
+                                                let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide);
                                                 $("#main-plot").main_plot("move_tooltip", e, data)
                                             });
                                             main_plot.on("mouseleave", function() {
