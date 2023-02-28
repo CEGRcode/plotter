@@ -8158,6 +8158,7 @@
         "xmin": -499,
         "xmax": 499,
         "ymax": 20,
-        "combined": false
+        "combined": false,
+        "locked": false
     }
 }
