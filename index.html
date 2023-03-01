@@ -1803,22 +1803,61 @@
                     <script>
                         let parse_composite = function(text) {
                             let lines = text.split("\n"),
-                                xdomain, sense, anti;
-                            for (let i = 0; i < 3; i++) {
-                                let line = lines[i],
-                                    fields = line.split("\t");
-                                if (i === 0) {
-                                    xdomain = fields.slice(1).map(p => parseInt(p))
-                                    if (xdomain[0] === 0) {
-                                        xdomain = xdomain.map(x => x - Math.floor(xdomain.length / 2))
+                                xmin, xmax, sense, anti, xmin_curr, xmax_curr, offset,
+                                i = 0;
+                            while (i < lines.length) {
+                                let line = lines[i];
+                                if (line.trim() === "") {
+                                    i++;
+                                    continue
+                                };
+                                let fields = line.split("\t");
+                                if (fields[0] === "" || fields[0] === "NAME") {
+                                    xmin_curr = parseInt(fields[1]);
+                                    xmax_curr = parseInt(fields[fields.length - 1]);
+                                    if (xmin_curr === 0) {
+                                        xmin_curr -= Math.floor(xmax_curr / 2)
+                                        xmax_curr -= Math.floor(xmax_curr / 2)
+                                    };
+
+                                    if (xmin === undefined || xmax === undefined) {
+                                        xmin = xmin_curr;
+                                        xmax = xmax_curr;
+                                        sense = Array(xmax_curr - xmin_curr + 1).fill(0);
+                                        anti = Array(xmax_curr - xmin_curr + 1).fill(0)
+                                    } else {
+                                        if (xmin_curr < xmin) {
+                                            sense.unshift(Array(xmin - xmin_curr).fill(0));
+                                            anti.unshift(Array(xmin - xmin_curr).fill(0));
+                                            xmin = xmin_curr
+                                        };
+                                        if (xmax_curr > xmax) {
+                                            sense.push(Array(xmax_curr - xmax).fill(0));
+                                            anti.push(Array(xmax_curr - xmax).fill(0));
+                                            xmax = xmax_curr
+                                        }
+                                    };
+
+                                    offset = xmin_curr - xmin
+                                } else if (fields[0].toLowerCase().includes("sense")) {
+                                    for (let j = 1; j < fields.length; j++) {
+                                        sense[offset + j - 1] += parseFloat(fields[j])
                                     }
-                                } else if (fields[0].includes("sense")) {
-                                    sense = fields.slice(1).map(o => parseFloat(o))
-                                } else if (fields[0].includes("anti")) {
-                                    anti = fields.slice(1).map(o => parseFloat(o))
-                                }
+                                } else if (fields[0].toLowerCase().includes("anti")) {
+                                    for (let j = 1; j < fields.length; j++) {
+                                        anti[offset + j - 1] += parseFloat(fields[j])
+                                    }
+                                } else {
+                                    for (let j = 1; j < fields.length; j++) {
+                                        sense[offset + j - 1] += parseFloat(fields[j]) / 2;
+                                        anti[offset + j - 1] += parseFloat(fields[j]) / 2
+                                    }
+                                };
+
+                                i++
                             };
-                            return {xdomain: xdomain, sense: sense, anti: anti}
+
+                            return {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
                         };
 
                         let sliding_window = function(xdomain, occupancy, window) {
@@ -2249,21 +2288,19 @@
                                             widg.add_id(id);
 
                                             reader.onload = function() {
-                                                let {xdomain, sense, anti} = parse_composite(reader.result),
+                                                let {xmin, xmax, sense, anti} = parse_composite(reader.result),
                                                     promise = () => new Promise(function(resolve_) {
 
                                                     // Update xdomain
-                                                    let xmin = Math.min(widg.xmin, xdomain[0]),
-                                                        xmax = Math.max(widg.xmax, xdomain[xdomain.length - 1]);
-                                                    widg.xmin = xmin;
-                                                    widg.xmax = xmax;
+                                                    widg.xmin = Math.min(widg.xmin, xmin);
+                                                    widg.xmax = Math.max(widg.xmax, xmax);
 
                                                     resolve_()
                                                 });
                                                 promise_arr[i] = i === 0 ? promise() : promise_arr[i - 1].then(promise);
 
                                                 // Update composite array
-                                                composite_arr[i] = {xdomain: xdomain, sense: sense, anti: anti};
+                                                composite_arr[i] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
 
                                                 resolve()
                                             };
@@ -2295,9 +2332,9 @@
 
                                     // Update sense and anti arrays
                                     for (let i = 0; i < n; i++) {
-                                        let {xdomain, sense, anti} = composite_arr[i];
-                                        for (let j = xdomain[0] - this.xmin; j <= xdomain[xdomain.length - 1] - xdomain[0]; j++) {
-                                            let idx = xdomain[0] - this.xmin + j;
+                                        let {xmin, xmax, sense, anti} = composite_arr[i];
+                                        for (let j = xmin - this.xmin; j <= xmax - xmin; j++) {
+                                            let idx = xmin - this.xmin + j;
                                             this.sense[idx] += sense[j];
                                             this.anti[idx] += anti[j]
                                         }
