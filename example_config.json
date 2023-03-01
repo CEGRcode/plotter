@@ -8149,16 +8149,17 @@
         }
     ],
     "plot": {
-        "title": "ChIP-exo: SAGA 25\u02daC at RP genes",
+        "title": "ChIP-exo: SAGA 25˚C at RP genes",
         "xlabel": "Distance from Sua7 (TSS)",
         "ylabel": "Occupancy (AU)",
         "opacity": 1,
-        "smoothing": 15,
+        "smoothing": 30,
         "bp_shift": 0,
         "xmin": -499,
         "xmax": 499,
         "ymax": 20,
         "combined": false,
         "locked": false
-    }
+    },
+    "preset": "mittal_2022"
 }

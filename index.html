@@ -251,7 +251,8 @@
                                             $("#main-plot").main_plot("import", data.plot);
                                             $("#settings-table").settings_table("import", data.settings);
                                             $("#metadata-table").metadata_table("import", data.metadata);
-                                            $("#main-plot").main_plot("update_legend")
+                                            $("#main-plot").main_plot("update_legend");
+                                            $("#settings-dropdown").settings_dropdown("set_value", data.preset)
                                         };
                                         reader.readAsText(file)
                                     })
@@ -264,7 +265,8 @@
                                         let data = {
                                             metadata: $("#metadata-table").metadata_table("export"),
                                             settings: $("#settings-table").settings_table("export"),
-                                            plot: $("#main-plot").main_plot("export")
+                                            plot: $("#main-plot").main_plot("export"),
+                                            preset: $("#settings-dropdown").settings_dropdown("get_value")
                                         },
                                             a = document.createElement("a"),
                                             e = new MouseEvent("click");
@@ -1635,6 +1637,79 @@
                             </script>
                         </div>
                         <div style="width:270px;">
+                            <div id="settings-dropdown"></div>
+                            <script>
+                                $(function() {
+                                    $.widget("composite_plot.settings_dropdown", {
+                                        presets: {
+                                            rossi_2021: {
+                                                opacity: 1,
+                                                smoothing: 20,
+                                                shift: 50,
+                                                combined: false
+                                            },
+
+                                            mittal_2022: {
+                                                opacity: 1,
+                                                smoothing: 30,
+                                                shift: 0,
+                                                combined: false
+                                            }
+                                        },
+                                        current_preset: "none",
+
+                                        _elements: {
+                                            dropdown: null
+                                        },
+
+                                        _create: function() {
+                                            let container = d3.select(this.element.context),
+                                                dropdown = container.append("select")
+                                                    .attr("id", "settings-dropdown")
+                                                    .on("change", function() {$("#settings-dropdown").settings_dropdown("change_settings", this.value)});
+                                            this._elements.dropdown = dropdown;
+
+                                            dropdown.append("option")
+                                                .attr("value", "none")
+                                                .text("Select a preset");
+
+                                            dropdown.append("option")
+                                                .attr("value", "rossi_2021")
+                                                .text("Rossi et al. 2021");
+
+                                            dropdown.append("option")
+                                                .attr("value", "mittal_2022")
+                                                .text("Mittal et al. 2022")
+                                        },
+
+                                        get_value: function() {
+                                            return this.current_preset
+                                        },
+
+                                        set_value: function(preset) {
+                                            this.current_preset = preset;
+                                            this._elements.dropdown.node().value = preset
+                                        },
+
+                                        change_settings: function(preset) {
+                                            this.current_preset = preset;
+
+                                            if (preset === "none") {
+                                                return
+                                            }
+
+                                            let settings = this.presets[preset];
+                                            $("#opacity-input").opacity_input("change_opacity", settings.opacity);
+                                            $("#smoothing-input").smoothing_input("change_smoothing", settings.smoothing);
+                                            $("#shift-input").shift_input("change_shift", settings.shift);
+                                            d3.select("#combined-checkbox").property("checked", settings.combined);
+                                            $("#main-plot").main_plot("toggle_combined", settings.combined)
+                                        }
+                                    });
+
+                                    $("#settings-dropdown").settings_dropdown()
+                                })
+                            </script>
                             <div id="opacity-input"></div>
                             <script>
                                 $(function() {
@@ -1657,13 +1732,19 @@
                                                     .attr("value", this.opacity * 100)
                                                     .attr("min", 0)
                                                     .attr("max", 100)
-                                                    .on("input", function() {$("#opacity-input").opacity_input("change_opacity", parseInt(this.value) / 100)}),
+                                                    .on("input", function() {
+                                                        $("#opacity-input").opacity_input("change_opacity", parseInt(this.value) / 100);
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    }),
                                                 text = container.append("input")
                                                     .attr("type", "text")
                                                     .attr("id", "opacity-text")
                                                     .attr("class", "slider-text")
                                                     .attr("value", this.opacity)
-                                                    .on("change", function() {$("#opacity-input").opacity_input("change_opacity", parseFloat(this.value))});
+                                                    .on("change", function() {
+                                                        $("#opacity-input").opacity_input("change_opacity", parseFloat(this.value));
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    });
 
                                             this._elements.slider = slider;
                                             this._elements.text = text
@@ -1702,13 +1783,19 @@
                                                     .attr("value", this.sliding_window)
                                                     .attr("min", 1)
                                                     .attr("max", 30)
-                                                    .on("input", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))}),
+                                                    .on("input", function() {
+                                                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value));
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    }),
                                                 text = container.append("input")
                                                     .attr("type", "text")
                                                     .attr("id", "smoothing-text")
                                                     .attr("class", "slider-text")
                                                     .attr("value", this.sliding_window)
-                                                    .on("change", function() {$("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))});
+                                                    .on("change", function() {
+                                                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value));
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    });
 
                                             this._elements.slider = slider;
                                             this._elements.text = text
@@ -1747,13 +1834,19 @@
                                                     .attr("value", this.bp_shift)
                                                     .attr("min", -50)
                                                     .attr("max", 50)
-                                                    .on("input", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))})
+                                                    .on("input", function() {
+                                                        $("#shift-input").shift_input("change_shift", parseInt(this.value));
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    })
                                                 text = container.append("input")
                                                     .attr("type", "text")
                                                     .attr("id", "shift-text")
                                                     .attr("class", "slider-text")
                                                     .attr("value", this.bp_shift)
-                                                    .on("change", function() {$("#shift-input").shift_input("change_shift", parseInt(this.value))});
+                                                    .on("change", function() {
+                                                        $("#shift-input").shift_input("change_shift", parseInt(this.value));
+                                                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                                                    });
 
                                             this._elements.slider = slider;
                                             this._elements.text = text
@@ -1776,7 +1869,8 @@
                                 <script>
                                     $(function() {
                                         $("#combined-checkbox").on("change", function() {
-                                            $("#main-plot").main_plot("toggle_combined", this.checked)
+                                            $("#main-plot").main_plot("toggle_combined", this.checked);
+                                            $("#settings-dropdown").settings_dropdown("set_value", "none")
                                         })
                                     })
                                 </script>
