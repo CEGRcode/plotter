@@ -1550,6 +1550,7 @@
                                             $("#smoothing-input").smoothing_input("change_smoothing", 7);
                                             $("#shift-input").shift_input("change_shift", 0);
                                             d3.select("#combined-checkbox").property("checked", false);
+                                            $("#settings-dropdown").settings_dropdown("set_value", "none");
 
                                             this._elements.main_plot.selectAll("*").remove();
                                             this._elements.composites = [];
