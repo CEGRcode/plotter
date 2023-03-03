@@ -519,7 +519,7 @@ $(function() {
             if (isNaN(new_scale)) {
                 d3.select(this.element.context).select("td.scale-col").select("input").node().value = this.scale
             } else {
-                new_scale = new_scale ? Math.max(parseFloat(new_scale), 0) : 1;
+                new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
                 d3.select(this.element.context).select("td.scale-col").select("input").node().value = new_scale;
                 if (plot) {
