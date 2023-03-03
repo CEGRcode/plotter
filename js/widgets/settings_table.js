@@ -516,15 +516,10 @@ $(function() {
         },
 
         change_scale: function(new_scale, plot=true) {
-            if (new_scale === "") {
-                this.scale = false;
-                d3.select(this.element.context).select("td.scale-col").select("input").node().value = "";
-                if (plot) {
-                    this.plot_composite()
-                }
-            } else if (isNaN(new_scale)) {
+            if (isNaN(new_scale)) {
                 d3.select(this.element.context).select("td.scale-col").select("input").node().value = this.scale
             } else {
+                new_scale = new_scale ? Math.max(parseFloat(new_scale), 0) : 1;
                 this.scale = new_scale;
                 d3.select(this.element.context).select("td.scale-col").select("input").node().value = new_scale;
                 if (plot) {
