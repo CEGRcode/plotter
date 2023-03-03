@@ -163,6 +163,9 @@ $(function() {
                 }),
 
             // Add sliders and buttons
+                drag_col = row.append("td")
+                .classed("drag-col", true)
+                .style("width", "48px"),
                 name_col = row.append("td")
                 .classed("name-col", true),
                 color_col = row.append("td")
@@ -181,10 +184,28 @@ $(function() {
                 .classed("upload-col", true),
                 id_col = row.append("td")
                 .classed("id-col", true),
-                drag_col = row.append("td")
-                .classed("drag-col", true),
                 reset_col = row.append("td")
                 .classed("reset-col", true);
+
+            // Add drag handle
+            drag_col.append("div")
+                .attr("title", "Drag to reorder")
+                .append("svg")
+                    .attr("baseProfile", "full")
+                    .attr("width", "24px")
+                    .attr("viewBox", "0 0 16 16")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .append("g")
+                        .selectAll("line")
+                        .data([4, 8, 12])
+                        .join("line")
+                            .attr("x1", 0)
+                            .attr("y1", d => d)
+                            .attr("x2", 16)
+                            .attr("y2", d => d)
+                            .attr("stroke", "gray")
+                            .attr("stroke-width", 2);
 
             // Add name input
             name_col.append("div")
@@ -328,26 +349,6 @@ $(function() {
                 .style("vertical-align", "top")
                 .style("padding-left", "5px")
                 .classed("id-list", true);
-
-            // Add drag handle
-            drag_col.append("div")
-                .attr("title", "Drag to reorder")
-                .append("svg")
-                    .attr("baseProfile", "full")
-                    .attr("width", "24px")
-                    .attr("viewBox", "0 0 16 16")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .append("g")
-                        .selectAll("line")
-                        .data([4, 8, 12])
-                        .join("line")
-                            .attr("x1", 0)
-                            .attr("y1", d => d)
-                            .attr("x2", 16)
-                            .attr("y2", d => d)
-                            .attr("stroke", "gray")
-                            .attr("stroke-width", 2);
 
             // Add reset button
             reset_col.append("input")
