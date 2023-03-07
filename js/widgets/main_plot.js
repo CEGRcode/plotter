@@ -12,7 +12,7 @@ $(function() {
         margins: {top: 30, right: 170, bottom: 35, left: 30},
         xscale: null,
         yscale: null,
-        opacity: .7,
+        opacity: 1,
         smoothing: 7,
         bp_shift: 0,
         combined: false,
@@ -542,7 +542,7 @@ $(function() {
             this.ylabel = "Occupancy (AU)";
 
             $("#axes-input").axes_input("change_axis_limits", -500, 500, 1);
-            $("#opacity-input").opacity_input("change_opacity", 0.7);
+            $("#opacity-input").opacity_input("change_opacity", 1);
             $("#smoothing-input").smoothing_input("change_smoothing", 7);
             $("#shift-input").shift_input("change_shift", 0);
             d3.select("#combined-checkbox").property("checked", false);

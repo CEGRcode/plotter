@@ -1,6 +1,6 @@
 $(function() {
     $.widget("composite_plot.opacity_input", {
-        opacity: 0.7,
+        opacity: 1,
 
         _elements: {
             slider: null,
