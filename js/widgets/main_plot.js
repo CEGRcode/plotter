@@ -463,8 +463,8 @@ $(function() {
 
             if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
                 mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
-                let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x)),
-                    mouse_bp_pos = mouse_x_scaled - this.xmin;
+                let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
+                data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
 
                 this._elements.tooltip
                     .style("display", null)
@@ -487,8 +487,8 @@ $(function() {
                         .attr("y", (_, i) => (i * 1.1) + "em")
                         .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
                         .attr("fill", (d, i) => i === 0 ? "black" : d.color)
-                        .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_bp_pos] + d.anti[mouse_bp_pos]).toPrecision(2))
-                            : parseFloat(d.sense[mouse_bp_pos].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_bp_pos].toPrecision(2))));
+                        .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
+                            : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
                 let {y, width: w, height: h} = tooltip_text.node().getBBox();
                 tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
                 tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
