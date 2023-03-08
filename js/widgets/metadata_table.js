@@ -152,9 +152,9 @@ $(function() {
         },
 
         // Add a row to the table
-        add_row: function() {
+        add_row: function(ids=[]) {
             let new_row = this._elements.tbody.insert("tr", "#add-row");
-            $(new_row.node()).metadata_row({idx: this._elements.rows.length, basecols: this.basecols, customcols: this.customcols});
+            $(new_row.node()).metadata_row({idx: this._elements.rows.length, basecols: this.basecols, customcols: this.customcols, ids: ids});
             this._elements.rows.push(new_row)
         },
 
@@ -327,18 +327,15 @@ $(function() {
 
     // Metadata row widget
     $.widget("composite_plot.metadata_row", {
-        ids: null,
-
         options: {
             idx: null,
             basecols: [],
-            customcols: []
+            customcols: [],
+            ids: []
         },
 
         // Create the row
         _create: function() {
-            this.ids = [];
-
             let row = d3.select(this.element.context)
                 .classed("content-row", true);
             row.selectAll("td")
@@ -358,7 +355,8 @@ $(function() {
             });
             row.insert("td", "td")
                 .attr("class", "content-field field-ids")
-                .append("div");
+                .append("div")
+                    .text(this.options.ids.join(", "));
 
             // Add button to remove the row
             let remove_row = row.append("td")
@@ -424,8 +422,8 @@ $(function() {
 
         // Add ID to row
         add_id: function(id) {
-            this.ids.push(id);
-            d3.select(this.element.context).select("td.field-ids div").text(this.ids.join(", "))
+            this.options.ids.push(id);
+            d3.select(this.element.context).select("td.field-ids div").text(this.options.ids.join(", "))
         },
 
         // Set the row index
@@ -454,7 +452,7 @@ $(function() {
                 {key: "treatments", field_name: "treatments", val: new Set()}
             ],
                 dedup_reads = [];
-            for (let pegr_id of this.ids) {
+            for (let pegr_id of this.options.ids) {
                 await $.post(
                     'https://thanos.vmhost.psu.edu/pegr/api/fetchSampleData?apiKey=' + api_key,
                     {
@@ -493,7 +491,7 @@ $(function() {
         },
 
         reset: function() {
-            this.ids = [];
+            this.options.ids = [];
 
             d3.select(this.element.context).selectAll("td.content-field").join()
                 .select("div")
@@ -506,14 +504,14 @@ $(function() {
         },
 
         import: function(data) {
-            this.ids = data[0].split(", ");
+            this.options.ids = data[0].split(", ");
 
             d3.select(this.element.context).selectAll("td.content-field").data(data).join()
                 .select("div")
                     .text(d => d);
 
             // Link rows in settings table to metadata table
-            $("#settings-table").settings_table("update_ids", this.options.idx, data[0])
+            $("#settings-table").settings_table("update_ids", this.options.idx, data[0].split(", "))
         }
     });
 

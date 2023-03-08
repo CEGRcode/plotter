@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="js/reset.js"></script>
     <script src="js/csrf_token.js"></script>
+    <script src="js/parse_composite.js"></script>
 </head>
 <body>
     <main>
@@ -25,6 +26,11 @@
                             <script src="js/events/import_json_button.js"></script>
                             <input type="button" id="json-download" value="Export JSON">
                             <script src="js/events/export_json_button.js"></script>
+                        </div>
+                        <div class="col text-right">
+                            <input type="button" id="load-composite-button" value="Load composite file">
+                            <input type="file" id="composite-loader" style="display:none;">
+                            <script src="js/events/load_composite_button.js"></script>
                         </div>
                     </div>
                 </div>
@@ -128,8 +134,10 @@
             <div class="row">
                 <div class="col" style="overflow:auto; height:calc(50vh - 80px);">
                     <h4>Composite settings</h4>
+                    <script>
+                        let individual_composites = {};
+                    </script>
                     <table id="settings-table" class="table"></table>
-                    <script src="js/parse_composite.js"></script>
                     <script src="js/widgets/settings_table.js"></script>
                 </div>
             </div>
