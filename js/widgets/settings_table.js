@@ -149,9 +149,11 @@ $(function() {
 
         // Create a new row
         _create: function() {
-            this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
-            this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
-            this.load_data(this.options.ids, plot=false);
+            if (this.options.ids.length > 0) {
+                this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
+                this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
+                this.load_data(this.options.ids, plot=false)
+            };
 
             // Add event listeners
             let row = d3.select(this.element.context)
