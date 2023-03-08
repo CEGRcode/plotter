@@ -49,9 +49,9 @@ $(function() {
             }
         },
 
-        plot_all_composites: function(scale_axes=false) {
+        plot_all_composites: function(scale_axes=false, allow_shrink=false) {
             if (scale_axes) {
-                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, scale_axes.ymax, this._elements.rows.reduce(function(sum, row) {
+                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, scale_axes.ymax, allow_shrink || this._elements.rows.reduce(function(sum, row) {
                     let inst = $(row.node()).settings_row("instance");
                     return sum + (inst.files_loaded && !inst.hide)
                 }, 0) === 1, true)
@@ -151,7 +151,7 @@ $(function() {
         _create: function() {
             this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
             this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
-            this.load_data(this.options.ids);
+            this.load_data(this.options.ids, plot=false);
 
             // Add event listeners
             let row = d3.select(this.element.context)
@@ -340,10 +340,8 @@ $(function() {
                             .attr("stroke-width", 2)
                             .attr("stroke-linejoin", "round")
                             .attr("fill", "none");
-            this.files_loaded = this.options.ids.length;
             upload_col.append("label")
-                .style("padding-left", "10px")
-                .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
+                .style("padding-left", "10px");
 
             // Show IDs
             id_col.append("div")
@@ -461,7 +459,7 @@ $(function() {
             this.load_data(ids, xmin_curr, xmax_curr)
         },
 
-        load_data: function(ids) {
+        load_data: function(ids, plot=true) {
             // If no files, initialize sense and anti arrays; otherwise, pad sense and anti arrays to new xdomain
             if (this.files_loaded === 0) {
                 this.sense = Array(this.xmax - this.xmin + 1).fill(0);
@@ -491,8 +489,10 @@ $(function() {
                 .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
 
             // Update composite plot
-            $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymax: Math.max(...this.sense, ...this.anti)});
-            $("#main-plot").main_plot("update_legend")
+            if (plot) {
+                $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymax: Math.max(...this.sense, ...this.anti)});
+                $("#main-plot").main_plot("update_legend")
+            }
         },
 
         // Plot composite data

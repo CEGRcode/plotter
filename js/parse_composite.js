@@ -88,7 +88,6 @@ let get_prefixes_from_multiple_composite = function(text) {
 
     // Take the first name and split it by "_"
     let split_name = names_list[0].split("_"),
-        break_flag = false,
         idx;
     // Iterate over each possible prefix-suffix split
     for (let i = 1; i < split_name.length - 1; i++) {
@@ -96,18 +95,13 @@ let get_prefixes_from_multiple_composite = function(text) {
             suffix = split_name.slice(i).join("_"),
             n_prefix = names_list.reduce((a, c) => a + c.startsWith(prefix), 0),
             n_suffix = names_list.reduce((a, c) => a + c.endsWith(suffix), 0);
-        // If the number of names with the prefix times the number of names with the suffix equals the total number of names, the split is valid
         if (n_prefix * n_suffix === names_list.length) {
-            idx = i;
-            // Take the last valid split
-            break_flag = true
-        } else if (break_flag) {
-            break
+            if (n_suffix === names_list.length) {
+                idx = idx === undefined ? i : idx;
+                break
+            };
+            idx = i
         }
-    };
-
-    if (!break_flag) {
-        alert("The names of the files do not follow the expected format. Please check the documentation for more information.");
     };
 
     let suffix = split_name.slice(idx).join("_");
@@ -119,7 +113,8 @@ let parse_multiple_composite = function(text, prefix) {
     let lines = text.split("\n"),
         composites = {},
         xmin, xmax, id, sense, anti,
-        i = 0;
+        i = 0,
+        save_comp = false;
 
     while (i < lines.length) {
         let line = lines[i];
@@ -133,9 +128,10 @@ let parse_multiple_composite = function(text, prefix) {
             col0 = fields[0];
         if (col0 === "" || col0 === "NAME") {
             // If the x domain is defined, save the composite
-            if (id !== undefined) {
+            if (save_comp) {
                 composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
             };
+            save_comp = false;
             // Get the new x domain
             xmin = parseInt(fields[1]);
             xmax = parseInt(fields[fields.length - 1]);
@@ -146,6 +142,7 @@ let parse_multiple_composite = function(text, prefix) {
             }
         } else if (col0.startsWith(prefix)){
             id = col0.slice(prefix.length).split("_")[0];
+            save_comp = true;
             if (col0.toLowerCase().includes("sense")) {
                 sense = fields.slice(1).map(parseFloat)
             } else if (col0.toLowerCase().includes("anti")) {
@@ -160,7 +157,9 @@ let parse_multiple_composite = function(text, prefix) {
     };
 
     // Save the last composite
-    composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+    if (save_comp) {
+        composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
+    };
 
     return composites
 }
