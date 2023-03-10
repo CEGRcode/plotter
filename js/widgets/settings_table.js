@@ -467,7 +467,9 @@ $(function() {
                 this.sense = Array(this.xmax - this.xmin + 1).fill(0);
                 this.anti = Array(this.xmax - this.xmin + 1).fill(0);
             } else {
-                let prefix = Array(xmin - this.xmin).fill(0),
+                let xmin = Math.min(...ids.map(id => individual_composites[id].xmin)),
+                    xmax = Math.max(...ids.map(id => individual_composites[id].xmax)),
+                    prefix = Array(xmin - this.xmin).fill(0),
                     suffix = Array(this.xmax - xmax).fill(0);
                 this.sense.unshift(...prefix);
                 this.sense.push(...suffix);
