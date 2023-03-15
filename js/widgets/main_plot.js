@@ -7,9 +7,9 @@ $(function() {
         ymax: 1,
         xlabel: "Position (bp)",
         ylabel: "Occupancy (AU)",
-        width: 550,
+        width: 460,
         height: 300,
-        margins: {top: 30, right: 170, bottom: 35, left: 30},
+        margins: {top: 30, right: 170, bottom: 35, left: 40},
         xscale: null,
         yscale: null,
         opacity: 1,
@@ -49,7 +49,8 @@ $(function() {
                 .range([this.height - this.margins.bottom, this.margins.top]);
             this.yscale = yscale;
 
-            let main_plot = d3.select(this.element.context);
+            let main_plot = d3.select(this.element.context)
+                .attr("viewBox", "0 0 " + this.width + " " + this.height);
             this._elements.main_plot = main_plot;
             main_plot.append("g")
                 .attr("transform", "translate(0 " + (this.height - this.margins.bottom) + ")")
@@ -82,27 +83,25 @@ $(function() {
                 .attr("x", this.margins.left)
                 .attr("y", this.height - this.margins.bottom + 15)
                 .style("text-anchor", "middle")
-                .attr("font-size", "10px")
+                .attr("font-size", "14px")
                 .text(this.xmin);
             this._elements.xmax = main_plot.append("text")
                 .attr("x", this.width - this.margins.right)
                 .attr("y", this.height - this.margins.bottom + 15)
                 .style("text-anchor", "middle")
-                .attr("font-size", "10px")
+                .attr("font-size", "14px")
                 .text(this.xmax);
             this._elements.ymin = main_plot.append("text")
-                .attr("x", 20)
+                .attr("x", 30)
                 .attr("y", this.height - this.margins.bottom)
-                .attr("transform", "rotate(-90 20 " + (this.height - this.margins.bottom) + ")")
-                .style("text-anchor", "middle")
-                .attr("font-size", "10px")
+                .style("text-anchor", "end")
+                .attr("font-size", "14px")
                 .text(-this.ymax);
             this._elements.ymax = main_plot.append("text")
-                .attr("x", 20)
-                .attr("y", this.margins.top)
-                .attr("transform", "rotate(-90 20 " + (this.margins.top) + ")")
-                .style("text-anchor", "middle")
-                .attr("font-size", "10px")
+                .attr("x", 30)
+                .attr("y", this.margins.top + 10)
+                .style("text-anchor", "end")
+                .attr("font-size", "14px")
                 .text(this.ymax);
             this._elements.title = main_plot.append("g");
             $(this._elements.title.node()).editable_svg_text({
@@ -118,15 +117,15 @@ $(function() {
                 text: this.xlabel,
                 x: (this.width + this.margins.left - this.margins.right) / 2,
                 y: this.height - 15,
-                font_size: 12
+                font_size: 16
             });
             this._elements.ylabel = main_plot.append("g");
             $(this._elements.ylabel.node()).editable_svg_text({
                 label: "ylabel",
                 text: this.ylabel,
-                x: 15,
+                x: 25,
                 y: (this.height + this.margins.top - this.margins.bottom) / 2,
-                font_size: 12,
+                font_size: 16,
                 rotation: "vertical"
             });
 
@@ -163,9 +162,17 @@ $(function() {
                     .attr("x2", "0%");
 
             composite.append("path")
+                .classed("white-line", true)
+                .attr("fill", "none")
+                .attr("stroke", "#FFFFFF")
+                .attr("stroke-width", 1)
+                .attr("d", "");
+
+            composite.append("path")
                 .classed("composite-line", true)
                 .attr("fill", "none")
-                .attr("stroke-width", 1)
+                .attr("stroke", "#000000")
+                .attr("stroke-width", 0.5)
                 .attr("d", "");
 
             composite.append("polygon")
@@ -209,7 +216,7 @@ $(function() {
                 .classed("plotted", false)
                 .style("display", "none");
 
-            composite.select("path")
+            composite.selectAll("path")
                 .attr("d", "");
             composite.select("polygon")
                 .attr("points", "");
@@ -251,9 +258,15 @@ $(function() {
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
 
+                composite.select(".white-line")
+                    .datum(truncated_xdomain)
+                    .attr("d", d3.line()
+                        .x(d => this.xscale(d))
+                        .y((_, j) => this.yscale(scaled_occupancy[j]))
+                    );
+
                 composite.select(".composite-line")
                     .datum(truncated_xdomain)
-                    .attr("stroke", color)
                     .attr("d", d3.line()
                         .x(d => this.xscale(d))
                         .y((_, j) => this.yscale(scaled_occupancy[j]))
@@ -286,8 +299,11 @@ $(function() {
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => d.opacity);
 
+                composite.select(".white-line")
+                    .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                        + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
                 composite.select(".composite-line")
-                    .attr("stroke", color)
                     .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
                         + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
 
@@ -376,8 +392,6 @@ $(function() {
             composite.select(".composite-gradient")
                 .selectAll("stop")
                     .attr("stop-color", color);
-            composite.select(".composite-line")
-                .attr("stroke", color);
 
             this._elements.legend_items[i].select("rect")
                 .attr("fill", color);
@@ -478,7 +492,9 @@ $(function() {
                     tooltip_text = this._elements.tooltip.selectAll("text")
                     .data([null])
                     .join("text")
-                        .attr("font-size", "8px");
+                        .attr("font-size", "8px")
+                        .attr("stroke", "black")
+                        .attr("stroke-width", "0.15px");
 
                 tooltip_text.selectAll("tspan")
                     .data([mouse_x_scaled, ...data])
