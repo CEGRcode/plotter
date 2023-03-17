@@ -1,8 +1,8 @@
-#Plotter
+# Plotter
 
 Plotter is a web application made for plotting epigenomic data.
 
-###Notes
+### Notes
 Standard parameters (meant to emulate Mittal et al. 2022):
 * Tag pileup run on 1100 bp windows (to allow data at the x-axis limits to be plotted)
 * x-axis limits: -500 to 500
