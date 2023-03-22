@@ -675,19 +675,46 @@ $(function() {
         },
 
         import: function(data) {
-            this.change_name(data.name, true);
-            this.change_color(data.color);
-            this.change_scale(data.scale, false);
-            this.change_opacity(data.opacity, false);
-            this.change_smoothing(data.smoothing, false);
-            this.change_bp_shift(data.bp_shift, false);
-            this.toggle_hide(data.hide, false);
-            this.files_loaded = data.files_loaded;
-            this.update_ids(data.ids);
-            this.xmin = data.xmin === null ? Infinity : data.xmin
-            this.xmax = data.xmax === null ? -Infinity : data.xmax;
-            this.sense = data.sense;
-            this.anti = data.anti;
+            if (data.name !== undefined) {
+                this.change_name(data.name, true)
+            };
+            if (data.color !== undefined) {
+                this.change_color(data.color)
+            };
+            if (data.scale !== undefined) {
+                this.change_scale(data.scale, false)
+            };
+            if (data.opacity !== undefined) {
+                this.change_opacity(data.opacity, false)
+            };
+            if (data.smoothing !== undefined) {
+                this.change_smoothing(data.smoothing, false)
+            };
+            if (data.bp_shift !== undefined) {
+                this.change_bp_shift(data.bp_shift, false)
+            };
+            if (data.hide !== undefined) {
+                this.toggle_hide(data.hide, false)
+            };
+            if (data.files_loaded !== undefined) {
+                this.files_loaded = data.files_loaded
+            };
+            if (data.ids !== undefined) {
+                this.update_ids(data.ids)
+            };
+            if (data.xmin !== undefined && data.xmin !== null) {
+                this.xmin = data.xmin
+            };
+            if (data.xmax !== undefined && data.xmax !== null) {
+                this.xmax = data.xmax
+            };
+            if (data.sense !== undefined) {
+                this.sense = data.sense
+            };
+            if (data.anti !== undefined) {
+                this.anti = data.anti
+            };
+
             d3.select(this.element.context).select("td.upload-col label")
                 .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
             this.plot_composite()

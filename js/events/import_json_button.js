@@ -31,31 +31,6 @@ $(function() {
                     return false
                 };
 
-                if (!data.plot.title || !data.plot.xlabel || !data.plot || isNaN(data.plot.xmin) ||
-                    isNaN(data.plot.xmax) || isNaN(data.plot.ymax) || isNaN(data.plot.opacity) ||
-                    !data.plot.smoothing || isNaN(data.plot.bp_shift) || isNaN(data.plot.combined) ||
-                    isNaN(data.plot.locked)) {
-                    return false
-                };
-
-                if (data.settings.some(function(setting) {
-                    if (isNaN(setting.xmin) || isNaN(setting.xmax) || !setting.color || isNaN(setting.scale) ||
-                        isNaN(setting.files_loaded)) {
-                        return true
-                    };
-
-                    if (setting.files_loaded === 0 && setting.xmax === null && setting.xmin === null) {
-                        return false
-                    };
-
-                    let range = setting.xmax - setting.xmin + 1;
-                    if (setting.sense.length !== range || setting.anti.length !== range) {
-                        return true
-                    }
-                })) {
-                    return false
-                };
-
                 return true
             };
 
@@ -68,7 +43,9 @@ $(function() {
             $("#settings-table").settings_table("import", data.settings);
             $("#metadata-table").metadata_table("import", data.metadata);
             $("#main-plot").main_plot("update_legend");
-            $("#settings-dropdown").settings_dropdown("set_value", data.preset)
+            if (data.preset) {
+                $("#settings-dropdown").settings_dropdown("set_value", data.preset)
+            }
         };
         reader.readAsText(file)
     })

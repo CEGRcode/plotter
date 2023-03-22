@@ -533,21 +533,40 @@ $(function() {
         },
 
         import: function(data) {
-            this.combined = data.combined;
+            if (data.combined !== undefined) {
+                this.combined = data.combined;
+                d3.select("#combined-checkbox").property("checked", data.combined)
+            };
 
-            this.scale_axes(data.xmin, data.xmax, data.ymax, true, true);
-            $("#opacity-input").opacity_input("change_opacity", data.opacity);
-            $("#smoothing-input").smoothing_input("change_smoothing", data.smoothing);
-            $("#shift-input").shift_input("change_shift", data.bp_shift);
-            d3.select("#combined-checkbox").property("checked", data.combined);
+            if (data.xmin !== undefined && data.xmax !== undefined && data.ymax !== undefined) {
+                this.scale_axes(data.xmin, data.xmax, data.ymax, true, true)
+            };
 
-            $(this._elements.title.node()).editable_svg_text("change_label", data.title);
-            $(this._elements.xlabel.node()).editable_svg_text("change_label", data.xlabel);
-            $(this._elements.ylabel.node()).editable_svg_text("change_label", data.ylabel);
+            if (data.opacity !== undefined) {
+                $("#opacity-input").opacity_input("change_opacity", data.opacity)
+            };
+            if (data.smoothing !== undefined) {
+                $("#smoothing-input").smoothing_input("change_smoothing", data.smoothing)
+            };
+            if (data.bp_shift !== undefined) {
+                $("#shift-input").shift_input("change_shift", data.bp_shift)
+            };
 
-            this.locked = data.locked;
-            d3.select("#lock-axes-checkbox").property("checked", data.locked);
-            $("#axes-input").axes_input("toggle_locked", data.locked)
+            if (data.title !== undefined) {
+                $(this._elements.title.node()).editable_svg_text("change_label", data.title)
+            };
+            if (data.xlabel !== undefined) {
+                $(this._elements.xlabel.node()).editable_svg_text("change_label", data.xlabel)
+            };
+            if (data.ylabel !== undefined) {
+                $(this._elements.ylabel.node()).editable_svg_text("change_label", data.ylabel)
+            };
+
+            if (data.locked !== undefined) {
+                this.locked = data.locked;
+                d3.select("#lock-axes-checkbox").property("checked", data.locked);
+                $("#axes-input").axes_input("toggle_locked", data.locked)
+            }
         },
 
         reset: function() {
