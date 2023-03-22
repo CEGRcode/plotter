@@ -14,6 +14,7 @@ $(function() {
             "#A700FF",
             "#FF00D0"
         ],
+        benz: true,
 
         // Counter for the number of rows added
         rows_added: 0,
@@ -31,7 +32,7 @@ $(function() {
         add_row: function(ids=[]) {
             let new_row = this._elements.table.append("tr"),
                 color = this.colors[this.rows_added % this.colors.length];
-            $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color, ids: ids});
+            $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color, ids: ids, benz: this.benz});
             this._elements.rows.push(new_row);
 
             // Add a new composite to the plot
@@ -107,6 +108,21 @@ $(function() {
             $(this._elements.rows[i].node()).settings_row("update_ids", new_ids)
         },
 
+        change_to_benz: function() {
+            this.benz = true;
+
+            while (this._elements.rows.length < 2) {
+                $("#metadata-table").metadata_table("add_row");
+                this.add_row()
+            };
+
+            $(this._elements.rows[0].node()).settings_row("change_color", "#0000FF");
+            $(this._elements.rows[0].node()).settings_row("change_name", "Read 1", true);
+
+            $(this._elements.rows[1].node()).settings_row("change_color", "#FF0000");
+            $(this._elements.rows[1].node()).settings_row("change_name", "Read 2", true)
+        },
+
         export: function() {
             return this._elements.rows.map(row => $(row.node()).settings_row("export"));
         },
@@ -139,12 +155,14 @@ $(function() {
         bp_shift: false,
         hide: false,
         files_loaded: 0,
+        secondary_color: null,
 
         options: {
             idx: null,
             name: null,
             color: null,
-            ids: []
+            ids: [],
+            benz: false
         },
 
         // Create a new row
@@ -226,8 +244,17 @@ $(function() {
             // Add color input
             color_col.append("input")
                 .attr("type", "color")
+                .classed("color-1", true)
                 .attr("value", this.options.color)
                 .on("change", function() {$(row.node()).settings_row("change_color", this.value)});
+            if (this.options.benz) {
+                this.secondary_color = this.options.color;
+                color_col.append("input")
+                    .attr("type", "color")
+                    .classed("color-2", true)
+                    .attr("value", this.options.color)
+                    .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
+            };
 
             // Add scale input
             scale_col.append("label")
@@ -504,7 +531,7 @@ $(function() {
         // Plot composite data
         plot_composite: function() {
             if (this.files_loaded) {
-                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide)
+                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide)
             }
         },
 
@@ -532,10 +559,19 @@ $(function() {
 
         change_color: function(new_color, plot=true) {
             this.options.color = new_color;
-            d3.select(this.element.context).select("td.color-col input").attr("value", new_color);
+            d3.select(this.element.context).select("td.color-col input.color-1").attr("value", new_color);
 
             if (plot) {
-                $("#main-plot").main_plot("change_color", this.options.idx, new_color)
+                $("#main-plot").main_plot("change_color", this.options.idx, new_color, this.options.benz)
+            }
+        },
+
+        change_secondary_color: function(new_color, plot=true) {
+            this.secondary_color = new_color;
+            d3.select(this.element.context).select("td.color-col input.color-2").attr("value", new_color);
+
+            if (plot) {
+                $("#main-plot").main_plot("change_secondary_color", this.options.idx, new_color)
             }
         },
 
@@ -632,6 +668,9 @@ $(function() {
         update_ids: function(new_ids) {
             this.options.ids = new_ids;
             d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
+        },
+
+        add_secondary_color_button: function() {
         },
 
         reset: function() {

@@ -28,8 +28,7 @@ $(function() {
                     .attr("class", "slider-text")
                     .attr("value", this.sliding_window)
                     .on("change", function() {
-                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value));
-                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))
                     });
 
             this._elements.slider = slider;

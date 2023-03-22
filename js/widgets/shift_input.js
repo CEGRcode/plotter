@@ -28,8 +28,7 @@ $(function() {
                     .attr("class", "slider-text")
                     .attr("value", this.bp_shift)
                     .on("change", function() {
-                        $("#shift-input").shift_input("change_shift", parseInt(this.value));
-                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                        $("#shift-input").shift_input("change_shift", parseInt(this.value))
                     });
 
             this._elements.slider = slider;

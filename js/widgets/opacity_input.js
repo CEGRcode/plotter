@@ -28,8 +28,7 @@ $(function() {
                     .attr("class", "slider-text")
                     .attr("value", this.opacity)
                     .on("change", function() {
-                        $("#opacity-input").opacity_input("change_opacity", parseFloat(this.value));
-                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                        $("#opacity-input").opacity_input("change_opacity", parseFloat(this.value))
                     });
 
             this._elements.slider = slider;

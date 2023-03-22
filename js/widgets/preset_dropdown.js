@@ -38,7 +38,11 @@ $(function() {
 
             dropdown.append("option")
                 .attr("value", "mittal_2022")
-                .text("Mittal et al. 2022")
+                .text("Mittal et al. 2022");
+
+            dropdown.append("option")
+                .attr("value", "benz")
+                .text("Benzonase")
         },
 
         get_value: function() {
@@ -55,14 +59,16 @@ $(function() {
 
             if (preset === "none") {
                 return
+            } else if (preset === "benz") {
+                $("#settings-table").settings_table("change_to_benz")
+            } else {
+                let settings = this.presets[preset];
+                $("#opacity-input").opacity_input("change_opacity", settings.opacity);
+                $("#smoothing-input").smoothing_input("change_smoothing", settings.smoothing);
+                $("#shift-input").shift_input("change_shift", settings.shift);
+                d3.select("#combined-checkbox").property("checked", settings.combined);
+                $("#main-plot").main_plot("toggle_combined", settings.combined)
             }
-
-            let settings = this.presets[preset];
-            $("#opacity-input").opacity_input("change_opacity", settings.opacity);
-            $("#smoothing-input").smoothing_input("change_smoothing", settings.smoothing);
-            $("#shift-input").shift_input("change_shift", settings.shift);
-            d3.select("#combined-checkbox").property("checked", settings.combined);
-            $("#main-plot").main_plot("toggle_combined", settings.combined)
         }
     });
 

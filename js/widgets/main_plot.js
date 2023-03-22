@@ -225,7 +225,7 @@ $(function() {
             this.update_legend()
         },
 
-        plot_composite: function(xmin, xmax, sense, anti, scale, color, i, opacity, smoothing, bp_shift, hide) {
+        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide) {
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
                 .style("display", hide ? "none" : null),
@@ -293,10 +293,15 @@ $(function() {
                     .attr("y1", (ymax - antimax) / (2 * ymax))
                     .attr("y2", (ymax + sensemax) / (2 * ymax))
                     .selectAll("stop")
-                        .data([{offset: 0, opacity: opacity}, {offset: .5, opacity: 0}, {offset: 1, opacity: opacity}])
+                        .data([
+                            {offset: 0, color: color, opacity: opacity},
+                            {offset: .5, color: color, opacity: 0},
+                            {offset: .5, color: "#FFFFFF", opacity: 0},
+                            {offset: .5, color: secondary_color, opacity: 0},
+                            {offset: 1, color: secondary_color, opacity: opacity}])
                         .join("stop")
                             .attr("offset", d => d.offset)
-                            .attr("stop-color", color)
+                            .attr("stop-color", d => d.color)
                             .attr("stop-opacity", d => d.opacity);
 
                 composite.select(".white-line")
@@ -387,14 +392,26 @@ $(function() {
                 .text(name)
         },
 
-        change_color: function(i, color) {
+        change_color: function(i, color, sense_only=false) {
+            let composite = this._elements.composites[i];
+            if (this.combined || !sense_only) {
+                composite.select(".composite-gradient")
+                    .selectAll("stop")
+                        .attr("stop-color", color);
+                this._elements.legend_items[i].select("rect")
+                    .attr("fill", color);
+            } else {
+                composite.select(".composite-gradient")
+                    .selectAll("stop")
+                    .each(function(d, i) {if (i < 2) {d3.select(this).attr("stop-color", color)}})
+            }
+        },
+
+        change_secondary_color: function(i, color) {
             let composite = this._elements.composites[i];
             composite.select(".composite-gradient")
                 .selectAll("stop")
-                    .attr("stop-color", color);
-
-            this._elements.legend_items[i].select("rect")
-                .attr("fill", color);
+                .each(function(d, i) {if (i > 2) {d3.select(this).attr("stop-color", color)}})
         },
 
         change_opacity: function(i, opacity) {
