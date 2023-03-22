@@ -1,0 +1,164 @@
+{
+    "GSM6542656": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "i5006", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542656", 
+        "Antibody": "IgG", 
+        "Target": "28966"
+    }, 
+    "GSM6542651": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "i5006", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542651", 
+        "Antibody": "IgG", 
+        "Target": "28934"
+    }, 
+    "GSM6542654": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542654", 
+        "Antibody": "TBP", 
+        "Target": "28958"
+    }, 
+    "GSM6542652": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542652", 
+        "Antibody": "TBP", 
+        "Target": "28952"
+    }, 
+    "GSM6542650": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542650", 
+        "Antibody": "Taf1", 
+        "Target": "28932"
+    }, 
+    "GSM6542655": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542655", 
+        "Antibody": "Taf1", 
+        "Target": "28961"
+    }, 
+    "GSM6542639": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542639", 
+        "Antibody": "TBP", 
+        "Target": "28907"
+    }, 
+    "GSM6542653": {
+        "Strain": "Tra1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542653", 
+        "Antibody": "TBP", 
+        "Target": "28954"
+    }, 
+    "GSM6542648": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542648", 
+        "Antibody": "Taf1", 
+        "Target": "28928"
+    }, 
+    "GSM6542649": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542649", 
+        "Antibody": "TBP", 
+        "Target": "28931"
+    }, 
+    "GSM6542646": {
+        "Strain": "Taf1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "i5006", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542646", 
+        "Antibody": "IgG", 
+        "Target": "28926"
+    }, 
+    "GSM6542647": {
+        "Strain": "Spt20-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542647", 
+        "Antibody": "TBP", 
+        "Target": "28927"
+    }, 
+    "GSM6542644": {
+        "Strain": "Taf1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542644", 
+        "Antibody": "TBP", 
+        "Target": "28923"
+    }, 
+    "GSM6542645": {
+        "Strain": "Taf1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542645", 
+        "Antibody": "Taf1", 
+        "Target": "28924"
+    }, 
+    "GSM6542642": {
+        "Strain": "Taf1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "61411", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542642", 
+        "Antibody": "TBP", 
+        "Target": "28919"
+    }, 
+    "GSM6542643": {
+        "Strain": "Taf1-Dtag", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "25C", 
+        "PEGRid": "GSM6542643", 
+        "Antibody": "Taf1", 
+        "Target": "28920"
+    }, 
+    "GSM6542640": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "ReeseLab-B01", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542640", 
+        "Antibody": "Taf1", 
+        "Target": "28908"
+    }, 
+    "GSM6542641": {
+        "Strain": "WT", 
+        "GeneticModification": "AR30", 
+        "HeatTreatment": "i5006", 
+        "ChemicalTreatment": "37C", 
+        "PEGRid": "GSM6542641", 
+        "Antibody": "IgG", 
+        "Target": "28910"
+    }
+}
