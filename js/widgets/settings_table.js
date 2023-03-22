@@ -28,10 +28,10 @@ $(function() {
         },
 
         // Add a new row to the table
-        add_row: function() {
+        add_row: function(ids=[]) {
             let new_row = this._elements.table.append("tr"),
                 color = this.colors[this.rows_added % this.colors.length];
-            $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color});
+            $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color, ids: ids});
             this._elements.rows.push(new_row);
 
             // Add a new composite to the plot
@@ -49,9 +49,9 @@ $(function() {
             }
         },
 
-        plot_all_composites: function(scale_axes=false) {
+        plot_all_composites: function(scale_axes=false, allow_shrink=false) {
             if (scale_axes) {
-                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, scale_axes.ymax, this._elements.rows.reduce(function(sum, row) {
+                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, scale_axes.ymax, allow_shrink || this._elements.rows.reduce(function(sum, row) {
                     let inst = $(row.node()).settings_row("instance");
                     return sum + (inst.files_loaded && !inst.hide)
                 }, 0) === 1, true)
@@ -143,11 +143,18 @@ $(function() {
         options: {
             idx: null,
             name: null,
-            color: null
+            color: null,
+            ids: []
         },
 
         // Create a new row
         _create: function() {
+            if (this.options.ids.length > 0) {
+                this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
+                this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
+                this.load_data(this.options.ids, plot=false)
+            };
+
             // Add event listeners
             let row = d3.select(this.element.context)
                 .classed("added-row", true)
@@ -335,9 +342,10 @@ $(function() {
                             .attr("stroke-width", 2)
                             .attr("stroke-linejoin", "round")
                             .attr("fill", "none");
+            this.files_loaded = this.options.ids.length;
             upload_col.append("label")
                 .style("padding-left", "10px")
-                .text("No files loaded");
+                .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
 
             // Show IDs
             id_col.append("div")
@@ -348,13 +356,14 @@ $(function() {
                 .style("display", "inline-block")
                 .style("vertical-align", "top")
                 .style("padding-left", "5px")
-                .classed("id-list", true);
+                .classed("id-list", true)
+                .text(this.options.ids.join(", "));
 
             // Add reset button
             reset_col.append("input")
                 .attr("type", "button")
                 .attr("value", "Reset")
-                .on("click", function() {$(row.node()).settings_row("reset")})
+                .on("click", function() {$(row.node()).settings_row("reset")});
         },
 
         // Remove the row
@@ -402,14 +411,21 @@ $(function() {
                 xmin_curr = this.xmin,
                 xmax_curr = this.xmax,
                 promise_arr = Array(n),
-                composite_arr = Array(n);
+                ids = [];
 
             // Read files
             for (let i = 0; i < n; i++) {
-                await new Promise(function(resolve) {
+                await new Promise(function(resolve, reject) {
                     let file = file_list[i],
                         reader = new FileReader(),
                         id = file.name.split(/[_.]/)[0];
+                    ids.push(id);
+
+                    if (id in individual_composites) {
+                        widg.xmin = Math.min(widg.xmin, individual_composites[id].xmin);
+                        widg.xmax = Math.max(widg.xmax, individual_composites[id].xmax);
+                        resolve()
+                    };
 
                     $("#metadata-table").metadata_table("add_id", widg.options.idx, id);
                     widg.add_id(id);
@@ -426,15 +442,15 @@ $(function() {
                         });
                         promise_arr[i] = i === 0 ? promise() : promise_arr[i - 1].then(promise);
 
-                        // Update composite array
-                        composite_arr[i] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+                        // Update composites object
+                        individual_composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
 
                         resolve()
                     };
 
                     reader.onerror = function() {
                         alert("Error loading file!!");
-                        throw "Error loading file"
+                        reject("Error loading file")
                     };
 
                     reader.readAsText(file)
@@ -444,13 +460,19 @@ $(function() {
             // Wait for xdomain and composite arrays to be updated
             await promise_arr[n - 1];
 
+            this.load_data(ids, xmin_curr, xmax_curr)
+        },
+
+        load_data: function(ids, plot=true) {
             // If no files, initialize sense and anti arrays; otherwise, pad sense and anti arrays to new xdomain
             if (this.files_loaded === 0) {
                 this.sense = Array(this.xmax - this.xmin + 1).fill(0);
                 this.anti = Array(this.xmax - this.xmin + 1).fill(0);
             } else {
-                let prefix = Array(xmin_curr - this.xmin).fill(0),
-                    suffix = Array(this.xmax - xmax_curr).fill(0);
+                let xmin = Math.min(...ids.map(id => individual_composites[id].xmin)),
+                    xmax = Math.max(...ids.map(id => individual_composites[id].xmax)),
+                    prefix = Array(xmin - this.xmin).fill(0),
+                    suffix = Array(this.xmax - xmax).fill(0);
                 this.sense.unshift(...prefix);
                 this.sense.push(...suffix);
                 this.anti.unshift(...prefix);
@@ -458,8 +480,8 @@ $(function() {
             };
 
             // Update sense and anti arrays
-            for (let i = 0; i < n; i++) {
-                let {xmin, xmax, sense, anti} = composite_arr[i];
+            for (let id of ids) {
+                let {xmin, xmax, sense, anti} = individual_composites[id];
                 for (let j = xmin - this.xmin; j <= xmax - xmin; j++) {
                     let idx = xmin - this.xmin + j;
                     this.sense[idx] += sense[j];
@@ -468,13 +490,15 @@ $(function() {
             };
 
             // Update files loaded
-            this.files_loaded += file_list.length;
-            d3.select(this.element.context).select("td.upload-col").select("label")
+            this.files_loaded += ids.length;
+            d3.select(this.element.context).select("td.upload-col label")
                 .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
 
             // Update composite plot
-            $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymax: Math.max(...this.sense, ...this.anti)});
-            $("#main-plot").main_plot("update_legend")
+            if (plot) {
+                $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymax: Math.max(...this.sense, ...this.anti)});
+                $("#main-plot").main_plot("update_legend")
+            }
         },
 
         // Plot composite data
@@ -502,13 +526,13 @@ $(function() {
             $("#main-plot").main_plot("change_name", this.options.idx, new_name);
 
             if (change_text) {
-                d3.select(this.element.context).select("td.name-col").select("div").text(new_name)
+                d3.select(this.element.context).select("td.name-col div").text(new_name)
             }
         },
 
         change_color: function(new_color, plot=true) {
             this.options.color = new_color;
-            d3.select(this.element.context).select("td.color-col").select("input").attr("value", new_color);
+            d3.select(this.element.context).select("td.color-col input").attr("value", new_color);
 
             if (plot) {
                 $("#main-plot").main_plot("change_color", this.options.idx, new_color)
@@ -517,11 +541,11 @@ $(function() {
 
         change_scale: function(new_scale, plot=true) {
             if (isNaN(new_scale)) {
-                d3.select(this.element.context).select("td.scale-col").select("input").node().value = this.scale
+                d3.select(this.element.context).select("td.scale-col input").node().value = this.scale
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
-                d3.select(this.element.context).select("td.scale-col").select("input").node().value = new_scale;
+                d3.select(this.element.context).select("td.scale-col input").node().value = new_scale;
                 if (plot) {
                     this.plot_composite()
                 }
@@ -531,16 +555,16 @@ $(function() {
         change_opacity: function(new_opacity, plot=true) {
             if (new_opacity === "" || new_opacity === false) {
                 this.opacity = false;
-                d3.select(this.element.context).select("td.opacity-col").select("input").node().value = "";
+                d3.select(this.element.context).select("td.opacity-col input").node().value = "";
                 if (plot) {
                     $("#main-plot").main_plot("change_opacity", this.options.idx, false)
                 }
             } else if (isNaN(new_opacity)) {
-                d3.select(this.element.context).select("td.opacity-col").select("input").node().value = this.opacity === false ? "" : this.opacity
+                d3.select(this.element.context).select("td.opacity-col input").node().value = this.opacity === false ? "" : this.opacity
             } else {
                 new_opacity = Math.min(Math.max(parseFloat(new_opacity), 0), 1);
                 this.opacity = new_opacity;
-                d3.select(this.element.context).select("td.opacity-col").select("input").node().value = new_opacity;
+                d3.select(this.element.context).select("td.opacity-col input").node().value = new_opacity;
                 if (plot) {
                     $("#main-plot").main_plot("change_opacity", this.options.idx, new_opacity)
                 }
@@ -550,16 +574,16 @@ $(function() {
         change_smoothing: function(new_smoothing, plot=true) {
             if (new_smoothing === "" || new_smoothing === false) {
                 this.smoothing = false;
-                d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = "";
+                d3.select(this.element.context).select("td.smoothing-col input").node().value = "";
                 if (plot) {
                     this.plot_composite()
                 }
             } else if (isNaN(new_smoothing)) {
-                d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = this.smoothing === false ? "" : this.smoothing
+                d3.select(this.element.context).select("td.smoothing-col input").node().value = this.smoothing === false ? "" : this.smoothing
             } else {
                 new_smoothing = Math.max(parseInt(new_smoothing), 1);
                 this.smoothing = new_smoothing;
-                d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = new_smoothing;
+                d3.select(this.element.context).select("td.smoothing-col input").node().value = new_smoothing;
                 if (plot) {
                     this.plot_composite()
                 }
@@ -569,16 +593,16 @@ $(function() {
         change_bp_shift: function(new_bp_shift, plot=true) {
             if (new_bp_shift === "" || new_bp_shift === false) {
                 this.bp_shift = false;
-                d3.select(this.element.context).select("td.shift-col").select("input").node().value = "";
+                d3.select(this.element.context).select("td.shift-col input").node().value = "";
                 if (plot) {
                     this.plot_composite()
                 }
             } else if (isNaN(new_bp_shift)) {
-                d3.select(this.element.context).select("td.shift-col").select("input").node().value = this.bp_shift === false ? "" : this.bp_shift
+                d3.select(this.element.context).select("td.shift-col input").node().value = this.bp_shift === false ? "" : this.bp_shift
             } else {
                 new_bp_shift = parseInt(new_bp_shift);
                 this.bp_shift = new_bp_shift;
-                d3.select(this.element.context).select("td.shift-col").select("input").node().value = new_bp_shift;
+                d3.select(this.element.context).select("td.shift-col input").node().value = new_bp_shift;
                 if (plot) {
                     this.plot_composite()
                 }
@@ -599,13 +623,15 @@ $(function() {
         },
 
         add_id: function(id) {
-            let id_list = d3.select(this.element.context).select(".id-col").select(".id-list"),
+            this.options.ids.push(id);
+            let id_list = d3.select(this.element.context).select(".id-col .id-list"),
                 id_list_text = id_list.text();
             id_list.text(id_list_text ? (id_list_text + ", " + id) : id)
         },
 
         update_ids: function(new_ids) {
-            d3.select(this.element.context).select(".id-col").select(".id-list").text(new_ids)
+            this.options.ids = new_ids;
+            d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
         },
 
         reset: function() {
@@ -620,13 +646,14 @@ $(function() {
             this.smoothing = false;
             this.bp_shift = false;
             this.hide = false;
-            d3.select(this.element.context).select("td.name-col").select("div").text(this.options.name);
-            d3.select(this.element.context).select("td.scale-col").select("input").node().value = "";
-            d3.select(this.element.context).select("td.opacity-col").select("input").node().value = "";
-            d3.select(this.element.context).select("td.smoothing-col").select("input").node().value = "";
-            d3.select(this.element.context).select("td.shift-col").select("input").node().value = "";
-            d3.select(this.element.context).select("td.upload-col").select("label").text("No files loaded");
-            this.update_ids("");
+            this.options.ids = [];
+            d3.select(this.element.context).select("td.name-col div").text(this.options.name);
+            d3.select(this.element.context).select("td.scale-col input").node().value = "";
+            d3.select(this.element.context).select("td.opacity-col input").node().value = "";
+            d3.select(this.element.context).select("td.smoothing-col input").node().value = "";
+            d3.select(this.element.context).select("td.shift-col input").node().value = "";
+            d3.select(this.element.context).select("td.upload-col label").text("No files loaded");
+            this.update_ids([]);
             $("#metadata-table").metadata_table("reset_row", this.options.idx);
             $("#main-plot").main_plot("reset_composite", this.options.idx)
         },
@@ -644,24 +671,53 @@ $(function() {
                 smoothing: this.smoothing,
                 bp_shift: this.bp_shift,
                 hide: this.hide,
-                files_loaded: this.files_loaded
+                files_loaded: this.files_loaded,
+                ids: this.options.ids
             }
         },
 
         import: function(data) {
-            this.change_name(data.name, true);
-            this.change_color(data.color);
-            this.change_scale(data.scale, false);
-            this.change_opacity(data.opacity, false);
-            this.change_smoothing(data.smoothing, false);
-            this.change_bp_shift(data.bp_shift, false);
-            this.toggle_hide(data.hide, false);
-            this.files_loaded = data.files_loaded;
-            this.xmin = data.xmin === null ? Infinity : data.xmin
-            this.xmax = data.xmax === null ? -Infinity : data.xmax;
-            this.sense = data.sense;
-            this.anti = data.anti;
-            d3.select(this.element.context).select("td.upload-col").select("label")
+            if (data.name !== undefined) {
+                this.change_name(data.name, true)
+            };
+            if (data.color !== undefined) {
+                this.change_color(data.color)
+            };
+            if (data.scale !== undefined) {
+                this.change_scale(data.scale, false)
+            };
+            if (data.opacity !== undefined) {
+                this.change_opacity(data.opacity, false)
+            };
+            if (data.smoothing !== undefined) {
+                this.change_smoothing(data.smoothing, false)
+            };
+            if (data.bp_shift !== undefined) {
+                this.change_bp_shift(data.bp_shift, false)
+            };
+            if (data.hide !== undefined) {
+                this.toggle_hide(data.hide, false)
+            };
+            if (data.files_loaded !== undefined) {
+                this.files_loaded = data.files_loaded
+            };
+            if (data.ids !== undefined) {
+                this.update_ids(data.ids)
+            };
+            if (data.xmin !== undefined && data.xmin !== null) {
+                this.xmin = data.xmin
+            };
+            if (data.xmax !== undefined && data.xmax !== null) {
+                this.xmax = data.xmax
+            };
+            if (data.sense !== undefined) {
+                this.sense = data.sense
+            };
+            if (data.anti !== undefined) {
+                this.anti = data.anti
+            };
+
+            d3.select(this.element.context).select("td.upload-col label")
                 .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
             this.plot_composite()
         }
