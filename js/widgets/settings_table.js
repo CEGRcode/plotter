@@ -342,8 +342,10 @@ $(function() {
                             .attr("stroke-width", 2)
                             .attr("stroke-linejoin", "round")
                             .attr("fill", "none");
+            this.files_loaded = this.options.ids.length;
             upload_col.append("label")
-                .style("padding-left", "10px");
+                .style("padding-left", "10px")
+                .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
 
             // Show IDs
             id_col.append("div")
