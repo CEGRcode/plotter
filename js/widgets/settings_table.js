@@ -148,7 +148,7 @@ $(function() {
         bp_shift: false,
         hide: false,
         files_loaded: 0,
-        secondary_color: "#000000",
+        secondary_color: "#FFFFFF",
 
         options: {
             idx: null,
@@ -731,7 +731,7 @@ $(function() {
                 this.change_color(data.color)
             };
             if (data.secondary_color !== undefined) {
-                this.change_secondary_color(data.secondary_color)
+                this.change_secondary_color(data.secondary_color, this.options.separate_color)
             };
             if (data.scale !== undefined) {
                 this.change_scale(data.scale, false)

@@ -188,7 +188,7 @@ $(function() {
 
             legend_element.append("polygon")
                 .classed("legend-color-sense", true)
-                .attr("points", "0,0 15,0 0,15")
+                .attr("points", "0,0 15,0 15,15 0,15")
                 .attr("fill", color);
             legend_element.append("polygon")
                 .classed("legend-color-anti", true)
