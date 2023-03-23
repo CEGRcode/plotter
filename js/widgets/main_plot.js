@@ -186,12 +186,20 @@ $(function() {
                 .classed("legend-element", true)
                 .style("display", "none");
 
+            legend_element.append("polygon")
+                .classed("legend-color-sense", true)
+                .attr("points", "0,0 15,0 0,15")
+                .attr("fill", color);
+            legend_element.append("polygon")
+                .classed("legend-color-anti", true)
+                .attr("points", "15,0 15,15 0,15")
+                .attr("fill", color);
             legend_element.append("rect")
                 .attr("width", 15)
                 .attr("height", 15)
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 1)
-                .attr("fill", color);
+                .attr("fill", "none");
             legend_element.append("text")
                 .attr("x", 20)
                 .attr("y", 10)
@@ -289,6 +297,7 @@ $(function() {
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
                         && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
 
+                secondary_color = secondary_color || color;
                 composite.select(".composite-gradient")
                     .attr("y1", (ymax - antimax) / (2 * ymax))
                     .attr("y2", (ymax + sensemax) / (2 * ymax))
@@ -398,12 +407,14 @@ $(function() {
                 composite.select(".composite-gradient")
                     .selectAll("stop")
                         .attr("stop-color", color);
-                this._elements.legend_items[i].select("rect")
-                    .attr("fill", color);
+                this._elements.legend_items[i].selectAll("polygon")
+                    .attr("fill", color)
             } else {
                 composite.select(".composite-gradient")
                     .selectAll("stop")
-                    .each(function(d, i) {if (i < 2) {d3.select(this).attr("stop-color", color)}})
+                    .each(function(d, i) {if (i < 2) {d3.select(this).attr("stop-color", color)}});
+                this._elements.legend_items[i].select("polygon.legend-color-sense")
+                    .attr("fill", color)
             }
         },
 
@@ -411,7 +422,9 @@ $(function() {
             let composite = this._elements.composites[i];
             composite.select(".composite-gradient")
                 .selectAll("stop")
-                .each(function(d, i) {if (i > 2) {d3.select(this).attr("stop-color", color)}})
+                .each(function(d, i) {if (i > 2) {d3.select(this).attr("stop-color", color)}});
+            this._elements.legend_items[i].select("polygon.legend-color-anti")
+                .attr("fill", color)
         },
 
         change_opacity: function(i, opacity) {

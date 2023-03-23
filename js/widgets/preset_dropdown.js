@@ -38,11 +38,7 @@ $(function() {
 
             dropdown.append("option")
                 .attr("value", "mittal_2022")
-                .text("Mittal et al. 2022");
-
-            dropdown.append("option")
-                .attr("value", "benz")
-                .text("Benzonase")
+                .text("Mittal et al. 2022")
         },
 
         get_value: function() {
@@ -59,8 +55,6 @@ $(function() {
 
             if (preset === "none") {
                 return
-            } else if (preset === "benz") {
-                $("#settings-table").settings_table("change_to_benz")
             } else {
                 let settings = this.presets[preset];
                 $("#opacity-input").opacity_input("change_opacity", settings.opacity);
