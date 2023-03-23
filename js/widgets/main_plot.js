@@ -565,7 +565,8 @@ $(function() {
         import: function(data) {
             if (data.combined !== undefined) {
                 this.combined = data.combined;
-                d3.select("#combined-checkbox").property("checked", data.combined)
+                d3.select("#combined-checkbox").property("checked", data.combined);
+                d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
 
             if (data.xmin !== undefined && data.xmax !== undefined && data.ymax !== undefined) {
