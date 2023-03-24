@@ -102,11 +102,13 @@ $(function() {
                 $("#opacity-input").opacity_input("change_opacity", settings.opacity);
                 $("#smoothing-input").smoothing_input("change_smoothing", settings.smoothing);
                 $("#shift-input").shift_input("change_shift", settings.shift);
-                d3.select("#combined-checkbox").property("checked", settings.combined);
-                d3.select("#separate-color-checkbox").property("disabled", settings.combined);
+                d3.select("#combined-checkbox")
+                    .property("checked", settings.combined)
+                    .property("disabled", settings.separate_color);
+                d3.select("#separate-color-checkbox")
+                    .property("checked", settings.separate_color)
+                    .property("disabled", settings.combined);
                 $("#main-plot").main_plot("toggle_combined", settings.combined);
-                d3.select("#separate-color-checkbox").property("checked", settings.separate_color);
-                d3.select("#combined-checkbox").property("disabled", settings.separate_color);
                 $("#settings-table").settings_table("toggle_color_separated_strands", settings.separate_color);
                 $("#settings-table").settings_table("update_rows", settings.rows)
             }
