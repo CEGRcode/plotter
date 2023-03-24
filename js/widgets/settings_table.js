@@ -134,6 +134,15 @@ $(function() {
             }
         },
 
+        autoscale_composites: function() {
+            for (let row of this._elements.rows) {
+                $(row.node()).settings_row("autoscale_composite")
+            };
+
+            this.autoscale_axes();
+            this.plot_all_composites()
+        },
+
         export: function() {
             return this._elements.rows.map(row => $(row.node()).settings_row("export"));
         },
@@ -149,6 +158,11 @@ $(function() {
             this.rows_added = 0;
             this._elements.table.selectAll("*").remove();
             this._elements.rows = [];
+
+            this.separate_color = false;
+            d3.select("#separate-color-checkbox").property("checked", false)
+                .property("disabled", false);
+
             this._create()
         }
     });
@@ -699,6 +713,12 @@ $(function() {
             }
         },
 
+        autoscale_composite: function() {
+            if (this.options.ids.length > 0) {
+                this.change_scale(1 / parseFloat(this.options.ids.length), false);
+            }
+        },
+
         reset: function() {
             this.files_loaded = 0;
             this.xmin = Infinity;
@@ -743,46 +763,48 @@ $(function() {
         },
 
         import: function(data) {
-            if (data.name !== undefined) {
+            if ("name" in data) {
                 this.change_name(data.name, true)
             };
-            if (data.color !== undefined) {
+            if ("color" in data) {
                 this.change_color(data.color)
             };
-            if (data.secondary_color !== undefined) {
+            if ("secondary_color" in data) {
                 this.change_secondary_color(data.secondary_color, this.options.separate_color)
+            } else {
+                this.change_secondary_color(this.options.color)
             };
-            if (data.scale !== undefined) {
+            if ("scale" in data) {
                 this.change_scale(data.scale, false)
             };
-            if (data.opacity !== undefined) {
+            if ("opacity" in data) {
                 this.change_opacity(data.opacity, false)
             };
-            if (data.smoothing !== undefined) {
+            if ("smoothing" in data) {
                 this.change_smoothing(data.smoothing, false)
             };
-            if (data.bp_shift !== undefined) {
+            if ("bp_shift" in data) {
                 this.change_bp_shift(data.bp_shift, false)
             };
-            if (data.hide !== undefined) {
+            if ("hide" in data) {
                 this.toggle_hide(data.hide, false)
             };
-            if (data.files_loaded !== undefined) {
+            if ("files_loaded" in data) {
                 this.files_loaded = data.files_loaded
             };
-            if (data.ids !== undefined) {
+            if ("ids" in data) {
                 this.update_ids(data.ids)
             };
-            if (data.xmin !== undefined && data.xmin !== null) {
+            if ("xmin" in data && data.xmin !== null) {
                 this.xmin = data.xmin
             };
-            if (data.xmax !== undefined && data.xmax !== null) {
+            if ("xmax" in data && data.xmax !== null) {
                 this.xmax = data.xmax
             };
-            if (data.sense !== undefined) {
+            if ("sense" in data) {
                 this.sense = data.sense
             };
-            if (data.anti !== undefined) {
+            if ("anti" in data) {
                 this.anti = data.anti
             };
 

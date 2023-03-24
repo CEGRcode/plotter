@@ -563,37 +563,37 @@ $(function() {
         },
 
         import: function(data) {
-            if (data.combined !== undefined) {
+            if ("combined" in data) {
                 this.combined = data.combined;
                 d3.select("#combined-checkbox").property("checked", data.combined);
                 d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
 
-            if (data.xmin !== undefined && data.xmax !== undefined && data.ymax !== undefined) {
+            if ("xmin" in data && "xmax" in data && "ymax" in data) {
                 this.scale_axes(data.xmin, data.xmax, data.ymax, true, true)
             };
 
-            if (data.opacity !== undefined) {
+            if ("opacity" in data) {
                 $("#opacity-input").opacity_input("change_opacity", data.opacity)
             };
-            if (data.smoothing !== undefined) {
+            if ("smoothing" in data) {
                 $("#smoothing-input").smoothing_input("change_smoothing", data.smoothing)
             };
-            if (data.bp_shift !== undefined) {
+            if ("bp_shift" in data) {
                 $("#shift-input").shift_input("change_shift", data.bp_shift)
             };
 
-            if (data.title !== undefined) {
+            if ("title" in data) {
                 $(this._elements.title.node()).editable_svg_text("change_label", data.title)
             };
-            if (data.xlabel !== undefined) {
+            if ("xlabel" in data) {
                 $(this._elements.xlabel.node()).editable_svg_text("change_label", data.xlabel)
             };
-            if (data.ylabel !== undefined) {
+            if ("ylabel" in data) {
                 $(this._elements.ylabel.node()).editable_svg_text("change_label", data.ylabel)
             };
 
-            if (data.locked !== undefined) {
+            if ("locked" in data) {
                 this.locked = data.locked;
                 d3.select("#lock-axes-checkbox").property("checked", data.locked);
                 $("#axes-input").axes_input("toggle_locked", data.locked)
@@ -611,7 +611,8 @@ $(function() {
             $("#opacity-input").opacity_input("change_opacity", 1);
             $("#smoothing-input").smoothing_input("change_smoothing", 7);
             $("#shift-input").shift_input("change_shift", 0);
-            d3.select("#combined-checkbox").property("checked", false);
+            d3.select("#combined-checkbox").property("checked", false)
+                .property("disabled", false);
             $("#settings-dropdown").settings_dropdown("set_value", "none");
 
             this._elements.main_plot.selectAll("*").remove();

@@ -138,12 +138,20 @@
             </div>
             <div class="row">
                 <div class="col" style="overflow:auto; height:calc(50vh - 80px);">
-                    <h4>Composite settings</h4>
-                    <script>
-                        let individual_composites = {};
-                    </script>
-                    <table id="settings-table" class="table"></table>
-                    <script src="js/widgets/settings_table.js"></script>
+                    <div class="row">
+                        <div class="col">
+                            <h4 style="display:inline; padding-right:20px;">Composite settings</h4>
+                            <input type="button" id="autoscale-composites-button" value="Scale composites by number of samples" style="display:inline;">
+                            <script src="js/events/autoscale_composites_button.js"></script>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table id="settings-table" class="table"></table>
+                        <script>
+                            let individual_composites = {};
+                        </script>
+                        <script src="js/widgets/settings_table.js"></script>
+                    </div>
                 </div>
             </div>
         </div>
