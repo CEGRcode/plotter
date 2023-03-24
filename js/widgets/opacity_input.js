@@ -39,7 +39,9 @@ $(function() {
             this.opacity = new_opacity;
             this._elements.slider.node().value = new_opacity * 100;
             this._elements.text.node().value = new_opacity;
-            $("#main-plot").main_plot("change_opacity", true, new_opacity)
+            $("#main-plot").main_plot("change_opacity", true, new_opacity);
+
+            $("settings-dropdown").settings_dropdown("set_value", "none")
         }
     });
 

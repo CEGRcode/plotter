@@ -39,7 +39,9 @@ $(function() {
             this.bp_shift = new_shift;
             this._elements.slider.node().value = new_shift;
             this._elements.text.node().value = new_shift;
-            $("#main-plot").main_plot("change_bp_shift", new_shift)
+            $("#main-plot").main_plot("change_bp_shift", new_shift);
+
+            $("settings-dropdown").settings_dropdown("set_value", "none")
         }
     });
 

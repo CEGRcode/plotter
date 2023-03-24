@@ -39,7 +39,9 @@ $(function() {
             this.sliding_window = new_window;
             this._elements.slider.node().value = new_window;
             this._elements.text.node().value = new_window;
-            $("#main-plot").main_plot("change_smoothing", new_window)
+            $("#main-plot").main_plot("change_smoothing", new_window);
+
+            $("settings-dropdown").settings_dropdown("set_value", "none")
         }
     });
 

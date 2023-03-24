@@ -116,6 +116,24 @@ $(function() {
             }
         },
 
+        update_rows: function(rows) {
+            for (let i in rows) {
+                if (i >= this._elements.rows.length) {
+                    this.add_row();
+                    $("#metadata-table").metadata_table("add_row")
+                };
+                if ("name" in rows[i]) {
+                    $(this._elements.rows[i].node()).settings_row("change_name", rows[i].name, true)
+                };
+                if ("color" in rows[i]) {
+                    $(this._elements.rows[i].node()).settings_row("change_color", rows[i].color)
+                };
+                if ("secondary_color" in rows[i]) {
+                    $(this._elements.rows[i].node()).settings_row("change_secondary_color", rows[i].secondary_color)
+                }
+            }
+        },
+
         export: function() {
             return this._elements.rows.map(row => $(row.node()).settings_row("export"));
         },
@@ -148,7 +166,7 @@ $(function() {
         bp_shift: false,
         hide: false,
         files_loaded: 0,
-        secondary_color: "#FFFFFF",
+        secondary_color: null,
 
         options: {
             idx: null,
@@ -240,6 +258,7 @@ $(function() {
                 .classed("color-1", true)
                 .attr("value", this.options.color)
                 .on("change", function() {$(row.node()).settings_row("change_color", this.value)});
+            this.secondary_color = this.options.color;
             if (this.options.separate_color) {
                 color_col.append("input")
                     .attr("type", "color")
