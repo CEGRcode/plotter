@@ -28,8 +28,7 @@ $(function() {
                     .attr("class", "slider-text")
                     .attr("value", this.bp_shift)
                     .on("change", function() {
-                        $("#shift-input").shift_input("change_shift", parseInt(this.value));
-                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                        $("#shift-input").shift_input("change_shift", parseInt(this.value))
                     });
 
             this._elements.slider = slider;
@@ -40,7 +39,9 @@ $(function() {
             this.bp_shift = new_shift;
             this._elements.slider.node().value = new_shift;
             this._elements.text.node().value = new_shift;
-            $("#main-plot").main_plot("change_bp_shift", new_shift)
+            $("#main-plot").main_plot("change_bp_shift", new_shift);
+
+            $("settings-dropdown").settings_dropdown("set_value", "none")
         }
     });
 

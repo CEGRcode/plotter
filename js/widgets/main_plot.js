@@ -186,12 +186,20 @@ $(function() {
                 .classed("legend-element", true)
                 .style("display", "none");
 
+            legend_element.append("polygon")
+                .classed("legend-color-sense", true)
+                .attr("points", "0,0 15,0 15,15 0,15")
+                .attr("fill", color);
+            legend_element.append("polygon")
+                .classed("legend-color-anti", true)
+                .attr("points", "15,0 15,15 0,15")
+                .attr("fill", color);
             legend_element.append("rect")
                 .attr("width", 15)
                 .attr("height", 15)
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 1)
-                .attr("fill", color);
+                .attr("fill", "none");
             legend_element.append("text")
                 .attr("x", 20)
                 .attr("y", 10)
@@ -225,7 +233,7 @@ $(function() {
             this.update_legend()
         },
 
-        plot_composite: function(xmin, xmax, sense, anti, scale, color, i, opacity, smoothing, bp_shift, hide) {
+        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide) {
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
                 .style("display", hide ? "none" : null),
@@ -289,14 +297,20 @@ $(function() {
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
                         && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
 
+                secondary_color = secondary_color || color;
                 composite.select(".composite-gradient")
                     .attr("y1", (ymax - antimax) / (2 * ymax))
                     .attr("y2", (ymax + sensemax) / (2 * ymax))
                     .selectAll("stop")
-                        .data([{offset: 0, opacity: opacity}, {offset: .5, opacity: 0}, {offset: 1, opacity: opacity}])
+                        .data([
+                            {offset: 0, color: color, opacity: opacity},
+                            {offset: .5, color: color, opacity: 0},
+                            {offset: .5, color: "#FFFFFF", opacity: 0},
+                            {offset: .5, color: secondary_color, opacity: 0},
+                            {offset: 1, color: secondary_color, opacity: opacity}])
                         .join("stop")
                             .attr("offset", d => d.offset)
-                            .attr("stop-color", color)
+                            .attr("stop-color", d => d.color)
                             .attr("stop-opacity", d => d.opacity);
 
                 composite.select(".white-line")
@@ -387,14 +401,30 @@ $(function() {
                 .text(name)
         },
 
-        change_color: function(i, color) {
+        change_color: function(i, color, sense_only=false) {
+            let composite = this._elements.composites[i];
+            if (this.combined || !sense_only) {
+                composite.select(".composite-gradient")
+                    .selectAll("stop")
+                        .attr("stop-color", color);
+                this._elements.legend_items[i].selectAll("polygon")
+                    .attr("fill", color)
+            } else {
+                composite.select(".composite-gradient")
+                    .selectAll("stop")
+                    .each(function(d, i) {if (i < 2) {d3.select(this).attr("stop-color", color)}});
+                this._elements.legend_items[i].select("polygon.legend-color-sense")
+                    .attr("fill", color)
+            }
+        },
+
+        change_secondary_color: function(i, color) {
             let composite = this._elements.composites[i];
             composite.select(".composite-gradient")
                 .selectAll("stop")
-                    .attr("stop-color", color);
-
-            this._elements.legend_items[i].select("rect")
-                .attr("fill", color);
+                .each(function(d, i) {if (i > 2) {d3.select(this).attr("stop-color", color)}});
+            this._elements.legend_items[i].select("polygon.legend-color-anti")
+                .attr("fill", color)
         },
 
         change_opacity: function(i, opacity) {
@@ -535,7 +565,8 @@ $(function() {
         import: function(data) {
             if (data.combined !== undefined) {
                 this.combined = data.combined;
-                d3.select("#combined-checkbox").property("checked", data.combined)
+                d3.select("#combined-checkbox").property("checked", data.combined);
+                d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
 
             if (data.xmin !== undefined && data.xmax !== undefined && data.ymax !== undefined) {

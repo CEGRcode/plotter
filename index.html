@@ -109,7 +109,7 @@
                             <script src="js/sliding_window.js"></script>
                             <script src="js/widgets/main_plot.js"></script>
                         </div>
-                        <div style="width:270px;">
+                        <div class="text-right" style="width:270px;">
                             <div id="settings-dropdown"></div>
                             <script src="js/widgets/preset_dropdown.js"></script>
                             <div id="opacity-input"></div>
@@ -122,6 +122,11 @@
                                 <label for="combined-checkbox">Combined</label>
                                 <input id="combined-checkbox" type="checkbox">
                                 <script src="js/events/combined_checkbox.js"></script>
+                            </div>
+                            <div>
+                                <label for="separate-color-checkbox">Separate colors for strands</label>
+                                <input id="separate-color-checkbox" type="checkbox">
+                                <script src="js/events/separate_color_checkbox.js"></script>
                             </div>
                             <div>
                                 <input type="button" id="download-svg-button" value="Download as SVG">

@@ -28,8 +28,7 @@ $(function() {
                     .attr("class", "slider-text")
                     .attr("value", this.sliding_window)
                     .on("change", function() {
-                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value));
-                        $("#settings-dropdown").settings_dropdown("set_value", "none")
+                        $("#smoothing-input").smoothing_input("change_smoothing", parseInt(this.value))
                     });
 
             this._elements.slider = slider;
@@ -40,7 +39,9 @@ $(function() {
             this.sliding_window = new_window;
             this._elements.slider.node().value = new_window;
             this._elements.text.node().value = new_window;
-            $("#main-plot").main_plot("change_smoothing", new_window)
+            $("#main-plot").main_plot("change_smoothing", new_window);
+
+            $("settings-dropdown").settings_dropdown("set_value", "none")
         }
     });
 

@@ -40,6 +40,11 @@ $(function() {
             };
 
             $("#main-plot").main_plot("import", data.plot);
+            if (data.separate_color !== undefined) {
+                d3.select("#separate-color-checkbox").property("checked", data.separate_color);
+                d3.select("#combined-checkbox").property("disabled", data.separate_color);
+                $("#settings-table").settings_table("toggle_color_separated_strands", data.separate_color)
+            };
             $("#settings-table").settings_table("import", data.settings);
             $("#metadata-table").metadata_table("import", data.metadata);
             $("#main-plot").main_plot("update_legend");

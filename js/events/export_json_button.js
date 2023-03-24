@@ -4,7 +4,8 @@ $(function() {
             metadata: $("#metadata-table").metadata_table("export"),
             settings: $("#settings-table").settings_table("export"),
             plot: $("#main-plot").main_plot("export"),
-            preset: $("#settings-dropdown").settings_dropdown("get_value")
+            preset: $("#settings-dropdown").settings_dropdown("get_value"),
+            separate_color: d3.select("#separate-color-checkbox").property("checked")
         },
             a = document.createElement("a"),
             e = new MouseEvent("click");
