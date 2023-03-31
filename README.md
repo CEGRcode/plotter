@@ -1,5 +1,5 @@
 # Plotter
-Plotter is a web application made for plotting epigenomic data.
+Plotter is a web application made for plotting genomic data.
 
 ## Getting started
 Open index.html in a web browser (mostly tested in Safari).
@@ -8,16 +8,19 @@ Open index.html in a web browser (mostly tested in Safari).
 
 Click "Add entry" in the Composite metadata table to initialize a composite.
 
-![initialize_composite](images/initialize_composite.gif)
+![initialize_composite](images/initialize_composite.png)
 
 Load composite files into the Composite settings table to plot.
 
 ![load_composite](images/load_composite.gif)
 
-If you load multiple files to a single composite, the resulting plot will be the sum of the components.
+If you load multiple files to a single composite, the resulting composite will be the sum of the components.
+
+Final result (from example_config.json):
+![final_result](images/final_result.png)
 
 ### Data format
-Loaded composite files should be the format of the composite output of [ScriptManager](github.com/CEGRcode/scriptmanager)'s tag pileup tool.
+Loaded composite files should be the format of the composite output of [ScriptManager](https://pughlab.mbg.cornell.edu/scriptmanager-docs/docs/Tutorials/chipexo-tutorial)'s tag pileup tool.
 The file name should start with the sample identifier, followed by an underscore.
 
 ## Features
@@ -56,7 +59,7 @@ To save a session, click "Export JSON" near the top left of the page.
 To load a session, click "Import JSON" near the top left of the page and select a JSON file.
 
 ## Notes
-Standard parameters (meant to emulate Mittal et al. 2022):
+Standard parameters (meant to emulate [Mittal et al. 2022](https://github.com/CEGRcode/2022-Mittal_SAGA/)):
 * Tag pileup run on 1100 bp windows (to allow data at the x-axis limits to be plotted)
 * x-axis limits: -500 to 500
 * 100% opacity
