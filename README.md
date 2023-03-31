@@ -50,7 +50,7 @@ The metadata table allows the user to keep track of the metadata for each compos
   * All fields except the IDs field are editable.
 * If the sample identifiers are PEGR IDs, you can import metadata from PEGR. Clicking the Import metadata from PEGR button opens an input box for your PEGR API key and your PEGR user email. Submit to autofill the metadata table (cells with mismatches between PEGR IDs will be highlighted red).
 
-### Save SVG graphic
+### Download SVG graphic
 To save a plot as an SVG graphic, click "Download as SVG" to the right of the plot.
 
 ### Saved sessions
