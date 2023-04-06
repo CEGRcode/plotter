@@ -99,7 +99,7 @@ $(function() {
                     }
                 });
 
-                $("#main-plot").main_plot("scale_axes", xmin, xmax, ymax, true, true);
+                $("#main-plot").main_plot("scale_axes", xmin, xmax, parseFloat(ymax.toPrecision(2)), true, true);
                 this.plot_all_composites()
             }
         },
