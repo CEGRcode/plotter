@@ -16,6 +16,7 @@ $(function() {
         smoothing: 7,
         bp_shift: 0,
         combined: false,
+        color_trace: false,
         locked: false,
 
         _elements: {
@@ -166,14 +167,23 @@ $(function() {
                 .attr("fill", "none")
                 .attr("stroke", "#FFFFFF")
                 .attr("stroke-width", 1)
-                .attr("d", "");
+                .attr("d", "")
+                .style("display", this.color_trace ? "none" : null);
 
             composite.append("path")
-                .classed("composite-line", true)
+                .classed("black-line", true)
                 .attr("fill", "none")
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 0.5)
-                .attr("d", "");
+                .attr("d", "")
+                .style("display", this.color_trace ? "none" : null);
+
+            composite.append("path")
+                .classed("color-line", true)
+                .attr("fill", "none")
+                .attr("stroke-width", 1)
+                .attr("d", "")
+                .style("display", this.color_trace ? null : "none");
 
             composite.append("polygon")
                 .classed("composite-fill", true)
@@ -266,19 +276,57 @@ $(function() {
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
 
-                composite.select(".white-line")
-                    .datum(truncated_xdomain)
-                    .attr("d", d3.line()
-                        .x(d => this.xscale(d))
-                        .y((_, j) => this.yscale(scaled_occupancy[j]))
-                    );
+                if (this.color_trace) {
+                    composite.select(".white-line")
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
 
-                composite.select(".composite-line")
-                    .datum(truncated_xdomain)
-                    .attr("d", d3.line()
-                        .x(d => this.xscale(d))
-                        .y((_, j) => this.yscale(scaled_occupancy[j]))
-                    );
+                    composite.select(".black-line")
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        )
+                } else {
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".white-line")
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".black-line")
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        )
+                }
 
                 composite.select(".composite-fill")
                     .attr("points", truncated_xdomain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_occupancy[j])).join(" ") + " "
@@ -313,13 +361,39 @@ $(function() {
                             .attr("stop-color", d => d.color)
                             .attr("stop-opacity", d => d.opacity);
 
-                composite.select(".white-line")
-                    .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                        + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                if (this.color_trace) {
+                    composite.select(".white-line")
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
 
-                composite.select(".composite-line")
-                    .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                        + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                    composite.select(".black-line")
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                } else {
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".white-line")
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".black-line")
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                };
 
                 composite.select(".composite-fill")
                     .attr("points", this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0) + " "
@@ -494,6 +568,27 @@ $(function() {
             this.scale_axes(undefined, undefined, undefined, true, true);
 
             $("#settings-table").settings_table("plot_all_composites")
+        },
+
+        toggle_color_trace: function(color_trace) {
+            this.color_trace = color_trace;
+
+            if (color_trace) {
+                this._elements.composite_group.selectAll(".composite .color-line")
+                    .style("display", null);
+                this._elements.composite_group.selectAll(".composite .white-line")
+                    .style("display", "none");
+                this._elements.composite_group.selectAll(".composite .black-line")
+                    .style("display", "none")
+            } else {
+                this._elements.composite_group.selectAll(".composite .color-line")
+                    .style("display", "none");
+                this._elements.composite_group.selectAll(".composite .white-line")
+                    .style("display", null);
+                this._elements.composite_group.selectAll(".composite .black-line")
+                    .style("display", null)
+            }
+
         },
 
         toggle_locked: function(locked) {
