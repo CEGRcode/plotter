@@ -559,15 +559,17 @@ $(function() {
             }
         },
 
-        toggle_combined: function(combine) {
+        toggle_combined: function(combine, plot=true) {
             this.combined = combine;
 
             this._elements.midaxis_top.style("display", combine ? "none" : null);
             this._elements.midaxis_bottom.style("display", combine ? "none" : null);
 
-            this.scale_axes(undefined, undefined, undefined, true, true);
+            if (plot) {
+                this.scale_axes(undefined, undefined, undefined, true, true);
 
-            $("#settings-table").settings_table("plot_all_composites")
+                $("#settings-table").settings_table("plot_all_composites")
+            }
         },
 
         toggle_color_trace: function(color_trace) {
@@ -654,12 +656,12 @@ $(function() {
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
-                ymax: this.ymax, combined: this.combined, locked: this.locked}
+                ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace}
         },
 
         import: function(data) {
             if ("combined" in data) {
-                this.combined = data.combined;
+                this.toggle_combined(data.combined, false);
                 d3.select("#combined-checkbox").property("checked", data.combined);
                 d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
@@ -692,6 +694,11 @@ $(function() {
                 this.locked = data.locked;
                 d3.select("#lock-axes-checkbox").property("checked", data.locked);
                 $("#axes-input").axes_input("toggle_locked", data.locked)
+            };
+
+            if ("color_trace" in data) {
+                this.color_trace = data.color_trace;
+                d3.select("#color-trace-checkbox").property("checked", data.color_trace)
             }
         },
 
