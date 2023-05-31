@@ -704,7 +704,7 @@ $(function() {
             };
 
             if ("color_trace" in data) {
-                this.color_trace = data.color_trace;
+                this.toggle_color_trace(data.color_trace);
                 d3.select("#color-trace-checkbox").property("checked", data.color_trace)
             }
         },
