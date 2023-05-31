@@ -52,7 +52,7 @@ $(function() {
 
         plot_all_composites: function(scale_axes=false, allow_shrink=false) {
             if (scale_axes) {
-                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, scale_axes.ymax, allow_shrink || this._elements.rows.reduce(function(sum, row) {
+                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, parseFloat(scale_axes.ymax.toPrecision(2)), allow_shrink || this._elements.rows.reduce(function(sum, row) {
                     let inst = $(row.node()).settings_row("instance");
                     return sum + (inst.files_loaded && !inst.hide)
                 }, 0) === 1, true)

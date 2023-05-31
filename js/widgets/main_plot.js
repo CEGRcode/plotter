@@ -16,7 +16,9 @@ $(function() {
         smoothing: 7,
         bp_shift: 0,
         combined: false,
+        color_trace: false,
         locked: false,
+        enable_tooltip: true,
 
         _elements: {
             main_plot: null,
@@ -116,14 +118,14 @@ $(function() {
                 label: "xlabel",
                 text: this.xlabel,
                 x: (this.width + this.margins.left - this.margins.right) / 2,
-                y: this.height - 15,
+                y: this.height - 5,
                 font_size: 16
             });
             this._elements.ylabel = main_plot.append("g");
             $(this._elements.ylabel.node()).editable_svg_text({
                 label: "ylabel",
                 text: this.ylabel,
-                x: 25,
+                x: 12,
                 y: (this.height + this.margins.top - this.margins.bottom) / 2,
                 font_size: 16,
                 rotation: "vertical"
@@ -138,8 +140,7 @@ $(function() {
                 .attr("id", "composite-plot-tooltip");
 
             main_plot.on("mousemove", function(e) {
-                let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide);
-                $("#main-plot").main_plot("move_tooltip", e, data)
+                $("#main-plot").main_plot("move_tooltip", e)
             });
             main_plot.on("mouseleave", function() {
                 $("#main-plot").main_plot("hide_tooltip")
@@ -166,14 +167,23 @@ $(function() {
                 .attr("fill", "none")
                 .attr("stroke", "#FFFFFF")
                 .attr("stroke-width", 1)
-                .attr("d", "");
+                .attr("d", "")
+                .style("display", this.color_trace ? "none" : null);
 
             composite.append("path")
-                .classed("composite-line", true)
+                .classed("black-line", true)
                 .attr("fill", "none")
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 0.5)
-                .attr("d", "");
+                .attr("d", "")
+                .style("display", this.color_trace ? "none" : null);
+
+            composite.append("path")
+                .classed("color-line", true)
+                .attr("fill", "none")
+                .attr("stroke-width", 1)
+                .attr("d", "")
+                .style("display", this.color_trace ? null : "none");
 
             composite.append("polygon")
                 .classed("composite-fill", true)
@@ -266,19 +276,57 @@ $(function() {
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
 
-                composite.select(".white-line")
-                    .datum(truncated_xdomain)
-                    .attr("d", d3.line()
-                        .x(d => this.xscale(d))
-                        .y((_, j) => this.yscale(scaled_occupancy[j]))
-                    );
+                if (this.color_trace) {
+                    composite.select(".white-line")
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
 
-                composite.select(".composite-line")
-                    .datum(truncated_xdomain)
-                    .attr("d", d3.line()
-                        .x(d => this.xscale(d))
-                        .y((_, j) => this.yscale(scaled_occupancy[j]))
-                    );
+                    composite.select(".black-line")
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        )
+                } else {
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", "none")
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".white-line")
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        );
+
+                    composite.select(".black-line")
+                        .style("display", null)
+                        .datum(truncated_xdomain)
+                        .attr("d", d3.line()
+                            .x(d => this.xscale(d))
+                            .y((_, j) => this.yscale(scaled_occupancy[j]))
+                        )
+                }
 
                 composite.select(".composite-fill")
                     .attr("points", truncated_xdomain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_occupancy[j])).join(" ") + " "
@@ -313,13 +361,39 @@ $(function() {
                             .attr("stop-color", d => d.color)
                             .attr("stop-opacity", d => d.opacity);
 
-                composite.select(".white-line")
-                    .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                        + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                if (this.color_trace) {
+                    composite.select(".white-line")
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
 
-                composite.select(".composite-line")
-                    .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                        + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                    composite.select(".black-line")
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                } else {
+                    composite.select(".color-line")
+                        .attr("stroke", color)
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".white-line")
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".black-line")
+                        .style("display", null)
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                };
 
                 composite.select(".composite-fill")
                     .attr("points", this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0) + " "
@@ -485,61 +559,91 @@ $(function() {
             }
         },
 
-        toggle_combined: function(combine) {
+        toggle_combined: function(combine, plot=true) {
             this.combined = combine;
 
             this._elements.midaxis_top.style("display", combine ? "none" : null);
             this._elements.midaxis_bottom.style("display", combine ? "none" : null);
 
-            this.scale_axes(undefined, undefined, undefined, true, true);
+            if (plot) {
+                this.scale_axes(undefined, undefined, undefined, true, true);
 
-            $("#settings-table").settings_table("plot_all_composites")
+                $("#settings-table").settings_table("plot_all_composites")
+            }
+        },
+
+        toggle_color_trace: function(color_trace) {
+            this.color_trace = color_trace;
+
+            if (color_trace) {
+                this._elements.composite_group.selectAll(".composite .color-line")
+                    .style("display", null);
+                this._elements.composite_group.selectAll(".composite .white-line")
+                    .style("display", "none");
+                this._elements.composite_group.selectAll(".composite .black-line")
+                    .style("display", "none")
+            } else {
+                this._elements.composite_group.selectAll(".composite .color-line")
+                    .style("display", "none");
+                this._elements.composite_group.selectAll(".composite .white-line")
+                    .style("display", null);
+                this._elements.composite_group.selectAll(".composite .black-line")
+                    .style("display", null)
+            }
+
         },
 
         toggle_locked: function(locked) {
             this.locked = locked
         },
 
-        move_tooltip: function(ev, data) {
-            let {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
-                mouse_x = (ev.clientX - plot_x) * this.width / width,
-                mouse_y = (ev.clientY - plot_y) * this.height / height;
+        toggle_tooltip: function(enable) {
+            this.enable_tooltip = enable
+        },
 
-            if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
-                mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
-                let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
-                data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
+        move_tooltip: function(ev) {
+            if (this.enable_tooltip) {
+                let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide),
+                    {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
+                    mouse_x = (ev.clientX - plot_x) * this.width / width,
+                    mouse_y = (ev.clientY - plot_y) * this.height / height;
 
-                this._elements.tooltip
-                    .style("display", null)
-                    .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
+                if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
+                    mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
+                    let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
+                    data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
 
-                let tooltip_border = this._elements.tooltip.selectAll("path")
-                    .data([null])
-                    .join("path")
-                        .attr("fill", "white")
-                        .attr("stroke", "black"),
-                    tooltip_text = this._elements.tooltip.selectAll("text")
-                    .data([null])
-                    .join("text")
-                        .attr("font-size", "8px")
-                        .attr("stroke", "black")
-                        .attr("stroke-width", "0.15px");
+                    this._elements.tooltip
+                        .style("display", null)
+                        .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
 
-                tooltip_text.selectAll("tspan")
-                    .data([mouse_x_scaled, ...data])
-                    .join("tspan")
-                        .attr("x", 0)
-                        .attr("y", (_, i) => (i * 1.1) + "em")
-                        .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
-                        .attr("fill", (d, i) => i === 0 ? "black" : d.color)
-                        .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
-                            : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
-                let {y, width: w, height: h} = tooltip_text.node().getBBox();
-                tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
-                tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
-            } else {
-                this._elements.tooltip.style("display", "none")
+                    let tooltip_border = this._elements.tooltip.selectAll("path")
+                        .data([null])
+                        .join("path")
+                            .attr("fill", "white")
+                            .attr("stroke", "black"),
+                        tooltip_text = this._elements.tooltip.selectAll("text")
+                        .data([null])
+                        .join("text")
+                            .attr("font-size", "8px")
+                            .attr("stroke", "black")
+                            .attr("stroke-width", "0.15px");
+
+                    tooltip_text.selectAll("tspan")
+                        .data([mouse_x_scaled, ...data])
+                        .join("tspan")
+                            .attr("x", 0)
+                            .attr("y", (_, i) => (i * 1.1) + "em")
+                            .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
+                            .attr("fill", (d, i) => i === 0 ? "black" : d.color)
+                            .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
+                                : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
+                    let {y, width: w, height: h} = tooltip_text.node().getBBox();
+                    tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
+                    tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
+                } else {
+                    this._elements.tooltip.style("display", "none")
+                }
             }
         },
 
@@ -559,12 +663,12 @@ $(function() {
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
-                ymax: this.ymax, combined: this.combined, locked: this.locked}
+                ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace}
         },
 
         import: function(data) {
             if ("combined" in data) {
-                this.combined = data.combined;
+                this.toggle_combined(data.combined, false);
                 d3.select("#combined-checkbox").property("checked", data.combined);
                 d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
@@ -597,6 +701,11 @@ $(function() {
                 this.locked = data.locked;
                 d3.select("#lock-axes-checkbox").property("checked", data.locked);
                 $("#axes-input").axes_input("toggle_locked", data.locked)
+            };
+
+            if ("color_trace" in data) {
+                this.color_trace = data.color_trace;
+                d3.select("#color-trace-checkbox").property("checked", data.color_trace)
             }
         },
 
