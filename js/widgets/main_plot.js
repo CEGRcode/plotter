@@ -155,13 +155,6 @@ $(function() {
             let composite = this._elements.composite_group.insert("g", "g.composite")
                 .classed("composite", true);
 
-            composite.append("defs")
-                .append("linearGradient")
-                    .attr("id", "composite-gradient-" + this._elements.composites.length)
-                    .classed("composite-gradient", true)
-                    .attr("x1", "0%")
-                    .attr("x2", "0%");
-
             composite.append("path")
                 .classed("white-line", true)
                 .attr("fill", "none")
@@ -179,15 +172,45 @@ $(function() {
                 .style("display", this.color_trace ? "none" : null);
 
             composite.append("path")
-                .classed("color-line", true)
+                .classed("color-line-top", true)
                 .attr("fill", "none")
                 .attr("stroke-width", 1)
                 .attr("d", "")
                 .style("display", this.color_trace ? null : "none");
 
+            composite.append("path")
+                .classed("color-line-bottom", true)
+                .attr("fill", "none")
+                .attr("stroke-width", 1)
+                .attr("d", "")
+                .style("display", this.color_trace ? null : "none");
+
+            composite.append("defs")
+                .append("linearGradient")
+                    .attr("id", "composite-gradient-top-" + this._elements.composites.length)
+                    .classed("composite-gradient-top", true)
+                    .attr("x1", "0%")
+                    .attr("x2", "0%")
+                    .attr("y1", "0%")
+                    .attr("y2", "100%");
+
+            composite.append("defs")
+                .append("linearGradient")
+                    .attr("id", "composite-gradient-bottom-" + this._elements.composites.length)
+                    .classed("composite-gradient-bottom", true)
+                    .attr("x1", "0%")
+                    .attr("x2", "0%")
+                    .attr("y1", "100%")
+                    .attr("y2", "0%");
+
             composite.append("polygon")
-                .classed("composite-fill", true)
-                .attr("fill", "url(#composite-gradient-" + this._elements.composites.length + ")")
+                .classed("composite-fill-top", true)
+                .attr("fill", "url(#composite-gradient-top-" + this._elements.composites.length + ")")
+                .attr("stroke", "none");
+
+            composite.append("polygon")
+                .classed("composite-fill-bottom", true)
+                .attr("fill", "url(#composite-gradient-bottom-" + this._elements.composites.length + ")")
                 .attr("stroke", "none");
 
             this._elements.composites.push(composite);
@@ -236,7 +259,7 @@ $(function() {
 
             composite.selectAll("path")
                 .attr("d", "");
-            composite.select("polygon")
+            composite.selectAll("polygon")
                 .attr("points", "");
 
             this.change_name(i, "Composite " + i);
@@ -266,9 +289,7 @@ $(function() {
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
                         .map(d => d * scale);
 
-                composite.select(".composite-gradient")
-                    .attr("y1", "0%")
-                    .attr("y2", "100%")
+                composite.select(".composite-gradient-top")
                     .selectAll("stop")
                         .data([0, 1])
                         .join("stop")
@@ -293,7 +314,7 @@ $(function() {
                             .y((_, j) => this.yscale(scaled_occupancy[j]))
                         );
 
-                    composite.select(".color-line")
+                    composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", null)
                         .datum(truncated_xdomain)
@@ -302,7 +323,7 @@ $(function() {
                             .y((_, j) => this.yscale(scaled_occupancy[j]))
                         )
                 } else {
-                    composite.select(".color-line")
+                    composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", "none")
                         .datum(truncated_xdomain)
@@ -326,9 +347,9 @@ $(function() {
                             .x(d => this.xscale(d))
                             .y((_, j) => this.yscale(scaled_occupancy[j]))
                         )
-                }
+                };
 
-                composite.select(".composite-fill")
+                composite.select(".composite-fill-top")
                     .attr("points", truncated_xdomain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_occupancy[j])).join(" ") + " "
                         + this.xscale(truncated_xdomain[truncated_xdomain.length - 1]) + "," + this.yscale(0) + " "
                         + this.xscale(truncated_xdomain[0]) + "," + this.yscale(0))
@@ -346,20 +367,20 @@ $(function() {
                         && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
 
                 secondary_color = secondary_color || color;
-                composite.select(".composite-gradient")
-                    .attr("y1", (ymax - antimax) / (2 * ymax))
-                    .attr("y2", (ymax + sensemax) / (2 * ymax))
+                composite.select(".composite-gradient-top")
                     .selectAll("stop")
-                        .data([
-                            {offset: 0, color: color, opacity: opacity},
-                            {offset: .5, color: color, opacity: 0},
-                            {offset: .5, color: "#FFFFFF", opacity: 0},
-                            {offset: .5, color: secondary_color, opacity: 0},
-                            {offset: 1, color: secondary_color, opacity: opacity}])
+                        .data([0, 1])
                         .join("stop")
-                            .attr("offset", d => d.offset)
-                            .attr("stop-color", d => d.color)
-                            .attr("stop-opacity", d => d.opacity);
+                            .attr("offset", d => d)
+                            .attr("stop-color", color)
+                            .attr("stop-opacity", d => (1 - d) * opacity);
+                composite.select(".composite-gradient-bottom")
+                    .selectAll("stop")
+                        .data([0, 1])
+                        .join("stop")
+                            .attr("offset", d => d)
+                            .attr("stop-color", secondary_color)
+                            .attr("stop-opacity", d => (1 - d) * opacity);
 
                 if (this.color_trace) {
                     composite.select(".white-line")
@@ -372,17 +393,26 @@ $(function() {
                         .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
                             + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
 
-                    composite.select(".color-line")
+                    composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", null)
                         .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+
+                    composite.select(".color-line-bottom")
+                        .attr("stroke", secondary_color)
+                        .style("display", null)
+                        .attr("d", "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
                 } else {
-                    composite.select(".color-line")
+                    composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", "none")
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L"));
+
+                    composite.select(".color-line-bottom")
+                        .attr("stroke", secondary_color)
+                        .style("display", "none")
+                        .attr("d", "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
 
                     composite.select(".white-line")
                         .style("display", null)
@@ -395,13 +425,14 @@ $(function() {
                             + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
                 };
 
-                composite.select(".composite-fill")
-                    .attr("points", this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0) + " "
-                        + truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ") + " "
-                        + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0) + " "
-                        + this.xscale(truncated_anti_domain[truncated_anti_domain.length - 1]) + "," + this.yscale(0) + " "
-                        + truncated_anti_domain.map((d, j) => this.xscale(d) + "," + this.yscale(-scaled_anti[j])).reverse().join(" ") + " "
-                        + this.xscale(truncated_anti_domain[0]) + "," + this.yscale(0))
+                composite.select(".composite-fill-top")
+                    .attr("points", truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ")
+                        + " " + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0)
+                        + " " + this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0));
+                composite.select(".composite-fill-bottom")
+                    .attr("points", truncated_anti_domain.map((d, j) => this.xscale(d) + "," + this.yscale(-scaled_anti[j])).join(" ")
+                        + " " + this.xscale(truncated_anti_domain[truncated_anti_domain.length - 1]) + "," + this.yscale(0)
+                        + " " + this.xscale(truncated_anti_domain[0]) + "," + this.yscale(0))
             }
         },
 
@@ -477,26 +508,30 @@ $(function() {
 
         change_color: function(i, color, sense_only=false) {
             let composite = this._elements.composites[i];
-            if (this.combined || !sense_only) {
-                composite.select(".composite-gradient")
+            composite.select(".composite-gradient-top")
+                .selectAll("stop")
+                    .attr("stop-color", color);
+            composite.select(".color-line-top")
+                .attr("stroke", color);
+            this._elements.legend_items[i].selectAll("polygon")
+                .attr("fill", color);
+
+            if (!sense_only) {
+                composite.select(".composite-gradient-bottom")
                     .selectAll("stop")
                         .attr("stop-color", color);
-                this._elements.legend_items[i].selectAll("polygon")
-                    .attr("fill", color)
-            } else {
-                composite.select(".composite-gradient")
-                    .selectAll("stop")
-                    .each(function(d, i) {if (i < 2) {d3.select(this).attr("stop-color", color)}});
-                this._elements.legend_items[i].select("polygon.legend-color-sense")
-                    .attr("fill", color)
+                composite.select(".color-line-bottom")
+                    .attr("stroke", color);
             }
         },
 
         change_secondary_color: function(i, color) {
             let composite = this._elements.composites[i];
-            composite.select(".composite-gradient")
+            composite.select(".composite-gradient-bottom")
                 .selectAll("stop")
-                .each(function(d, i) {if (i > 2) {d3.select(this).attr("stop-color", color)}});
+                    .attr("stop-color", color);
+            composite.select(".color-line-bottom")
+                .attr("stroke", color);
             this._elements.legend_items[i].select("polygon.legend-color-anti")
                 .attr("fill", color)
         },
@@ -565,6 +600,13 @@ $(function() {
             this._elements.midaxis_top.style("display", combine ? "none" : null);
             this._elements.midaxis_bottom.style("display", combine ? "none" : null);
 
+            this._elements.composites.forEach(function(comp) {
+                comp.select(".color-line-bottom")
+                    .style("display", combine ? "none" : null);
+                comp.select(".composite-fill-bottom")
+                    .style("display", combine ? "none" : null)
+            })
+
             if (plot) {
                 this.scale_axes(undefined, undefined, undefined, true, true);
 
@@ -576,14 +618,18 @@ $(function() {
             this.color_trace = color_trace;
 
             if (color_trace) {
-                this._elements.composite_group.selectAll(".composite .color-line")
+                this._elements.composite_group.selectAll(".composite .color-line-top")
+                    .style("display", null);
+                this._elements.composite_group.selectAll(".composite .color-line-bottom")
                     .style("display", null);
                 this._elements.composite_group.selectAll(".composite .white-line")
                     .style("display", "none");
                 this._elements.composite_group.selectAll(".composite .black-line")
                     .style("display", "none")
             } else {
-                this._elements.composite_group.selectAll(".composite .color-line")
+                this._elements.composite_group.selectAll(".composite .color-line-top")
+                    .style("display", "none");
+                this._elements.composite_group.selectAll(".composite .color-line-bottom")
                     .style("display", "none");
                 this._elements.composite_group.selectAll(".composite .white-line")
                     .style("display", null);
