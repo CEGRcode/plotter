@@ -117,14 +117,14 @@ $(function() {
                 label: "xlabel",
                 text: this.xlabel,
                 x: (this.width + this.margins.left - this.margins.right) / 2,
-                y: this.height - 15,
+                y: this.height - 5,
                 font_size: 16
             });
             this._elements.ylabel = main_plot.append("g");
             $(this._elements.ylabel.node()).editable_svg_text({
                 label: "ylabel",
                 text: this.ylabel,
-                x: 25,
+                x: 12,
                 y: (this.height + this.margins.top - this.margins.bottom) / 2,
                 font_size: 16,
                 rotation: "vertical"
