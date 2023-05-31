@@ -18,6 +18,7 @@ $(function() {
         combined: false,
         color_trace: false,
         locked: false,
+        enable_tooltip: true,
 
         _elements: {
             main_plot: null,
@@ -139,8 +140,7 @@ $(function() {
                 .attr("id", "composite-plot-tooltip");
 
             main_plot.on("mousemove", function(e) {
-                let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide);
-                $("#main-plot").main_plot("move_tooltip", e, data)
+                $("#main-plot").main_plot("move_tooltip", e)
             });
             main_plot.on("mouseleave", function() {
                 $("#main-plot").main_plot("hide_tooltip")
@@ -597,46 +597,53 @@ $(function() {
             this.locked = locked
         },
 
-        move_tooltip: function(ev, data) {
-            let {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
-                mouse_x = (ev.clientX - plot_x) * this.width / width,
-                mouse_y = (ev.clientY - plot_y) * this.height / height;
+        toggle_tooltip: function(enable) {
+            this.enable_tooltip = enable
+        },
 
-            if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
-                mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
-                let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
-                data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
+        move_tooltip: function(ev) {
+            if (this.enable_tooltip) {
+                let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide),
+                    {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
+                    mouse_x = (ev.clientX - plot_x) * this.width / width,
+                    mouse_y = (ev.clientY - plot_y) * this.height / height;
 
-                this._elements.tooltip
-                    .style("display", null)
-                    .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
+                if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
+                    mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
+                    let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
+                    data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
 
-                let tooltip_border = this._elements.tooltip.selectAll("path")
-                    .data([null])
-                    .join("path")
-                        .attr("fill", "white")
-                        .attr("stroke", "black"),
-                    tooltip_text = this._elements.tooltip.selectAll("text")
-                    .data([null])
-                    .join("text")
-                        .attr("font-size", "8px")
-                        .attr("stroke", "black")
-                        .attr("stroke-width", "0.15px");
+                    this._elements.tooltip
+                        .style("display", null)
+                        .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
 
-                tooltip_text.selectAll("tspan")
-                    .data([mouse_x_scaled, ...data])
-                    .join("tspan")
-                        .attr("x", 0)
-                        .attr("y", (_, i) => (i * 1.1) + "em")
-                        .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
-                        .attr("fill", (d, i) => i === 0 ? "black" : d.color)
-                        .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
-                            : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
-                let {y, width: w, height: h} = tooltip_text.node().getBBox();
-                tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
-                tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
-            } else {
-                this._elements.tooltip.style("display", "none")
+                    let tooltip_border = this._elements.tooltip.selectAll("path")
+                        .data([null])
+                        .join("path")
+                            .attr("fill", "white")
+                            .attr("stroke", "black"),
+                        tooltip_text = this._elements.tooltip.selectAll("text")
+                        .data([null])
+                        .join("text")
+                            .attr("font-size", "8px")
+                            .attr("stroke", "black")
+                            .attr("stroke-width", "0.15px");
+
+                    tooltip_text.selectAll("tspan")
+                        .data([mouse_x_scaled, ...data])
+                        .join("tspan")
+                            .attr("x", 0)
+                            .attr("y", (_, i) => (i * 1.1) + "em")
+                            .attr("font-weight", (_, i) => i === 0 ? "bold" : null)
+                            .attr("fill", (d, i) => i === 0 ? "black" : d.color)
+                            .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
+                                : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
+                    let {y, width: w, height: h} = tooltip_text.node().getBBox();
+                    tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
+                    tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
+                } else {
+                    this._elements.tooltip.style("display", "none")
+                }
             }
         },
 
