@@ -19,6 +19,7 @@ $(function() {
         color_trace: false,
         locked: false,
         enable_tooltip: true,
+        show_legend: true,
 
         _elements: {
             main_plot: null,
@@ -497,6 +498,11 @@ $(function() {
                     .style("display", d => d[1])
         },
 
+        toggle_legend: function(show) {
+            this.show_legend = show;
+            this._elements.legend.style("display", show ? null : "none")
+        },
+
         change_label: function(label, text) {
             this[label] = text
         },
@@ -706,10 +712,18 @@ $(function() {
             a.dispatchEvent(e)
         },
 
+        toggle_svg_button: function() {
+            let disable = this._elements.main_plot.selectAll("foreignObject").size() > 0;
+            d3.select("#download-svg-button")
+                .property("disabled", disable)
+                .attr("title", disable ? "Cannot download SVG while labels are being edited" : null)
+        },
+
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
-                ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace}
+                ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace,
+                show_legend: this.show_legend}
         },
 
         import: function(data) {
@@ -752,6 +766,11 @@ $(function() {
             if ("color_trace" in data) {
                 this.toggle_color_trace(data.color_trace);
                 d3.select("#color-trace-checkbox").property("checked", data.color_trace)
+            };
+
+            if ("show_legend") {
+                this.toggle_legend(data.show_legend);
+                d3.select("#show-legend-checkbox").property("checked", data.show_legend)
             }
         },
 
@@ -826,7 +845,10 @@ $(function() {
 
             this.foreign_object.select("input")
                 .on("keypress", function(e) {$(label_group.node()).editable_svg_text("enter_input", e)})
-                .node().focus()
+                .attr("title", "Press enter to submit")
+                .node().focus();
+
+            $("#main-plot").main_plot("toggle_svg_button")
         },
 
         enter_input: function(ev) {
@@ -837,7 +859,9 @@ $(function() {
                     this.change_label(ev.target.value)
                 } else {
                     this.text_label.style("display", null)
-                }
+                };
+
+                $("#main-plot").main_plot("toggle_svg_button")
             }
         },
 
