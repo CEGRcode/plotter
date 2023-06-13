@@ -712,6 +712,13 @@ $(function() {
             a.dispatchEvent(e)
         },
 
+        toggle_svg_button: function() {
+            let disable = this._elements.main_plot.selectAll("foreignObject").size() > 0;
+            d3.select("#download-svg-button")
+                .property("disabled", disable)
+                .attr("title", disable ? "Cannot download SVG while labels are being edited" : null)
+        },
+
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
@@ -838,7 +845,10 @@ $(function() {
 
             this.foreign_object.select("input")
                 .on("keypress", function(e) {$(label_group.node()).editable_svg_text("enter_input", e)})
-                .node().focus()
+                .attr("title", "Press enter to submit")
+                .node().focus();
+
+            $("#main-plot").main_plot("toggle_svg_button")
         },
 
         enter_input: function(ev) {
@@ -849,7 +859,9 @@ $(function() {
                     this.change_label(ev.target.value)
                 } else {
                     this.text_label.style("display", null)
-                }
+                };
+
+                $("#main-plot").main_plot("toggle_svg_button")
             }
         },
 
