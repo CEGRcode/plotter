@@ -4,11 +4,14 @@ $(function() {
         // Default axis limits
         xmin: -500,
         xmax: 500,
+        ymin: -1,
         ymax: 1,
+        combined: false,
 
         _elements: {
             xmin_text: null,
             xmax_text: null,
+            ymin_text: null,
             ymax_text: null
         },
 
@@ -32,7 +35,7 @@ $(function() {
                 .attr("type", "text")
                 .attr("value", this.xmin)
                 .style("width", "50px")
-                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", this.value, null, null)});
+                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", this.value, null, null, null)});
 
             this._elements.xmax_text = xaxis.append("input")
                 .attr("id", "xmax-text")
@@ -40,39 +43,69 @@ $(function() {
                 .attr("value", this.xmax)
                 .style("width", "50px")
                 .style("margin-left", "5px")
-                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, this.value, null)});
+                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, this.value, null, null)});
 
             yaxis.append("label")
-                .attr("for", "ymax-text")
-                .text("y axis max:");
+                .attr("for", "ymin-text")
+                .text("y axis limits:");
+
+            this._elements.ymin_text = yaxis.append("input")
+                .attr("id", "ymin-text")
+                .attr("type", "text")
+                .attr("value", this.ymin)
+                .style("width", "50px")
+                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, null, this.value, null)});
 
             this._elements.ymax_text = yaxis.append("input")
                 .attr("id", "ymax-text")
                 .attr("type", "text")
                 .attr("value", this.ymax)
-                .style("width", "40px")
-                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, null, this.value)})
+                .style("width", "50px")
+                .style("margin-left", "5px")
+                .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, null, null, this.value)})
         },
 
-        change_axis_limits: function(xmin, xmax, ymax, change_plot=true) {
+        change_axis_limits: function(xmin, xmax, ymin, ymax, change_plot=true) {
             if (xmin !== null) {
                 this.xmin = xmin;
             };
             if (xmax !== null) {
                 this.xmax = xmax;
             };
-            if (ymax !== null) {
-                this.ymax = ymax;
+            if (this.combined && change_plot) {
+                if (ymax !== null) {
+                    let factor = ymax / (this.ymax - this.ymin);
+                    this.ymin = (this.ymin * factor).toPrecision(2);
+                    this.ymax = (this.ymax * factor).toPrecision(2)
+                }
+            } else {
+                if (ymin !== null) {
+                    this.ymin = ymin;
+                };
+                if (ymax !== null) {
+                    this.ymax = ymax;
+                }
             };
 
             this._elements.xmin_text.node().value = this.xmin;
             this._elements.xmax_text.node().value = this.xmax;
-            this._elements.ymax_text.node().value = this.ymax;
+            this._elements.ymin_text.node().value = this.combined ? 0 : this.ymin;
+            this._elements.ymax_text.node().value = this.combined ? this.ymax - this.ymin : this.ymax;
 
             if (change_plot) {
-                $("#main-plot").main_plot("scale_axes", this.xmin, this.xmax, this.ymax);
+                $("#main-plot").main_plot("scale_axes", this.xmin, this.xmax, this.ymin, this.ymax);
                 $("#settings-table").settings_table("plot_all_composites")
             }
+        },
+
+        toggle_combined: function(combined) {
+            this.combined = combined;
+            this._elements.ymin_text.node().value = combined ? 0 : this.ymin;
+            this._elements.ymax_text.node().value = combined ? this.ymax - this.ymin : this.ymax;
+
+            this._elements.ymin_text
+                .property("disabled", combined)
+                .style("background-color", combined ? "#DDDDDD" : "white")
         },
 
         toggle_locked: function(locked) {

@@ -4,6 +4,7 @@ $(function() {
         title: "Composite plot",
         xmin: -500,
         xmax: 500,
+        ymin: -1,
         ymax: 1,
         xlabel: "Position (bp)",
         ylabel: "Occupancy (AU)",
@@ -48,7 +49,7 @@ $(function() {
                 .range([this.margins.left, this.width - this.margins.right]);
             this.xscale = xscale;
             let yscale = d3.scaleLinear()
-                .domain([-this.ymax, this.ymax])
+                .domain([this.ymin, this.ymax])
                 .range([this.height - this.margins.bottom, this.margins.top]);
             this.yscale = yscale;
 
@@ -76,7 +77,7 @@ $(function() {
             this._elements.refline = main_plot.append("line")
                 .attr("x1", xscale(0))
                 .attr("x2", xscale(0))
-                .attr("y1", yscale(-this.ymax))
+                .attr("y1", yscale(this.ymin))
                 .attr("y2", yscale(this.ymax))
                 .attr("stroke", "gray")
                 .attr("stroke-width", 1)
@@ -99,7 +100,7 @@ $(function() {
                 .attr("y", this.height - this.margins.bottom)
                 .style("text-anchor", "end")
                 .attr("font-size", "14px")
-                .text(-this.ymax);
+                .text(this.ymin);
             this._elements.ymax = main_plot.append("text")
                 .attr("x", 30)
                 .attr("y", this.margins.top + 10)
@@ -355,10 +356,7 @@ $(function() {
                         + this.xscale(truncated_xdomain[truncated_xdomain.length - 1]) + "," + this.yscale(0) + " "
                         + this.xscale(truncated_xdomain[0]) + "," + this.yscale(0))
             } else {
-                let sensemax = Math.max(...sense),
-                    antimax = Math.max(...anti),
-                    ymax = Math.max(sensemax, antimax),
-                    {new_xdomain, new_occupancy: smoothed_sense} = sliding_window(xdomain, sense, smoothing),
+                let {new_xdomain, new_occupancy: smoothed_sense} = sliding_window(xdomain, sense, smoothing),
                     {new_occupancy: smoothed_anti} = sliding_window(xdomain, anti, smoothing),
                     truncated_sense_domain = new_xdomain.map(x => x + bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
                     truncated_anti_domain = new_xdomain.map(x => x - bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
@@ -437,7 +435,7 @@ $(function() {
             }
         },
 
-        scale_axes: function(xmin, xmax, ymax, allow_shrink=true, change_input=false) {
+        scale_axes: function(xmin, xmax, ymin, ymax, allow_shrink=true, change_input=false) {
             if (this.locked) {
                 return
             };
@@ -446,47 +444,51 @@ $(function() {
                 if (allow_shrink) {
                     this.xmin = xmin;
                     this.xmax = xmax;
-                    this.ymax = change_input ? ymax : ymax / (this.combined + 1)
+                    this.ymin = ymin;
+                    this.ymax = ymax
                 } else {
                     this.xmin = Math.min(this.xmin, xmin);
                     this.xmax = Math.max(this.xmax, xmax);
-                    this.ymax = Math.max(this.ymax, ymax) / (change_input ? 1 : this.combined + 1)
+                    this.ymin = Math.min(this.ymin, ymin);
+                    this.ymax = Math.max(this.ymax, ymax)
                 }
             };
 
             this._elements.xmin.text(this.xmin);
             this._elements.xmax.text(this.xmax);
-            let round_exp = 1 - Math.floor(Math.log10(this.ymax)),
+            let round_exp = 1 - Math.floor(Math.log10(this.ymax - this.ymin)),
                 round_factor = 10 ** round_exp,
-                ymax_factor = this.combined ? 2 : 1;
-            if (round_exp > -2 && round_exp < 2) {
-                this._elements.ylabel_suffix = ""
-                this._elements.ymin.text(this.combined ? "" : Math.round(-this.ymax * round_factor) / round_factor);
-                this._elements.ymax.text(Math.round(this.ymax * round_factor * ymax_factor) / round_factor)
+                exp_label = round_exp <= -2 || round_exp >= 2;
+            this._elements.ylabel_suffix = exp_label ? " x10 <tspan font-size=\"8px\" baseline-shift=\"super\">" + (1 - round_exp) + "</tspan>" : "";
+            if (this.combined) {
+                this._elements.ymin.text("");
+                this._elements.ymax.text(Math.round((this.ymax - this.ymin) * round_factor) / (exp_label ? 10 : round_factor))
             } else {
-                this._elements.ylabel_suffix = " x10 <tspan font-size=\"8px\" baseline-shift=\"super\">" + (round_exp - 1) + "</tspan>";
-                this._elements.ymin.text(this.combined ? "" : Math.round(-this.ymax * round_factor) / 10);
-                this._elements.ymax.text(Math.round(this.ymax * round_factor * ymax_factor) / 10)
+                this._elements.ymin.text(Math.round(this.ymin * round_factor) / (exp_label ? 10 : round_factor));
+                this._elements.ymax.text(Math.round(this.ymax * round_factor) / (exp_label ? 10 : round_factor))
             };
 
             this.xscale = d3.scaleLinear()
                 .domain([this.xmin, this.xmax])
                 .range([this.margins.left, this.width - this.margins.right]);
             this.yscale = d3.scaleLinear()
-                .domain([-this.ymax * !this.combined, this.ymax * ymax_factor])
+                .domain(this.combined ? [0, this.ymax - this.ymin] : [this.ymin, this.ymax])
                 .range([this.height - this.margins.bottom, this.margins.top]);
 
             this._elements.refline
                 .attr("x1", this.xscale(0))
                 .attr("x2", this.xscale(0))
-                .attr("y1", this.yscale(this.combined ? 0 : -this.ymax))
-                .attr("y2", this.yscale(this.ymax * ymax_factor))
+                .attr("y1", this.yscale(this.combined ? 0 : this.ymin))
+                .attr("y2", this.yscale(this.combined ? this.ymax - this.ymin : this.ymax))
                 .style("display", this.xmin < 0 && this.xmax > 0 ? null : "none");
+
+            this._elements.midaxis_top.attr("transform", "translate(0," + this.yscale(0) + ")");
+            this._elements.midaxis_bottom.attr("transform", "translate(0," + this.yscale(0) + ")");
 
             this._elements.ylabel.select("text").html(this.ylabel + this._elements.ylabel_suffix);
 
             if (change_input) {
-                $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymax * ymax_factor)
+                $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
         },
 
@@ -614,7 +616,7 @@ $(function() {
             })
 
             if (plot) {
-                this.scale_axes(undefined, undefined, undefined, true, true);
+                this.scale_axes(undefined, undefined, undefined, true, false);
 
                 $("#settings-table").settings_table("plot_all_composites")
             }
@@ -721,7 +723,7 @@ $(function() {
 
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
-                smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax,
+                smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax, ymin: this.ymin,
                 ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace,
                 show_legend: this.show_legend}
         },
@@ -729,12 +731,13 @@ $(function() {
         import: function(data) {
             if ("combined" in data) {
                 this.toggle_combined(data.combined, false);
+                $("#axes-input").axes_input("toggle_combined", data.combined);
                 d3.select("#combined-checkbox").property("checked", data.combined);
                 d3.select("#separate-color-checkbox").property("disabled", data.combined)
             };
 
-            if ("xmin" in data && "xmax" in data && "ymax" in data) {
-                this.scale_axes(data.xmin, data.xmax, data.ymax, true, true)
+            if ("xmin" in data && "xmax" in data && "ymin" in data && "ymax" in data) {
+                this.scale_axes(data.xmin, data.xmax, data.ymin, data.ymax, true, true)
             };
 
             if ("opacity" in data) {
@@ -781,7 +784,8 @@ $(function() {
             this.xlabel = "Position (bp)";
             this.ylabel = "Occupancy (AU)";
 
-            $("#axes-input").axes_input("change_axis_limits", -500, 500, 1);
+            $("#axes-input").axes_input("toggle_combined", false);
+            $("#axes-input").axes_input("change_axis_limits", -500, 500, -1, 1, true, true);
             $("#opacity-input").opacity_input("change_opacity", 1);
             $("#smoothing-input").smoothing_input("change_smoothing", 7);
             $("#shift-input").shift_input("change_shift", 0);
