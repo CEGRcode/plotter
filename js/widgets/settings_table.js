@@ -52,7 +52,7 @@ $(function() {
 
         plot_all_composites: function(scale_axes=false, allow_shrink=false) {
             if (scale_axes) {
-                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, parseFloat(scale_axes.ymax.toPrecision(2)), allow_shrink || this._elements.rows.reduce(function(sum, row) {
+                $("#main-plot").main_plot("scale_axes", scale_axes.xmin, scale_axes.xmax, parseFloat(scale_axes.ymin.toPrecision(2)), parseFloat(scale_axes.ymax.toPrecision(2)), allow_shrink || this._elements.rows.reduce(function(sum, row) {
                     let inst = $(row.node()).settings_row("instance");
                     return sum + (inst.files_loaded && !inst.hide)
                 }, 0) === 1, true)
@@ -89,17 +89,19 @@ $(function() {
             } else {
                 let xmin = Infinity,
                     xmax = -Infinity,
+                    ymin = -Infinity,
                     ymax = -Infinity;
                 this._elements.rows.forEach(function(row) {
                     let inst = $(row.node()).settings_row("instance");
                     if (inst.files_loaded && !inst.hide) {
                         xmin = Math.min(xmin, inst.xmin);
                         xmax = Math.max(xmax, inst.xmax);
-                        ymax = Math.max(ymax, Math.max(...inst.sense, ...inst.anti) * inst.scale)
+                        ymin = Math.max(ymin, Math.max(...inst.anti) * inst.scale);
+                        ymax = Math.max(ymax, Math.max(...inst.sense) * inst.scale)
                     }
                 });
 
-                $("#main-plot").main_plot("scale_axes", xmin, xmax, parseFloat(ymax.toPrecision(2)), true, true);
+                $("#main-plot").main_plot("scale_axes", xmin, xmax, parseFloat(-ymin.toPrecision(2)), parseFloat(ymax.toPrecision(2)), true, true);
                 this.plot_all_composites()
             }
         },
@@ -548,7 +550,7 @@ $(function() {
 
             // Update composite plot
             if (plot) {
-                $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymax: Math.max(...this.sense, ...this.anti)});
+                $("#settings-table").settings_table("plot_all_composites", {xmin: this.xmin, xmax: this.xmax, ymin: -Math.max(...this.anti), ymax: Math.max(...this.sense)});
                 $("#main-plot").main_plot("update_legend")
             }
         },
@@ -733,7 +735,7 @@ $(function() {
             this.hide = false;
             this.options.ids = [];
             d3.select(this.element.context).select("td.name-col div").text(this.options.name);
-            d3.select(this.element.context).select("td.scale-col input").node().value = "";
+            d3.select(this.element.context).select("td.scale-col input").node().value = 1;
             d3.select(this.element.context).select("td.opacity-col input").node().value = "";
             d3.select(this.element.context).select("td.smoothing-col input").node().value = "";
             d3.select(this.element.context).select("td.shift-col input").node().value = "";
