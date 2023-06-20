@@ -1,6 +1,7 @@
 $(function() {
     // Main plot widget
     $.widget("composite_plot.main_plot", {
+        // Default plot settings
         title: "Composite plot",
         xmin: -500,
         xmax: 500,
@@ -44,6 +45,7 @@ $(function() {
         },
 
         _create: function() {
+            // Create scales for raw values to svg coordinates
             let xscale = d3.scaleLinear()
                 .domain([this.xmin, this.xmax])
                 .range([this.margins.left, this.width - this.margins.right]);
@@ -53,9 +55,11 @@ $(function() {
                 .range([this.height - this.margins.bottom, this.margins.top]);
             this.yscale = yscale;
 
+            // Create main plot
             let main_plot = d3.select(this.element.context)
                 .attr("viewBox", "0 0 " + this.width + " " + this.height);
             this._elements.main_plot = main_plot;
+            // Create axes
             main_plot.append("g")
                 .attr("transform", "translate(0 " + (this.height - this.margins.bottom) + ")")
                 .call(d3.axisTop(xscale).tickFormat(""))
@@ -74,6 +78,7 @@ $(function() {
             this._elements.midaxis_top = main_plot.append("g")
                 .attr("transform", "translate(0 " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
                 .call(d3.axisTop(xscale).tickFormat(""));
+            // Create vertical line at reference point
             this._elements.refline = main_plot.append("line")
                 .attr("x1", xscale(0))
                 .attr("x2", xscale(0))
@@ -83,6 +88,7 @@ $(function() {
                 .attr("stroke-width", 1)
                 .attr("stroke-dasharray", "5,5")
                 .attr("opacity", .5);
+            // Create axis bound labels
             this._elements.xmin = main_plot.append("text")
                 .attr("x", this.margins.left)
                 .attr("y", this.height - this.margins.bottom + 15)
@@ -107,6 +113,7 @@ $(function() {
                 .style("text-anchor", "end")
                 .attr("font-size", "14px")
                 .text(this.ymax);
+            // Create title and axis labels
             this._elements.title = main_plot.append("g");
             $(this._elements.title.node()).editable_svg_text({
                 label: "title",
@@ -133,11 +140,14 @@ $(function() {
                 rotation: "vertical"
             });
 
+            // Create container for composites
             this._elements.composite_group = main_plot.append("g");
 
+            // Create legend
             this._elements.legend = main_plot.append("g")
                 .attr("transform", "translate(" + (this.width - this.margins.right + 25) + " " + this.margins.top + ")");
 
+            // Create tooltip
             this._elements.tooltip = main_plot.append("g")
                 .attr("id", "composite-plot-tooltip");
 
@@ -154,9 +164,11 @@ $(function() {
         },
 
         add_composite: function(name, color) {
+            // Create container for composite
             let composite = this._elements.composite_group.insert("g", "g.composite")
                 .classed("composite", true);
 
+            // Add white and black trace for contrast at composite edges
             composite.append("path")
                 .classed("white-line", true)
                 .attr("fill", "none")
@@ -173,6 +185,7 @@ $(function() {
                 .attr("d", "")
                 .style("display", this.color_trace ? "none" : null);
 
+            // Add color traces for top and bottom of composite
             composite.append("path")
                 .classed("color-line-top", true)
                 .attr("fill", "none")
@@ -187,6 +200,7 @@ $(function() {
                 .attr("d", "")
                 .style("display", this.color_trace ? null : "none");
 
+            // Add gradients for top and bottom of composite
             composite.append("defs")
                 .append("linearGradient")
                     .attr("id", "composite-gradient-top-" + this._elements.composites.length)
@@ -205,6 +219,7 @@ $(function() {
                     .attr("y1", "100%")
                     .attr("y2", "0%");
 
+            // Add fill polygons for top and bottom of composite
             composite.append("polygon")
                 .classed("composite-fill-top", true)
                 .attr("fill", "url(#composite-gradient-top-" + this._elements.composites.length + ")")
@@ -217,24 +232,29 @@ $(function() {
 
             this._elements.composites.push(composite);
 
+            // Add legend element
             let legend_element = this._elements.legend.append("g")
                 .classed("legend-element", true)
                 .style("display", "none");
 
+            // Add primary legend color
             legend_element.append("polygon")
                 .classed("legend-color-sense", true)
                 .attr("points", "0,0 15,0 15,15 0,15")
                 .attr("fill", color);
+            // Add secondary legend color
             legend_element.append("polygon")
                 .classed("legend-color-anti", true)
                 .attr("points", "15,0 15,15 0,15")
                 .attr("fill", color);
+            // Add black border
             legend_element.append("rect")
                 .attr("width", 15)
                 .attr("height", 15)
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 1)
                 .attr("fill", "none");
+            // Add text
             legend_element.append("text")
                 .attr("x", 20)
                 .attr("y", 10)
@@ -245,9 +265,11 @@ $(function() {
         },
 
         remove_composite: function(i) {
+            // Remove composite
             this._elements.composites[i].remove();
             this._elements.composites.splice(i, 1);
 
+            // Remove corresponding legend item
             this._elements.legend_items[i].remove();
             this._elements.legend_items.splice(i, 1);
 
@@ -255,6 +277,7 @@ $(function() {
         },
 
         reset_composite: function(i) {
+            // Clear composite
             let composite = this._elements.composites[i]
                 .classed("plotted", false)
                 .style("display", "none");
@@ -264,33 +287,44 @@ $(function() {
             composite.selectAll("polygon")
                 .attr("points", "");
 
+            // Reset legend item
             this.change_name(i, "Composite " + i);
             this.update_legend()
         },
 
         plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide) {
+            // Set composite visibility
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
                 .style("display", hide ? "none" : null),
+                // Set x domain as array of integers from xmin to xmax
                 xdomain = Array.from({length: xmax - xmin + 1}, (d, j) => j + xmin);
 
+            // Set parameters to global values if not specified
             opacity = opacity === false ? this.opacity : opacity;
             smoothing = smoothing === false ? this.smoothing : smoothing;
             bp_shift = bp_shift === false ? this.bp_shift : bp_shift;
 
             if (this.combined) {
+                // Calculate defined x domain after shifting
                 let shifted_xdomain = xdomain.filter(x => x - bp_shift >= xdomain[0] && x - bp_shift <= xdomain[xdomain.length - 1]
                         && x + bp_shift >= xdomain[0] && x + bp_shift <= xdomain[xdomain.length - 1]),
+                    // Shift sense and anti occupancy
                     shifted_sense = sense.filter((_, j) => xdomain[j] + bp_shift >= shifted_xdomain[0]
                         && xdomain[j] + bp_shift <= shifted_xdomain[shifted_xdomain.length - 1]),
                     shifted_anti = anti.filter((_, j) => xdomain[j] - bp_shift >= shifted_xdomain[0]
                         && xdomain[j] - bp_shift <= shifted_xdomain[shifted_xdomain.length - 1]),
+                    // Add occupancy for sense and anti
                     combined_occupancy = shifted_sense.map((d, j) => d + shifted_anti[j]),
+                    // Smooth occupancy with moving average
                     {new_xdomain, new_occupancy: smoothed_occupancy} = sliding_window(shifted_xdomain, combined_occupancy, smoothing),
+                    // Truncate x domain to x axis limits
                     truncated_xdomain = new_xdomain.filter(x => x >= this.xmin && x <= this.xmax),
+                    // Truncate occupancy and scale by scale factor
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
                         .map(d => d * scale);
 
+                // Set fill color
                 composite.select(".composite-gradient-top")
                     .selectAll("stop")
                         .data([0, 1])
@@ -299,6 +333,7 @@ $(function() {
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
 
+                // Redraw composite trace
                 if (this.color_trace) {
                     composite.select(".white-line")
                         .style("display", "none")
@@ -351,20 +386,25 @@ $(function() {
                         )
                 };
 
+                // Redraw composite fill
                 composite.select(".composite-fill-top")
                     .attr("points", truncated_xdomain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_occupancy[j])).join(" ") + " "
                         + this.xscale(truncated_xdomain[truncated_xdomain.length - 1]) + "," + this.yscale(0) + " "
                         + this.xscale(truncated_xdomain[0]) + "," + this.yscale(0))
             } else {
+                // Smooth sense and anti occupancy with moving average
                 let {new_xdomain, new_occupancy: smoothed_sense} = sliding_window(xdomain, sense, smoothing),
                     {new_occupancy: smoothed_anti} = sliding_window(xdomain, anti, smoothing),
+                    // Truncate x domain to x axis limits
                     truncated_sense_domain = new_xdomain.map(x => x + bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
                     truncated_anti_domain = new_xdomain.map(x => x - bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
+                    // Truncate sense and anti occupancy and scale by scale factor
                     scaled_sense = smoothed_sense.filter((_, j) => new_xdomain[j] + bp_shift >= this.xmin
                         && new_xdomain[j] + bp_shift <= this.xmax).map(d => d * scale),
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
                         && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
 
+                // Set fill color
                 secondary_color = secondary_color || color;
                 composite.select(".composite-gradient-top")
                     .selectAll("stop")
@@ -381,6 +421,7 @@ $(function() {
                             .attr("stop-color", secondary_color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
 
+                // Redraw composite trace
                 if (this.color_trace) {
                     composite.select(".white-line")
                         .style("display", "none")
@@ -395,8 +436,7 @@ $(function() {
                     composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", null)
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L"));
 
                     composite.select(".color-line-bottom")
                         .attr("stroke", secondary_color)
@@ -424,6 +464,7 @@ $(function() {
                             + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
                 };
 
+                // Redraw composite fill
                 composite.select(".composite-fill-top")
                     .attr("points", truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ")
                         + " " + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0)
@@ -436,11 +477,13 @@ $(function() {
         },
 
         scale_axes: function(xmin, xmax, ymin, ymax, allow_shrink=true, change_input=false) {
+            // Do not scale if locked
             if (this.locked) {
                 return
             };
 
-            if (xmin !== undefined && xmax !== undefined && ymax !== undefined) {
+            // Set axis limits
+            if (xmin !== undefined && xmax !== undefined && ymin !== undefined && ymax !== undefined) {
                 if (allow_shrink) {
                     this.xmin = xmin;
                     this.xmax = xmax;
@@ -454,13 +497,18 @@ $(function() {
                 }
             };
 
+            // Change x axis bound labels
             this._elements.xmin.text(this.xmin);
             this._elements.xmax.text(this.xmax);
+            // Calculate exponent for y axis label
             let round_exp = 1 - Math.floor(Math.log10(this.ymax - this.ymin)),
                 round_factor = 10 ** round_exp,
                 exp_label = round_exp <= -2 || round_exp >= 2;
+            // Change suffix for y axis label
             this._elements.ylabel_suffix = exp_label ? " x10 <tspan font-size=\"8px\" baseline-shift=\"super\">" + (1 - round_exp) + "</tspan>" : "";
+            // Change y axis bound labels
             if (this.combined) {
+                // If combined, lower bound is 0 and upper bound is ymax - ymin
                 this._elements.ymin.text("");
                 this._elements.ymax.text(Math.round((this.ymax - this.ymin) * round_factor) / (exp_label ? 10 : round_factor))
             } else {
@@ -468,6 +516,7 @@ $(function() {
                 this._elements.ymax.text(Math.round(this.ymax * round_factor) / (exp_label ? 10 : round_factor))
             };
 
+            // Update scales for raw values to svg coordinates
             this.xscale = d3.scaleLinear()
                 .domain([this.xmin, this.xmax])
                 .range([this.margins.left, this.width - this.margins.right]);
@@ -475,6 +524,7 @@ $(function() {
                 .domain(this.combined ? [0, this.ymax - this.ymin] : [this.ymin, this.ymax])
                 .range([this.height - this.margins.bottom, this.margins.top]);
 
+            // Update x=0 reference line
             this._elements.refline
                 .attr("x1", this.xscale(0))
                 .attr("x2", this.xscale(0))
@@ -482,17 +532,21 @@ $(function() {
                 .attr("y2", this.yscale(this.combined ? this.ymax - this.ymin : this.ymax))
                 .style("display", this.xmin < 0 && this.xmax > 0 ? null : "none");
 
+            // Update y=0 axis
             this._elements.midaxis_top.attr("transform", "translate(0," + this.yscale(0) + ")");
             this._elements.midaxis_bottom.attr("transform", "translate(0," + this.yscale(0) + ")");
 
+            // Change y axis label to include exponent
             this._elements.ylabel.select("text").html(this.ylabel + this._elements.ylabel_suffix);
 
             if (change_input) {
+                // Change axes input text boxes
                 $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
         },
 
         update_legend: function() {
+            // Plot legend items in a column 24 pixels per row
             this._elements.legend.selectAll("g")
                 .data(this._elements.composites.map((y => comp => [y += comp.classed("plotted") * 24, comp.classed("plotted") ? null : "none"])(-24)))
                 .join("g")
@@ -515,6 +569,7 @@ $(function() {
         },
 
         change_color: function(i, color, sense_only=false) {
+            // Change color of top half of composite and corresponding legend item
             let composite = this._elements.composites[i];
             composite.select(".composite-gradient-top")
                 .selectAll("stop")
@@ -525,6 +580,7 @@ $(function() {
                 .attr("fill", color);
 
             if (!sense_only) {
+                // If requested, also change color of bottom half of composite
                 composite.select(".composite-gradient-bottom")
                     .selectAll("stop")
                         .attr("stop-color", color);
@@ -534,6 +590,7 @@ $(function() {
         },
 
         change_secondary_color: function(i, color) {
+            // Change color of bottom half of composite and corresponding legend item
             let composite = this._elements.composites[i];
             composite.select(".composite-gradient-bottom")
                 .selectAll("stop")
@@ -545,17 +602,20 @@ $(function() {
         },
 
         change_opacity: function(i, opacity) {
+            // If i is true, change opacity of all composites
             if (i === true) {
                 this.opacity = opacity;
                 $("#settings-table").settings_table("plot_all_composites")
+            // Else if opacity is false, change opacity of composite i to the global opacity
             } else if (opacity === false) {
-                this._elements.composites[i].select(".composite-gradient")
+                this._elements.composites[i].selectAll("linearGradient")
                     .selectAll("stop")
-                        .attr("stop-opacity", (d, i) => (1 - i % 2) * this.opacity)
+                        .attr("stop-opacity", (d, i) => (1 - i) * opacity)
+            // Else change opacity of composite i to the given opacity
             } else {
-                this._elements.composites[i].select(".composite-gradient")
+                this._elements.composites[i].selectAll("linearGradient")
                     .selectAll("stop")
-                        .attr("stop-opacity", (d, i) => (1 - i % 2) * opacity)
+                        .attr("stop-opacity", (d, i) => (1 - i) * opacity)
             }
         },
 
@@ -585,6 +645,7 @@ $(function() {
                     drop_comp = this._elements.composites[drop_idx],
                     drag_legend_item = this._elements.legend_items[drag_idx],
                     drop_legend_item = this._elements.legend_items[drop_idx];
+                // Composite order is reversed from legend and settings table to plot first composites on top
                 if (insert_after) {
                     $(drag_comp.node()).insertBefore(drop_comp.node());
                     $(drag_legend_item.node()).insertAfter(drop_legend_item.node())
@@ -593,6 +654,7 @@ $(function() {
                     $(drag_legend_item.node()).insertBefore(drop_legend_item.node())
                 };
 
+                // Update composite and legend item arrays
                 this._elements.composites.splice(drag_idx, 1);
                 this._elements.composites.splice(drop_idx + insert_after - (drop_idx > drag_idx), 0, drag_comp);
                 this._elements.legend_items.splice(drag_idx, 1);
@@ -605,9 +667,11 @@ $(function() {
         toggle_combined: function(combine, plot=true) {
             this.combined = combine;
 
+            // Toggle display of axis at y=0
             this._elements.midaxis_top.style("display", combine ? "none" : null);
             this._elements.midaxis_bottom.style("display", combine ? "none" : null);
 
+            // Toggle display of bottom half of composite
             this._elements.composites.forEach(function(comp) {
                 comp.select(".color-line-bottom")
                     .style("display", combine ? "none" : null);
@@ -616,6 +680,7 @@ $(function() {
             })
 
             if (plot) {
+                // Replot all composites
                 this.scale_axes(undefined, undefined, undefined, true, false);
 
                 $("#settings-table").settings_table("plot_all_composites")
@@ -625,6 +690,7 @@ $(function() {
         toggle_color_trace: function(color_trace) {
             this.color_trace = color_trace;
 
+            // Toggle display of color trace and white/black lines
             if (color_trace) {
                 this._elements.composite_group.selectAll(".composite .color-line-top")
                     .style("display", null);
@@ -657,20 +723,25 @@ $(function() {
 
         move_tooltip: function(ev) {
             if (this.enable_tooltip) {
+                // Get data for all composites that are plotted and have files loaded
                 let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide),
+                    // Get mouse position relative to plot
                     {x: plot_x, y: plot_y, width, height} = this._elements.main_plot.node().getBoundingClientRect(),
                     mouse_x = (ev.clientX - plot_x) * this.width / width,
                     mouse_y = (ev.clientY - plot_y) * this.height / height;
 
                 if (mouse_x >= this.margins.left && mouse_x <= this.width - this.margins.right &&
                     mouse_y >= this.margins.top && mouse_y <= this.height - this.margins.bottom) {
+                    // Get data for all composites that contain mouse position
                     let mouse_x_scaled = Math.round(this.xscale.invert(mouse_x));
                     data = data.filter(d => d.xmin <= mouse_x_scaled && d.xmax >= mouse_x_scaled);
 
+                    // Move tooltip to mouse position
                     this._elements.tooltip
                         .style("display", null)
                         .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
 
+                    // Create tooltip border and text
                     let tooltip_border = this._elements.tooltip.selectAll("path")
                         .data([null])
                         .join("path")
@@ -683,6 +754,7 @@ $(function() {
                             .attr("stroke", "black")
                             .attr("stroke-width", "0.15px");
 
+                    // Populate tooltip text with data
                     tooltip_text.selectAll("tspan")
                         .data([mouse_x_scaled, ...data])
                         .join("tspan")
@@ -692,8 +764,10 @@ $(function() {
                             .attr("fill", (d, i) => i === 0 ? "black" : d.color)
                             .text((d, i) => i === 0 ? this.xlabel + ": " + d : d.name + ": " + (this.combined ? parseFloat((d.sense[mouse_x_scaled - d.xmin] + d.anti[mouse_x_scaled - d.xmin]).toPrecision(2))
                                 : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
+                    // Get bounding box of text
                     let {y, width: w, height: h} = tooltip_text.node().getBBox();
                     tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
+                    // Update tooltip border
                     tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
                 } else {
                     this._elements.tooltip.style("display", "none")
@@ -715,6 +789,7 @@ $(function() {
         },
 
         toggle_svg_button: function() {
+            // Disable download button while labels are being edited
             let disable = this._elements.main_plot.selectAll("foreignObject").size() > 0;
             d3.select("#download-svg-button")
                 .property("disabled", disable)
