@@ -735,7 +735,7 @@ $(function() {
             this.hide = false;
             this.options.ids = [];
             d3.select(this.element.context).select("td.name-col div").text(this.options.name);
-            d3.select(this.element.context).select("td.scale-col input").node().value = "";
+            d3.select(this.element.context).select("td.scale-col input").node().value = 1;
             d3.select(this.element.context).select("td.opacity-col input").node().value = "";
             d3.select(this.element.context).select("td.smoothing-col input").node().value = "";
             d3.select(this.element.context).select("td.shift-col input").node().value = "";
