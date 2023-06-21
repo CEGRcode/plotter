@@ -20,17 +20,17 @@
             <div class="row" style="padding-top:5px;">
                 <div class="col-4">
                     <div class="row">
-                        <div class="col">
-                            <input type="button" id="json-button" value="Import JSON">
+                        <div class="col-8">
+                            <input type="button" id="json-button" value="Import JSON session">
                             <input type="file" id="json-loader" style="display:none;">
                             <script src="js/events/import_json_button.js"></script>
-                            <input type="button" id="json-download" value="Export JSON">
+                            <input type="button" id="json-download" value="Export session as JSON">
                             <script src="js/events/export_json_button.js"></script>
-                            <input type="button" id="tsv-download" value="Export TSV">
+                            <input type="button" id="tsv-download" value="Export metadata as TSV">
                             <script src="js/events/export_tsv_button.js"></script>
                         </div>
-                        <div class="col text-right">
-                            <input type="button" id="load-composite-button" value="Load composite file">
+                        <div class="col-4 text-right">
+                            <input type="button" id="load-composite-button" value="Load multi-composite">
                             <input type="file" id="composite-loader" style="display:none;">
                             <script src="js/events/load_composite_button.js"></script>
                         </div>
