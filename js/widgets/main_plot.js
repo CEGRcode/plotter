@@ -804,6 +804,7 @@ $(function() {
         },
 
         import: function(data) {
+            // Import data from JSON object
             if ("combined" in data) {
                 this.toggle_combined(data.combined, false);
                 $("#axes-input").axes_input("toggle_combined", data.combined);
@@ -853,6 +854,7 @@ $(function() {
         },
 
         reset: function() {
+            // Reset plot to default settings
             this.combined = false;
             this.locked = false;
             this.title = "Composite Plot";
@@ -868,6 +870,7 @@ $(function() {
                 .property("disabled", false);
             $("#settings-dropdown").settings_dropdown("set_value", "none");
 
+            // Clear plot
             this._elements.main_plot.selectAll("*").remove();
             this._elements.composites = [];
             this._elements.legend_items = [];
@@ -889,6 +892,7 @@ $(function() {
         },
 
         _create: function() {
+            // Create text label
             let label_group = d3.select(this.element.context);
             this.text_label = label_group.append("text")
                 .attr("x", this.options.x)
@@ -905,6 +909,7 @@ $(function() {
 
         toggle_input: function(ev) {
             let label_group = d3.select(this.element.context);
+            // Hide text label and create input box
             this.text_label.style("display", "none");
             this.foreign_object = label_group.append("foreignObject")
                 .attr("x", this.options.x - 200)
@@ -931,12 +936,17 @@ $(function() {
         },
 
         enter_input: function(ev) {
+            // ev.keyCode === 13 is the enter/return key
             if (ev.keyCode === 13) {
+                // Remove input box
                 this.foreign_object.remove();
 
+                // TODO: User can still submit a whitespace string, making the label uneditable
                 if (ev.target.value.trim().length !== 0) {
+                    // Change the text label if the input field is not empty
                     this.change_label(ev.target.value)
                 } else {
+                    // Otherwise, reset the text label to the original text
                     this.text_label.style("display", null)
                 };
 
@@ -946,8 +956,10 @@ $(function() {
 
         change_label: function(new_label) {
             this.options.text = new_label;
+            // Show text label and change text
             this.text_label
                 .style("display", null)
+                // If the label is the y-axis label, add the y-axis suffix
                 .html(new_label + (this.options.label === "ylabel" ? $("#main-plot").main_plot("instance")._elements.ylabel_suffix : ""));
 
             $("#main-plot").main_plot("change_label", this.options.label, new_label)
