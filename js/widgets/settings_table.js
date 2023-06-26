@@ -294,6 +294,15 @@ $(function() {
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            scale_col.append("input")
+                .attr("type", "range")
+                .attr("id", "scale-slider")
+                .attr("value", 1)
+                .attr("min", 1)
+                .attr("max", 1000)
+                .on("input", function() {$(row.node()).settings_row("change_scale", this.value * .01)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
             // Add opacity input
             opacity_col.append("label")
