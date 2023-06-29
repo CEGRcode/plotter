@@ -222,6 +222,8 @@ $(function() {
                 .classed("name-col", true),
                 color_col = row.append("td")
                 .classed("color-col", true),
+                order_arrows = row.append("td")
+                .classed("order_arrows", true),
                 scale_col = row.append("td")
                 .classed("scale-col", true),
                 opacity_col = row.append("td")
@@ -283,6 +285,23 @@ $(function() {
                     .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
             };
 
+            //adds up order button
+            order_arrows.append("button")
+                .attr("type","button")
+                .attr("id","up_arrow")
+                .style("scale",".8")
+                .style("display","grid")
+                .text("⬆️")
+                .on('click', function(){$(row.node()).settings_row("shift_up");})  
+            //adds down order button
+            order_arrows.append("button")
+                .attr("type","button")
+                .text("⬇️")
+                .style("justify-self","center")
+                .style("scale",".8")
+                .on('click', function(){$(row.node()).settings_row("shift_down");})  
+                // .on('click',function(){$(row.node()).settings_row("direct_drop_event", d3.select(this.element.context));})
+
             // Add scale input
             scale_col.append("label")
                 .text("Scale:");
@@ -294,15 +313,21 @@ $(function() {
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            
+            //creates a new slider for the scale input
             scale_col.append("input")
+                .style("margin-left","10px")
                 .attr("type", "range")
-                .attr("id", "scale-slider")
-                .attr("value", 1)
+                .classed("scale-slider", true)
+                .attr("value", 100)
                 .attr("min", 1)
                 .attr("max", 1000)
                 .on("input", function() {$(row.node()).settings_row("change_scale", this.value * .01)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+
+
+
 
             // Add opacity input
             opacity_col.append("label")
@@ -453,19 +478,20 @@ $(function() {
             $("#metadata-table").metadata_table("unhighlight_row", this.options.idx)
         },
 
-        // Handle drop event
-        direct_drop_event: function(ev) {
-            ev.preventDefault();
-            if (ev.dataTransfer.items[0].kind === "file") {
-                let file_list = [];
-                for (let i = 0; i < ev.dataTransfer.items.length; i++) {
-                    file_list.push(ev.dataTransfer.items[i].getAsFile())
-                };
-                this.load_files(file_list)
-            } else {
-                this.insert_row(parseInt(ev.dataTransfer.getData("text/plain")), event.clientY)
-            }
-        },
+       // Handle drop event
+       direct_drop_event: function(ev) {
+        ev.preventDefault();
+        if (ev.dataTransfer.items[0].kind === "file") {
+            let file_list = [];
+            for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+                file_list.push(ev.dataTransfer.items[i].getAsFile())
+            };
+            this.load_files(file_list)
+        } else {
+            this.insert_row(parseInt(ev.dataTransfer.getData("text/plain")), event.clientY)
+        }
+    },
+
 
         // Load composite files
         load_files: async function(file_list) {
@@ -580,6 +606,22 @@ $(function() {
             $("#settings-table").settings_table("insert_row", idx, this_idx, insert_after)
         },
 
+        //shifts a row up by one
+        shift_up: function(){
+            this_idx = parseInt(this.options.idx),
+            $("#metadata-table").metadata_table("insert_row", this_idx - 1, this_idx, true);
+            $("#main-plot").main_plot("change_order",this_idx - 1, this_idx, true);
+            $("#settings-table").settings_table("insert_row", this_idx - 1, this_idx, true);
+        },
+
+        //shifts a row down by one
+        shift_down: function(){
+            this_idx = parseInt(this.options.idx),
+            $("#metadata-table").metadata_table("insert_row", this_idx, this_idx + 1, true);
+            $("#main-plot").main_plot("change_order",this_idx, this_idx + 1, true);
+            $("#settings-table").settings_table("insert_row", this_idx, this_idx + 1, true);
+        },
+
         toggle_draggable: function(val) {
             d3.select(this.element.context).attr("draggable", val)
         },
@@ -617,7 +659,8 @@ $(function() {
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
-                d3.select(this.element.context).select("td.scale-col input").node().value = new_scale;
+                inputs = d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = new_scale;
+                inputs = d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = new_scale * 100;
                 if (plot) {
                     this.plot_composite()
                 }
