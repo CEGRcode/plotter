@@ -28,6 +28,11 @@ $(function() {
             this._elements.table = d3.select(this.element.context)
         },
 
+        //Returns number of current rows
+        get_rows_added: function(){
+            return this.rows_added
+        },
+
         // Add a new row to the table
         add_row: function(ids=[]) {
             let new_row = this._elements.table.append("tr"),
@@ -319,10 +324,10 @@ $(function() {
                 .style("margin-left","10px")
                 .attr("type", "range")
                 .classed("scale-slider", true)
-                .attr("value", 100)
+                .attr("value", 50)
                 .attr("min", 1)
-                .attr("max", 1000)
-                .on("input", function() {$(row.node()).settings_row("change_scale", this.value * .01)})
+                .attr("max", 100)
+                .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
@@ -608,18 +613,26 @@ $(function() {
 
         //shifts a row up by one
         shift_up: function(){
-            this_idx = parseInt(this.options.idx),
-            $("#metadata-table").metadata_table("insert_row", this_idx - 1, this_idx, true);
-            $("#main-plot").main_plot("change_order",this_idx - 1, this_idx, true);
-            $("#settings-table").settings_table("insert_row", this_idx - 1, this_idx, true);
+            this_idx = parseInt(this.options.idx);
+            if (this_idx == 0){
+            }
+            else{
+                $("#metadata-table").metadata_table("insert_row", this_idx - 1, this_idx, true);
+                $("#main-plot").main_plot("change_order",this_idx - 1, this_idx, true);
+                $("#settings-table").settings_table("insert_row", this_idx - 1, this_idx, true);
+            }
         },
 
         //shifts a row down by one
         shift_down: function(){
-            this_idx = parseInt(this.options.idx),
-            $("#metadata-table").metadata_table("insert_row", this_idx, this_idx + 1, true);
-            $("#main-plot").main_plot("change_order",this_idx, this_idx + 1, true);
-            $("#settings-table").settings_table("insert_row", this_idx, this_idx + 1, true);
+            this_idx = parseInt(this.options.idx);
+            if (this_idx == parseInt($("#settings-table").settings_table("get_rows_added")) - 1){
+            }
+            else{
+                $("#metadata-table").metadata_table("insert_row", this_idx, this_idx + 1, true);
+                $("#main-plot").main_plot("change_order",this_idx, this_idx + 1, true);
+                $("#settings-table").settings_table("insert_row", this_idx, this_idx + 1, true);
+            }
         },
 
         toggle_draggable: function(val) {
@@ -659,8 +672,8 @@ $(function() {
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
-                inputs = d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = new_scale;
-                inputs = d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = new_scale * 100;
+                inputs = d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = Math.round(new_scale * 100) / 100;
+                inputs = d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(new_scale) * 50 + 50;
                 if (plot) {
                     this.plot_composite()
                 }
