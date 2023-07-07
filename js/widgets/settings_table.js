@@ -28,11 +28,6 @@ $(function() {
             this._elements.table = d3.select(this.element.context)
         },
 
-        //Returns number of current rows
-        get_rows_added: function(){
-            return this.rows_added
-        },
-
         // Add a new row to the table
         add_row: function(ids=[]) {
             let new_row = this._elements.table.append("tr"),
@@ -227,8 +222,6 @@ $(function() {
                 .classed("name-col", true),
                 color_col = row.append("td")
                 .classed("color-col", true),
-                order_arrows = row.append("td")
-                .classed("order_arrows", true),
                 scale_col = row.append("td")
                 .classed("scale-col", true),
                 opacity_col = row.append("td")
@@ -289,23 +282,6 @@ $(function() {
                     .attr("value", this.secondary_color)
                     .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
             };
-
-            //adds up order button
-            order_arrows.append("button")
-                .attr("type","button")
-                .attr("id","up_arrow")
-                .style("scale",".8")
-                .style("display","grid")
-                .text("⬆️")
-                .on('click', function(){$(row.node()).settings_row("shift_up");})  
-            //adds down order button
-            order_arrows.append("button")
-                .attr("type","button")
-                .text("⬇️")
-                .style("justify-self","center")
-                .style("scale",".8")
-                .on('click', function(){$(row.node()).settings_row("shift_down");})  
-                // .on('click',function(){$(row.node()).settings_row("direct_drop_event", d3.select(this.element.context));})
 
             // Add scale input
             scale_col.append("label")
@@ -609,30 +585,6 @@ $(function() {
             $("#metadata-table").metadata_table("insert_row", idx, this_idx, insert_after);
             $("#main-plot").main_plot("change_order", idx, this_idx, insert_after);
             $("#settings-table").settings_table("insert_row", idx, this_idx, insert_after)
-        },
-
-        //shifts a row up by one
-        shift_up: function(){
-            this_idx = parseInt(this.options.idx);
-            if (this_idx == 0){
-            }
-            else{
-                $("#metadata-table").metadata_table("insert_row", this_idx - 1, this_idx, true);
-                $("#main-plot").main_plot("change_order",this_idx - 1, this_idx, true);
-                $("#settings-table").settings_table("insert_row", this_idx - 1, this_idx, true);
-            }
-        },
-
-        //shifts a row down by one
-        shift_down: function(){
-            this_idx = parseInt(this.options.idx);
-            if (this_idx == parseInt($("#settings-table").settings_table("get_rows_added")) - 1){
-            }
-            else{
-                $("#metadata-table").metadata_table("insert_row", this_idx, this_idx + 1, true);
-                $("#main-plot").main_plot("change_order",this_idx, this_idx + 1, true);
-                $("#settings-table").settings_table("insert_row", this_idx, this_idx + 1, true);
-            }
         },
 
         toggle_draggable: function(val) {
