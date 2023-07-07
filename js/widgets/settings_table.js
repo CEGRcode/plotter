@@ -296,8 +296,8 @@ $(function() {
                 .attr("id","up_arrow")
                 .style("scale",".8")
                 .style("display","grid")
+                .on('click', function(){$(row.node()).settings_row("shift_up");})
                 .text("⬆️")
-                .on('click', function(){$(row.node()).settings_row("shift_up");})  
             //adds down order button
             order_arrows.append("button")
                 .attr("type","button")
