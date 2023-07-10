@@ -291,21 +291,45 @@ $(function() {
             };
 
             //adds up order button
-            order_arrows.append("button")
-                .attr("type","button")
-                .attr("id","up_arrow")
-                .style("scale",".8")
+            let up_arrow = order_arrows.append("div")
+                .attr("title", "up_arrow")
                 .style("display","grid")
-                .on('click', function(){$(row.node()).settings_row("shift_up");})
-                .text("⬆️")
+                .style("margin-top","3px")
+                .append("svg")
+                    .attr("width", "12px")
+                    .attr("height", "10px")
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "0 0 52 25")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .on("click", function() {$(row.node()).settings_row("shift_up");})
+            
+                up_arrow.append("path")
+                    .attr("d", "M 1 24 L 26 1 L 51 24")
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 10)
+                    .node();
+
             //adds down order button
-            order_arrows.append("button")
-                .attr("type","button")
-                .text("⬇️")
+            let down_arrow = order_arrows.append("div")
+                .attr("title", "down_arrow")
                 .style("justify-self","center")
-                .style("scale",".8")
-                .on('click', function(){$(row.node()).settings_row("shift_down");})  
-                // .on('click',function(){$(row.node()).settings_row("direct_drop_event", d3.select(this.element.context));})
+                .append("svg")
+                    .attr("width", "12px")
+                    .attr("height", "10px")
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "0 0 52 25")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .on("click", function() {$(row.node()).settings_row("shift_down");})
+            
+                down_arrow.append("path")
+                    .attr("d", "M 1 1 L 26 24 L 51 1")
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 10)
+                    .node();
 
             // Add scale input
             scale_col.append("label")
@@ -616,10 +640,6 @@ $(function() {
 
         //shifts a row up by one
         shift_up: function(){
-            this_idx = parseInt(this.options.idx),
-            $("#metadata-table").metadata_table("insert_row", this_idx - 1, this_idx, true);
-            $("#main-plot").main_plot("change_order",this_idx - 1, this_idx, true);
-            $("#settings-table").settings_table("insert_row", this_idx - 1, this_idx, true);
             this_idx = parseInt(this.options.idx);
             if (this_idx == 0){
             }
@@ -632,10 +652,6 @@ $(function() {
 
         //shifts a row down by one
         shift_down: function(){
-            this_idx = parseInt(this.options.idx),
-            $("#metadata-table").metadata_table("insert_row", this_idx, this_idx + 1, true);
-            $("#main-plot").main_plot("change_order",this_idx, this_idx + 1, true);
-            $("#settings-table").settings_table("insert_row", this_idx, this_idx + 1, true);
             this_idx = parseInt(this.options.idx);
             if (this_idx == parseInt($("#settings-table").settings_table("get_rows_added")) - 1){
             }
