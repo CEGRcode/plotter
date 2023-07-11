@@ -307,9 +307,6 @@ $(function() {
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
-
-
-
             // Add opacity input
             opacity_col.append("label")
                 .text("Opacity:");
@@ -459,20 +456,19 @@ $(function() {
             $("#metadata-table").metadata_table("unhighlight_row", this.options.idx)
         },
 
-       // Handle drop event
-       direct_drop_event: function(ev) {
-        ev.preventDefault();
-        if (ev.dataTransfer.items[0].kind === "file") {
-            let file_list = [];
-            for (let i = 0; i < ev.dataTransfer.items.length; i++) {
-                file_list.push(ev.dataTransfer.items[i].getAsFile())
-            };
-            this.load_files(file_list)
-        } else {
-            this.insert_row(parseInt(ev.dataTransfer.getData("text/plain")), event.clientY)
-        }
-    },
-
+        // Handle drop event
+        direct_drop_event: function(ev) {
+            ev.preventDefault();
+            if (ev.dataTransfer.items[0].kind === "file") {
+                let file_list = [];
+                for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+                    file_list.push(ev.dataTransfer.items[i].getAsFile())
+                };
+                this.load_files(file_list)
+            } else {
+                this.insert_row(parseInt(ev.dataTransfer.getData("text/plain")), event.clientY)
+            }
+        },
 
         // Load composite files
         load_files: async function(file_list) {
@@ -620,12 +616,13 @@ $(function() {
 
         change_scale: function(new_scale, plot=true) {
             if (isNaN(new_scale)) {
-                d3.select(this.element.context).select("td.scale-col input").node().value = this.scale
+                d3.select(this.element.context).select("td.scale-col input").node().value = this.scale;
+                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
-                inputs = d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = Math.round(new_scale * 100) / 100;
-                inputs = d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(new_scale) * 50 + 50;
+                d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = Math.round(new_scale * 100) / 100;
+                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(new_scale) * 50 + 50;
                 if (plot) {
                     this.plot_composite()
                 }
