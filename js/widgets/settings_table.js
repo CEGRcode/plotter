@@ -294,6 +294,18 @@ $(function() {
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            
+            //creates a new slider for the scale input
+            scale_col.append("input")
+                .style("margin-left","10px")
+                .attr("type", "range")
+                .classed("scale-slider", true)
+                .attr("value", 50)
+                .attr("min", 1)
+                .attr("max", 100)
+                .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
             // Add opacity input
             opacity_col.append("label")
@@ -604,11 +616,13 @@ $(function() {
 
         change_scale: function(new_scale, plot=true) {
             if (isNaN(new_scale)) {
-                d3.select(this.element.context).select("td.scale-col input").node().value = this.scale
+                d3.select(this.element.context).select("td.scale-col input").node().value = this.scale;
+                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
-                d3.select(this.element.context).select("td.scale-col input").node().value = new_scale;
+                d3.select(this.element.context).select("td.scale-col input.setting-text").node().value = Math.round(new_scale * 100) / 100;
+                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(new_scale) * 50 + 50;
                 if (plot) {
                     this.plot_composite()
                 }
