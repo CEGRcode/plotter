@@ -20,6 +20,7 @@ $(function() {
         combined: false,
         color_trace: false,
         locked: false,
+        symmetrical: false,
         enable_tooltip: true,
         show_legend: true,
 
@@ -482,6 +483,45 @@ $(function() {
                 return
             };
 
+            // Makes inputs symmetrical if "Make axes symmetrical" box is checked
+            if(this.symmetrical){
+                if(xmin * -1 != xmax)
+                {
+                    if(this.xmin !== xmin && this.xmax == xmax){
+                        xmax = xmin * -1;
+                    }
+                    else if(this.xmax !== xmax && this.xmin == xmin){
+                        xmin = xmax * -1;
+                    }
+                    else{
+                        if(Math.abs(xmin) > Math.abs(xmax)){
+                            xmax = xmin * -1;
+                        }
+                        else{
+                            xmin = xmax * -1;
+                        }
+                    }
+                }
+                if(ymin * -1 != ymax)
+                {
+                    if(this.ymin !== ymin && this.ymax == ymax){
+                        ymax = ymin * -1;
+                    }
+                    else if(this.ymax !== ymax && this.ymin == ymin){
+                        ymin = ymax * -1;
+                    }
+                    else{
+                        if(Math.abs(ymin) > Math.abs(ymax)){
+                            ymax = ymin * -1;
+                        }
+                        else{
+                            ymin = ymax * -1;
+                        }
+                    }
+                }
+                change_input = true;
+            };
+
             // Set axis limits
             if (xmin !== undefined && xmax !== undefined && ymin !== undefined && ymax !== undefined) {
                 if (allow_shrink) {
@@ -717,6 +757,10 @@ $(function() {
             this.locked = locked
         },
 
+        toggle_symmetrical: function(symmetrical){
+            this.symmetrical = symmetrical;
+        },
+
         toggle_tooltip: function(enable) {
             this.enable_tooltip = enable
         },
@@ -799,7 +843,7 @@ $(function() {
         export: function() {
             return {title: this.title, xlabel: this.xlabel, ylabel: this.ylabel, opacity: this.opacity,
                 smoothing: this.smoothing, bp_shift: this.bp_shift, xmin: this.xmin, xmax: this.xmax, ymin: this.ymin,
-                ymax: this.ymax, combined: this.combined, locked: this.locked, color_trace: this.color_trace,
+                ymax: this.ymax, combined: this.combined, locked: this.locked, symmetrical: this.symmetrical, color_trace: this.color_trace,
                 show_legend: this.show_legend}
         },
 
@@ -842,6 +886,11 @@ $(function() {
                 $("#axes-input").axes_input("toggle_locked", data.locked)
             };
 
+            if ("symmetrical" in data) {
+                this.symmetrical = data.symmetrical;
+                d3.select("#symmetrical_axes_checkbox").property("checked", data.symmetrical);
+            };
+
             if ("color_trace" in data) {
                 this.toggle_color_trace(data.color_trace);
                 d3.select("#color-trace-checkbox").property("checked", data.color_trace)
@@ -857,6 +906,7 @@ $(function() {
             // Reset plot to default settings
             this.combined = false;
             this.locked = false;
+            this.symmetrical = false;
             this.title = "Composite Plot";
             this.xlabel = "Position (bp)";
             this.ylabel = "Occupancy (AU)";
