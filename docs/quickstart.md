@@ -29,9 +29,9 @@ To generate your own data, check out this [tutorial](https://github.com/CEGRcode
 ![Choose Color](image9.png)
 ![Color Wheel](image10.png)
 ![Press Enter to Save](image11.png)
-6. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
+5. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
 ![Renaming Titles](image12.png)
 ![Retyped Text](image13.png)
 ![New Title](image14.png)
-8. Once completed, download your plot as an SVG
+6. Once completed, download your plot as an SVG
 ![Download as SVG](image15.png)
