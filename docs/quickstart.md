@@ -6,6 +6,13 @@
 5. Download the provided data to your device and import it onto the interface
 To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Tutorials/chipexo-tutorial.md)
 
+# Important Buttons
+- Import/Export JSON session: allows users to save their current JSON session (export) and import it at a later date to start where they left off
+- Reset Plot: allows users to reset the plot, outputting an empty plot
+- Select a preset: allows users to apply a preset of already-customized inputs to their plot
+- Autoscale axes: allows the system to automatically scale the axes of the plot
+- Lock axes: locks the current axes inputs so that they are not changeable 
+
 # Tutorial
 1. Click “add entry” to create a new row under IDs
 ![Press Add Entry](image1.png)
