@@ -8,23 +8,23 @@ To generate your own data, check out this [tutorial](https://github.com/CEGRcode
 
 # Tutorial
 1. Click “add entry” to create a new row under IDs
-![alt text](image1.png)
-![alt text](image2.png)
+![Press Add Entry](image1.png)
+![Creates a New Row](image2.png)
 2. Locate the composite files for lgG. One by one, drag each file pertaining to “lgG” into the empty row. Do the same for Gcn5, Spt7, and Sgf73.
-![alt text](image3.png)
-![alt text](image4.png)
-![alt text](image5.png)
+![Choose Files in Directory](image3.png)
+![Highlighted Files in Directory](image4.png)
+![Drag Files in Directory](image5.png)
 3. Rename “Composite 0” to “lgG”, and respectfully for the other files. Changes should be reflected in the legend on the right of the Composite plot.
-![alt text](image6.png)
-![alt text](image7.png)
-![alt text](image8.png)
+![Rename Composite](image6.png)
+![Click to Rename](image7.png)
+![Renamed Composite](image8.png)
 4. Change colors for each of the file names so that each file is a different color in the plot. After choosing colors in the wheel, press “enter” on your keyboard to save the changes.
-![alt text](image9.png)
-![alt text](image10.png)
-![alt text](image11.png)
+![Choose Color](image9.png)
+![Color Wheel](image10.png)
+![Press Enter to Save](image11.png)
 6. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
-![alt text](image12.png)
-![alt text](image13.png)
-![alt text](image14.png)
+![Renaming Titles](image12.png)
+![Retyped Text](image13.png)
+![New Title](image14.png)
 8. Once completed, download your plot as an SVG
-![alt text](image15.png)
+![Download as SVG](image15.png)
