@@ -35,6 +35,7 @@ $(function() {
             // Create x axis controls
             xaxis.append("label")
                 .attr("for", "xmin-text")
+                .attr("id", "x-axis-inputs-label")
                 .text("x axis limits:");
 
             this._elements.xmin_text = xaxis.append("input")
@@ -55,6 +56,7 @@ $(function() {
             // Create y axis controls
             yaxis.append("label")
                 .attr("for", "ymin-text")
+                .attr("id", "y-axis-inputs-label")
                 .text("y axis limits:");
 
             this._elements.ymin_text = yaxis.append("input")

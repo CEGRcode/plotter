@@ -50,7 +50,7 @@
                             <div class="row">
                                 <div class="col">
                                     <input type="checkbox" id="lock-axes-checkbox">
-                                    <label for="lock-axes-checkbox">Lock axes</label>
+                                    <label for="lock-axes-checkbox" id="lock-axes-label">Lock axes</label>
                                     <script src="js/events/lock_axes_checkbox.js"></script>
                                 </div>
                             </div>
@@ -62,7 +62,11 @@
                         <div class="col text-right">
                             <input type="button" id="reset-plot-button" value="Reset plot">
                             <script src="js/events/reset_button.js"></script>
-                        </div>
+                            <div style="display: block; margin-top: 5px;">
+                                <label for="enable-tooltips" id="enable-tooltips-label">Enable tooltips</label>
+                                <input id="enable-tooltips-checkbox" type="checkbox">
+                                <script src="js/tooltips.js"></script>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -121,27 +125,27 @@
                             <div id="shift-input"></div>
                             <script src="js/widgets/shift_input.js"></script>
                             <div>
-                                <label for="combined-checkbox">Combined</label>
+                                <label for="combined-checkbox" id="combined-label">Combined</label>
                                 <input id="combined-checkbox" type="checkbox">
                                 <script src="js/events/combined_checkbox.js"></script>
                             </div>
                             <div>
-                                <label for="separate-color-checkbox">Separate colors for strands</label>
+                                <label for="separate-color-checkbox" id="seperate-color-label">Separate colors for strands</label>
                                 <input id="separate-color-checkbox" type="checkbox">
                                 <script src="js/events/separate_color_checkbox.js"></script>
                             </div>
                             <div>
-                                <label for="color-trace-checkbox">Color trace</label>
+                                <label for="color-trace-checkbox" id="color-trace-label">Color trace</label>
                                 <input id="color-trace-checkbox" type="checkbox">
                                 <script src="js/events/color_trace_checkbox.js"></script>
                             </div>
                             <div>
-                                <label for="tooltip-checkbox">Enable tooltip</label>
+                                <label for="tooltip-checkbox" id="tooltip-label">Enable tooltip</label>
                                 <input id="tooltip-checkbox" type="checkbox" checked>
                                 <script src="js/events/tooltip_checkbox.js"></script>
                             </div>
                             <div>
-                                <label for="show-legend-checkbox">Show legend</label>
+                                <label for="show-legend-checkbox" id="show-legend-label">Show legend</label>
                                 <input id="show-legend-checkbox" type="checkbox" checked>
                                 <script src="js/events/show_legend_checkbox.js"></script>
                             </div>

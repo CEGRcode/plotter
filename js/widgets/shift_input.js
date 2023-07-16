@@ -11,6 +11,7 @@ $(function() {
             let container = d3.select(this.element.context),
                 label = container.append("label")
                     .attr("for", "shift-slider")
+                    .attr("id", "shift-label")
                     .text("BP shift:"),
                 slider = container.append("input")
                     .attr("type", "range")
