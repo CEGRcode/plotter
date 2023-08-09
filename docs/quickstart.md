@@ -15,7 +15,7 @@ To generate your own data, check out this [tutorial](https://github.com/CEGRcode
 
 # Tutorial
 1. Click “add entry” to create a new row under IDs
-![Press Add Entry](/chitvan/image1.png)
+![Press Add Entry](chitvan/image1.png)
 ![Creates a New Row](image2.png)
 2. Locate the composite files for lgG. One by one, drag each file pertaining to “lgG” into the empty row. Do the same for Gcn5, Spt7, and Sgf73.
 ![Choose Files in Directory](image3.png)
