@@ -16,22 +16,22 @@ To generate your own data, check out this [tutorial](https://github.com/CEGRcode
 # Tutorial
 1. Click “add entry” to create a new row under IDs
 ![Press Add Entry](chitvan/image1.png)
-![Creates a New Row](image2.png)
+![Creates a New Row](chitvan/image2.png)
 2. Locate the composite files for lgG. One by one, drag each file pertaining to “lgG” into the empty row. Do the same for Gcn5, Spt7, and Sgf73.
-![Choose Files in Directory](image3.png)
-![Highlighted Files in Directory](image4.png)
-![Drag Files in Directory](image5.png)
+![Choose Files in Directory](chitvan/image3.png)
+![Highlighted Files in Directory](chitvan/image4.png)
+![Drag Files in Directory](chitvan/image5.png)
 3. Rename “Composite 0” to “lgG”, and respectfully for the other files. Changes should be reflected in the legend on the right of the Composite plot.
-![Rename Composite](image6.png)
-![Click to Rename](image7.png)
-![Renamed Composite](image8.png)
+![Rename Composite](chitvan/image6.png)
+![Click to Rename](chitvan/image7.png)
+![Renamed Composite](chitvan/image8.png)
 4. Change colors for each of the file names so that each file is a different color in the plot. After choosing colors in the wheel, press “enter” on your keyboard to save the changes.
-![Choose Color](image9.png)
-![Color Wheel](image10.png)
-![Press Enter to Save](image11.png)
+![Choose Color](chitvan/image9.png)
+![Color Wheel](chitvan/image10.png)
+![Press Enter to Save](chitvan/image11.png)
 5. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
-![Renaming Titles](image12.png)
-![Retyped Text](image13.png)
-![New Title](image14.png)
+![Renaming Titles](chitvan/image12.png)
+![Retyped Text](chitvan/image13.png)
+![New Title](chitvan/image14.png)
 6. Once completed, download your plot as an SVG
-![Download as SVG](image15.png)
+![Download as SVG](chitvan/image15.png)
