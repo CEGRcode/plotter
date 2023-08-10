@@ -120,15 +120,17 @@ $(function() {
                 text: this.title,
                 x: (this.width + this.margins.left - this.margins.right) / 2,
                 y: 20,
-                font_size: 16
-            });
+                font_size: 16,
+                id: "main-plot-title"
+            })
             this._elements.xlabel = main_plot.append("g");
             $(this._elements.xlabel.node()).editable_svg_text({
                 label: "xlabel",
                 text: this.xlabel,
                 x: (this.width + this.margins.left - this.margins.right) / 2,
                 y: this.height - 5,
-                font_size: 16
+                font_size: 16,
+                id: "main-plot-xlabel"
             });
             this._elements.ylabel = main_plot.append("g");
             $(this._elements.ylabel.node()).editable_svg_text({
@@ -137,7 +139,8 @@ $(function() {
                 x: 12,
                 y: (this.height + this.margins.top - this.margins.bottom) / 2,
                 font_size: 16,
-                rotation: "vertical"
+                rotation: "vertical",
+                id: "main-plot-ylabel"
             });
 
             // Create container for composites
@@ -888,7 +891,8 @@ $(function() {
             x: null,
             y: null,
             font_size: null,
-            rotation: "horizontal"
+            rotation: "horizontal",
+            id: id
         },
 
         _create: function() {
@@ -897,6 +901,7 @@ $(function() {
             this.text_label = label_group.append("text")
                 .attr("x", this.options.x)
                 .attr("y", this.options.y)
+                .attr("id", this.options.id)
                 .attr("font-size", this.options.font_size)
                 .attr("transform", "rotate(" + (this.options.rotation === "horizontal" ? 0 : -90 + " " + this.options.x + " " + this.options.y) + ")")
                 .style("text-anchor", "middle")

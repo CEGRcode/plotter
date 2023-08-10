@@ -11,6 +11,7 @@ $(function() {
             let container = d3.select(this.element.context),
                 label = container.append("label")
                     .attr("for", "smoothing-slider")
+                    .attr("id", "smoothing-label")
                     .text("Smoothing:"),
                 slider = container.append("input")
                     .attr("type", "range")

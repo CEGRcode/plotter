@@ -11,6 +11,7 @@ $(function() {
             let container = d3.select(this.element.context),
                 label = container.append("label")
                     .attr("for", "opacity-slider")
+                    .attr("id", "opacity-label")
                     .text("Opacity:"),
                 slider = container.append("input")
                     .attr("type", "range")
