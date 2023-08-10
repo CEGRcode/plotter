@@ -64,7 +64,7 @@ $(function() {
                     .attr("width", "24px")
                     .attr("height", "20px")
                     .attr("baseProfile", "full")
-                    .attr("viewBox", "0 0 25 25")
+                    .attr("viewBox", "0 0 25 26")
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
@@ -91,7 +91,7 @@ $(function() {
                     .attr("width", "24px")
                     .attr("height", "20px")
                     .attr("baseProfile", "full")
-                    .attr("viewBox", "0 0 25 25")
+                    .attr("viewBox", "0 0 25 26")
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
@@ -139,7 +139,7 @@ $(function() {
                     .attr("width", "24px")
                     .attr("height", "20px")
                     .attr("baseProfile", "full")
-                    .attr("viewBox", "0 0 25 25")
+                    .attr("viewBox", "0 0 25 26")
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
@@ -166,7 +166,7 @@ $(function() {
                     .attr("width", "24px")
                     .attr("height", "20px")
                     .attr("baseProfile", "full")
-                    .attr("viewBox", "0 0 25 25")
+                    .attr("viewBox", "0 0 25 26")
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
