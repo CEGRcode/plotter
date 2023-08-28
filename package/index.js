@@ -11,7 +11,7 @@ let sliding_window = function(arr, window) {
 };
 
 // Main plot widget
-$.widget("locus-plotter.main_plot", {
+$.widget("locus-plotter.composite_plot", {
     xscale: null,
     yscale: null,
 
@@ -63,7 +63,6 @@ $.widget("locus-plotter.main_plot", {
             "#3A92E7"
         ],
         settings: {
-            opacity: 1,
             smoothing: 5,
             bp_shift: 0,
             combined: true
@@ -130,8 +129,8 @@ $.widget("locus-plotter.main_plot", {
         this._elements.refline = main_plot.append("line")
             .attr("x1", xscale(0))
             .attr("x2", xscale(0))
-            .attr("y1", yscale(this.options.axis_limits.ymin))
-            .attr("y2", yscale(this.options.axis_limits.ymax))
+            .attr("y1", this.options.margins.top)
+            .attr("y2", this.options.dimensions.height - this.options.margins.bottom)
             .attr("stroke", "gray")
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "5,5")
@@ -161,24 +160,24 @@ $.widget("locus-plotter.main_plot", {
         // Create axis bound labels
         this._elements.labels.xmin = main_plot.append("text")
             .attr("x", this.options.margins.left)
-            .attr("y", this.options.dimensions.height - this.options.margins.bottom + 15)
+            .attr("y", this.options.dimensions.height - this.options.margins.bottom + 18)
             .style("text-anchor", "middle")
             .attr("font-size", "14px")
             .text(this.options.axis_limits.xmin);
         this._elements.labels.xmax = main_plot.append("text")
             .attr("x", this.options.dimensions.width - this.options.margins.right)
-            .attr("y", this.options.dimensions.height - this.options.margins.bottom + 15)
+            .attr("y", this.options.dimensions.height - this.options.margins.bottom + 18)
             .style("text-anchor", "middle")
             .attr("font-size", "14px")
             .text(this.options.axis_limits.xmax);
         this._elements.labels.ymin = main_plot.append("text")
-            .attr("x", 30)
+            .attr("x", 35)
             .attr("y", this.options.dimensions.height - this.options.margins.bottom)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
             .text(this.options.settings.combined ? "" : this.options.axis_limits.ymin);
         this._elements.labels.ymax = main_plot.append("text")
-            .attr("x", 30)
+            .attr("x", 35)
             .attr("y", this.options.margins.top + 10)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
@@ -189,10 +188,25 @@ $.widget("locus-plotter.main_plot", {
 
         // Create legend
         this._elements.legend = main_plot.append("g")
-            .attr("transform", "translate(" + (this.width - this.margins.right + 25) + " " + this.margins.top + ")")
+            .attr("transform", "translate(" + (this.options.dimensions.width - this.options.margins.right + 25) + " " + this.options.margins.top + ")")
     },
 
-    change_xaxis_limits: function(xmin, xmax, plot=true) {
+    change_title: function(title) {
+        this.options.labels.title = title;
+        this._elements.labels.title.text(title)
+    },
+
+    change_xlabel: function(xlabel) {
+        this.options.labels.xlabel = xlabel;
+        this._elements.labels.xlabel.text(xlabel)
+    },
+
+    change_ylabel: function(ylabel) {
+        this.options.labels.ylabel = ylabel;
+        this._elements.labels.ylabel.text(ylabel)
+    },
+
+    change_xaxis_limits: function(xmin, xmax) {
         this.options.axis_limits.xmin = xmin;
         this.options.axis_limits.xmax = xmax;
         this.xscale.domain([xmin, xmax]);
@@ -200,12 +214,10 @@ $.widget("locus-plotter.main_plot", {
         this._elements.labels.xmin.text(xmin);
         this._elements.labels.xmax.text(xmax);
 
-        this._elements.refline.attr("x1", this.xscale(0)).attr("x2", this.xscale(0));
-
-        plot || this.plot_composites()
+        this._elements.refline.attr("x1", this.xscale(0)).attr("x2", this.xscale(0))
     },
 
-    change_yaxis_limits: function(ymin, ymax, plot=true) {
+    change_yaxis_limits: function(ymin, ymax) {
         this.options.axis_limits.ymin = ymin;
         this.options.axis_limits.ymax = ymax;
 
@@ -220,27 +232,15 @@ $.widget("locus-plotter.main_plot", {
             this._elements.labels.ymax.text(ymax);
 
             this._elements.midaxis.attr("transform", "translate(0 " + this.yscale(0) + ")")
-        };
-
-        plot || this.plot_composites()
-    },
-
-    change_opacity: function(opacity) {
-        this.options.settings.opacity = opacity;
-
-        this.plot_composites()
+        }
     },
 
     change_smoothing: function(smoothing) {
-        this.options.settings.smoothing = smoothing;
-
-        this.plot_composites()
+        this.options.settings.smoothing = smoothing
     },
 
     change_bp_shift: function(bp_shift) {
-        this.options.settings.bp_shift = bp_shift;
-
-        this.plot_composites()
+        this.options.settings.bp_shift = bp_shift
     },
 
     combine_strands: function() {
@@ -257,65 +257,6 @@ $.widget("locus-plotter.main_plot", {
         this.change_yaxis_limits(this.options.axis_limits.ymin, this.options.axis_limits.ymax)
     },
 
-    load_composites: function(composites) {
-        this.composite_data = composites;
-
-        let colors = this.options.default_colors;
-
-        // Create composites
-        this._elements.composite_group = this._elements.composite_group.selectAll("g.composite")
-            .data(composites)
-            .join()
-                .classed("composite", true);
-
-        // Add composite line
-        this._elements.composite_group.append("path")
-            .classed("composite-line", true)
-            .attr("fill", "none")
-            .attr("stroke-width", 1)
-            .attr("stroke", (_, i) => colors[i])
-            .attr("d", "");
-
-        this._elements.composites = this._elements.composite_group._groups;
-
-        // Update axis limits and plot
-        let xmin = Infinity, xmax = -Infinity, ymin = 0, ymax = 0;
-        for (let composite of composites) {
-            xmin = Math.min(xmin, composite.xdomain[0]);
-            xmax = Math.max(xmax, composite.xdomain[composite.xdomain.length - 1]);
-            ymax = Math.max(ymax, Math.max(...composite.forward));
-            ymin = Math.min(ymin, -Math.max(...composite.reverse));
-        };
-        this.change_xaxis_limits(xmin, xmax, false);
-        this.change_yaxis_limits(ymin, ymax);
-
-        // Create legend items
-        this._elements.legend = this._elements.legend.selectAll("g")
-            .data(composites)
-            .join()
-                .classed("legend-element", true)
-                .attr("transform", (_, i) => "translate(0 " + (i * 24) + ")")
-                .style("display", "none");
-
-        // Add legend color
-        this._elements.legend.append("rect")
-            .classed("legend-color", true)
-            .attr("width", 15)
-            .attr("height", 15)
-            .attr("stroke", "#000000")
-            .attr("stroke-width", 1)
-            .attr("fill", (_, i) => colors[i]);
-
-        // Add text
-        this._elements.legend.append("text")
-            .attr("x", 20)
-            .attr("y", 10)
-            .attr("font-size", "10px")
-            .text(d => d.name);
-
-        this._elements.legend_items = this._elements.legend._groups
-    },
-
     plot_composites: function() {
         let axis_limits = this.options.axis_limits,
             settings = this.options.settings,
@@ -323,7 +264,7 @@ $.widget("locus-plotter.main_plot", {
             yscale = this.yscale;
 
         if (settings.combined) {
-            this._elements.composites.select("path")
+            this._elements.composites
                 .attr("d", function(d) {
                     let len = d.xdomain.length,
                         // Shift the xdomain and occupancy arrays by the bp_shift
@@ -342,7 +283,7 @@ $.widget("locus-plotter.main_plot", {
                     return "M " + truncated_xdomain.map((x, i) => xscale(x) + " " + yscale(truncated_occupancy[i])).join(" L ")
                 })
         } else {
-            this._elements.composites.select("path")
+            this._elements.composites
                 .attr("d", function(d) {
                     // Smooth the xdomain and occupancy arrays
                     let smoothed_xdomain = sliding_window(d.xdomain, settings.smoothing),
@@ -361,4 +302,55 @@ $.widget("locus-plotter.main_plot", {
                 })
         }
     },
+
+    load_composites: function(composites) {
+        this.composite_data = composites;
+
+        let colors = this.options.default_colors;
+
+        // Create composites
+        this._elements.composites = this._elements.composite_group.selectAll("path")
+            .data(composites)
+            .join("path")
+                .classed("composite-line", true)
+                .attr("fill", "none")
+                .attr("stroke-width", 1)
+                .attr("stroke", (_, i) => colors[i])
+                .attr("d", "");
+
+        // Update axis limits and plot
+        let xmin = Infinity, xmax = -Infinity, ymin = 0, ymax = 0;
+        for (let composite of composites) {
+            xmin = Math.min(xmin, composite.xdomain[0]);
+            xmax = Math.max(xmax, composite.xdomain[composite.xdomain.length - 1]);
+            ymax = Math.max(ymax, Math.max(...composite.forward));
+            ymin = Math.min(ymin, -Math.max(...composite.reverse));
+        };
+        this.change_xaxis_limits(Math.floor(xmin), Math.ceil(xmax));
+        this.change_yaxis_limits(Math.floor(ymin), Math.ceil(ymax));
+        this.plot_composites();
+
+        // Create legend items
+        this._elements.legend_items = this._elements.legend.selectAll("g")
+            .data(composites)
+            .join("g")
+                .classed("legend-element", true)
+                .attr("transform", (_, i) => "translate(0 " + (i * 24) + ")");
+
+        // Add legend color
+        this._elements.legend_items.append("rect")
+            .classed("legend-color", true)
+            .attr("width", 15)
+            .attr("height", 15)
+            .attr("stroke", "#000000")
+            .attr("stroke-width", 1)
+            .attr("fill", (_, i) => colors[i]);
+
+        // Add text
+        this._elements.legend_items.append("text")
+            .attr("x", 20)
+            .attr("y", 10)
+            .attr("font-size", "10px")
+            .text(d => d.name)
+    }
 })
