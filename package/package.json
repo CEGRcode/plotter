@@ -1,0 +1,30 @@
+{
+  "name": "plotter",
+  "version": "0.0.1",
+  "description": "A web application made for plotting genomic data",
+  "main": "index.js",
+  "dependencies": {
+    "jquery": "1.12.4",
+    "jquery-ui": "1.13.2",
+    "d3": "^7.X"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CEGRcode/plotter.git"
+  },
+  "keywords": [
+    "react",
+    "visualization",
+    "nodejs",
+    "bioinformatics"
+  ],
+  "author": "Justin Cha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CEGRcode/plotter/issues"
+  },
+  "homepage": "https://github.com/CEGRcode/plotter#readme"
+}
