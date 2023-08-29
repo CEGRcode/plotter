@@ -338,19 +338,23 @@ $.widget("locus-plotter.composite_plot", {
                 .attr("transform", (_, i) => "translate(0 " + (i * 24) + ")");
 
         // Add legend color
-        this._elements.legend_items.append("rect")
-            .classed("legend-color", true)
-            .attr("width", 15)
-            .attr("height", 15)
-            .attr("stroke", "#000000")
-            .attr("stroke-width", 1)
-            .attr("fill", (_, i) => colors[i]);
+        this._elements.legend_items.selectAll("rect")
+            .data((_, i) => [i])
+            .join("rect")
+                .classed("legend-color", true)
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("stroke", "#000000")
+                .attr("stroke-width", 1)
+                .attr("fill", (_, i) => colors[i]);
 
         // Add text
-        this._elements.legend_items.append("text")
-            .attr("x", 20)
-            .attr("y", 10)
-            .attr("font-size", "10px")
-            .text(d => d.name)
+        this._elements.legend_items.selectAll("text")
+            .data(d => [d])
+            .join("text")
+                .attr("x", 20)
+                .attr("y", 10)
+                .attr("font-size", "10px")
+                .text(d => d.name)
     }
 })
