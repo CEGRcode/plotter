@@ -488,9 +488,12 @@ $(function() {
                     ids.push(id);
 
                     if (id in individual_composites) {
-                        widg.xmin = Math.min(widg.xmin, individual_composites[id].xmin);
-                        widg.xmax = Math.max(widg.xmax, individual_composites[id].xmax);
-                        resolve()
+                        if (!confirm("Composite " + id + " already exists. Overwrite?")) {
+                            reject("Composite " + id + " already exists")
+                        }
+//                        widg.xmin = Math.min(widg.xmin, individual_composites[id].xmin);
+//                        widg.xmax = Math.max(widg.xmax, individual_composites[id].xmax);
+//                        resolve()
                     };
 
                     $("#metadata-table").metadata_table("add_id", widg.options.idx, id);
