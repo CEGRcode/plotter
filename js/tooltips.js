@@ -49,7 +49,6 @@ id = "";
 
 window.addEventListener('mousemove', e => {
     element = document.elementFromPoint(e.clientX, e.clientY);
-    console.log(element.id);
     if (element != null)
     {
         id = element.id.toString();
