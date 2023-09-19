@@ -6,6 +6,8 @@ $(function() {
         xmax: 500,
         ymin: -1,
         ymax: 1,
+        xrange: 1000,
+        yrange: 2,
 
         // Flag to indicate whether axes are locked
         locked: false,
@@ -55,7 +57,9 @@ $(function() {
                 .style("margin-left", "5px")
                 .on("change", function() {$("#axes-input").axes_input("change_axis_limits", null, this.value, null, null)});
 
-            //Appends the "+" svg/button for the xaxis
+            let self = this;
+
+            // Appends the "+" svg/button for the xaxis
             let x_plus = xaxis.append("div")
                 .attr("title", "x_plus")
                 .style("margin-left", "5px")
@@ -69,10 +73,7 @@ $(function() {
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
-                        let value_change = 50;
-                        let xmin = parseInt($("#axes-input").axes_input("get_axis_values", 1, value_change));
-                        let xmax = parseInt($("#axes-input").axes_input("get_axis_values", 0, value_change));
-                        $("#axes-input").axes_input("change_axis_limits", xmin - value_change, xmax + value_change, null, null)
+                        $("#axes-input").axes_input("change_axis_limits", parseInt(self.xmin - self.xrange / 20), parseInt(self.xmax + self.xrange / 20), null, null, true, false)
                     })
             
                 x_plus.append("path")
@@ -82,7 +83,7 @@ $(function() {
                     .attr("stroke-width", 2)
                     .node();
 
-            //Appends the "-" svg/button for the xaxis
+            // Appends the "-" svg/button for the xaxis
             let x_minus = xaxis.append("div")
                 .attr("title", "x_minus")
                 .style("margin-left", "5px")
@@ -96,10 +97,7 @@ $(function() {
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
-                        let value_change = 50;
-                        let xmin = parseInt($("#axes-input").axes_input("get_axis_values", 1, value_change));
-                        let xmax = parseInt($("#axes-input").axes_input("get_axis_values", 0, value_change));
-                        $("#axes-input").axes_input("change_axis_limits", xmin + value_change, xmax - value_change, null, null)
+                        $("#axes-input").axes_input("change_axis_limits", parseInt(self.xmin + self.xrange / 20), parseInt(self.xmax - self.xrange / 20), null, null, true, false)
                     })
             
                 x_minus.append("path")
@@ -108,7 +106,6 @@ $(function() {
                     .attr("stroke", "orange")
                     .attr("stroke-width", 2)
                     .node();
-                
 
             // Create y axis controls
             yaxis.append("label")
@@ -145,10 +142,8 @@ $(function() {
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
-                        let value_change = .1;
-                        let ymin = parseFloat($("#axes-input").axes_input("get_axis_values", 3, value_change));
-                        let ymax = parseFloat($("#axes-input").axes_input("get_axis_values", 2, value_change));
-                        $("#axes-input").axes_input("change_axis_limits", null, null, ymin - value_change, ymax + value_change);
+                        $("#axes-input").axes_input("change_axis_limits", null, null, (self.ymin - self.yrange / 20) * (1 - self.combined),
+                            (self.ymax + self.yrange / 20) * (self.combined + 1), true, false);
                     })
             
                 y_plus.append("path")
@@ -172,10 +167,8 @@ $(function() {
                     .attr("version", "1.1")
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
-                        let value_change = .1;
-                        let ymin = parseFloat($("#axes-input").axes_input("get_axis_values", 3, value_change));
-                        let ymax = parseFloat($("#axes-input").axes_input("get_axis_values", 2, value_change));
-                        $("#axes-input").axes_input("change_axis_limits", null, null, parseFloat(ymin + value_change), parseFloat(ymax - value_change));
+                        $("#axes-input").axes_input("change_axis_limits", null, null, (self.ymin + self.yrange / 20) * (1 - self.combined),
+                            (self.ymax - self.yrange / 20) * (self.combined + 1), true, false);
                     })
             
                 y_minus.append("path")
@@ -186,28 +179,36 @@ $(function() {
                     .node();
         },
 
-        change_axis_limits: function(xmin, xmax, ymin, ymax, change_plot=true) {
+        change_axis_limits: function(xmin, xmax, ymin, ymax, change_plot=true, change_range=true) {
             // Change x axis limits
             if (xmin !== null) {
-                this.xmin = xmin;
+                this.xmin = parseInt(xmin);
             };
             if (xmax !== null) {
-                this.xmax = xmax;
+                this.xmax = parseInt(xmax);
             };
             // Change y axis limits
             if (this.combined && change_plot) {
                 // If the strands are combined, the y axis limits are scaled relative to the difference
                 if (ymax !== null) {
                     let factor = ymax / (this.ymax - this.ymin);
-                    this.ymin = (this.ymin * factor).toPrecision(2);
-                    this.ymax = (this.ymax * factor).toPrecision(2)
+                    this.ymin = parseFloat((this.ymin * factor).toPrecision(2));
+                    this.ymax = parseFloat((this.ymax * factor).toPrecision(2))
                 }
             } else {
                 if (ymin !== null) {
-                    this.ymin = ymin;
+                    this.ymin = parseFloat(ymin);
                 };
                 if (ymax !== null) {
-                    this.ymax = ymax;
+                    this.ymax = parseFloat(ymax);
+                }
+            };
+            if (change_range) {
+                if (xmin !== null || xmax !== null) {
+                    this.xrange = this.xmax - this.xmin
+                };
+                if (ymin !== null || ymax !== null) {
+                    this.yrange = this.ymax - this.ymin
                 }
             };
 
@@ -222,25 +223,6 @@ $(function() {
             if (change_plot) {
                 $("#main-plot").main_plot("scale_axes", this.xmin, this.xmax, this.ymin, this.ymax);
                 $("#settings-table").settings_table("plot_all_composites")
-            }
-        },
-
-        //Returns the current value an axis given an integer and a value the axis is being changed by (so the function calling it can default to zero)
-        get_axis_values: function(axis, change_val) {
-            if (parseInt(axis) == 0){
-                return (this.xmax > change_val) ? this.xmax : change_val;
-            }
-            else if (parseInt(axis) == 1){
-                return (this.xmin < -change_val) ? this.xmin : -change_val;
-            }
-            else if (parseInt(axis) == 2){
-                return (this.ymax > change_val) ? this.ymax : change_val;
-            }
-            else if (parseInt(axis) == 3){
-                return (this.ymin < -change_val) ? this.ymin : -change_val;
-            }
-            else{
-                return null;
             }
         },
 
