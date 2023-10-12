@@ -67,7 +67,7 @@ Retrieve 4D Nucleosome metadata from API for plotter.
 optional arguments:
   -h, --help            show this help message and exit
   -i input_fn, --input input_fn
-                        the tab-delimited file with ENCFF accessions of BAM
+                        the tab-delimited file with 4DNFI accessions of BAM
                         files in the first column
   -o json_fn, --output json_fn
                         the output json filename
