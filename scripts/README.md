@@ -13,6 +13,7 @@ Retrieves the following information keyed on the BAM file accession (ENCFFXXXXXX
 - strain info, run type (single/paired end)
 - target ("None" if not applicable)
 - file size
+- total reads
 - read length
 - genome assembly
 
@@ -50,6 +51,5 @@ optional arguments:
 
 ## Run tests
 ```
-python get_metadata_from_ENCODE.py -i testdata/encode_samples.txt -o testdata/encode_samples.json
-python get_metadata_from_TABfile.py -i testdata/samples.tab -o testdata/samples.json
+python3 get_metadata_from_4DNucleosome.py -i testdata/4dnucleosome_sample.txt -o testdata/4dnucleosome_sample.json 
 ```
