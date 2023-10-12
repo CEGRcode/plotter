@@ -48,9 +48,7 @@ optional arguments:
 ```
 ## get_metadata_from_4DNucleosome.py
 
-** Needs reformatting for different `schema_version` codes but uses None types for info not found**
-
-Retrieves the following information keyed on the BAM file accession (ENCFFXXXXXX) using the ENCODE API.
+Retrieves the following information keyed on the BAM file accession (4DNFIXXXXXXX) using the 4D Nucleosome API.
 - experiment accession (ENSRXXXXXX)
 - assay name
 - biosample accession (ENCBSXXXXXX)
@@ -62,9 +60,9 @@ Retrieves the following information keyed on the BAM file accession (ENCFFXXXXXX
 - genome assembly
 
 ```
-usage: get_metadata_from_ENCODE.py [-h] -i input_fn -o json_fn
+usage: get_metadata_from_4DNucleosome.py [-h] -i input_fn -o json_fn
 
-Retrieve ENCODE metadata from API for plotter.
+Retrieve 4D Nucleosome metadata from API for plotter.
 
 optional arguments:
   -h, --help            show this help message and exit
