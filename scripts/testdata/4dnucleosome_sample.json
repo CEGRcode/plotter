@@ -1,0 +1,114 @@
+{
+    "4DNFIK734P7Z": {
+        "ENCSR": "/experiments-hi-c/4DNEXJCUBTM2/",
+        "ENCLB": "None",
+        "target": "Arima - A1, A2",
+        "ENCBS": "/biosources/4DNSRCCM5D5D/",
+        "strain": "HUES8",
+        "assay": "in situ Hi-C",
+        "assembly": "GRCh38",
+        "file_size": "59552912307",
+        "total_reads": "321592041",
+        "read_length": "None",
+        "run_type": "None"
+    },
+    "4DNFIKSORPB9": {
+        "ENCSR": "/experiments-hi-c/4DNEXW6T5QSA/",
+        "ENCLB": "None",
+        "target": "HindIII",
+        "ENCBS": "/biosources/4DNSRLAXYUCU/",
+        "strain": "GM19204",
+        "assay": "Dilution Hi-C",
+        "assembly": "GRCh38",
+        "file_size": "92909712242",
+        "total_reads": "None",
+        "read_length": "None",
+        "run_type": "None"
+    },
+    "4DNFIP6DJ98P": {
+        "ENCSR": "/experiments-repliseq/4DNEXOLHMWYM/",
+        "ENCLB": "None",
+        "target": "late fraction of 2 fractions",
+        "ENCBS": "/biosources/4DNSRIOTVJ4X/",
+        "strain": "pluripotent stem cell",
+        "assay": "2-stage Repli-seq",
+        "assembly": "GRCh38",
+        "file_size": "606626982",
+        "total_reads": "None",
+        "read_length": "None",
+        "run_type": "None"
+    },
+    "4DNFI66KS84H": {
+        "ENCSR": "/experiments-repliseq/4DNEXOA9VFCD/",
+        "ENCLB": "None",
+        "target": "P2 of 16 fractions",
+        "ENCBS": "/biosources/4DNSRJ3TG8FL/",
+        "strain": "HCT116",
+        "assay": "Multi-stage Repli-seq",
+        "assembly": "GRCh38",
+        "file_size": "1222308231",
+        "total_reads": "None",
+        "read_length": "None",
+        "run_type": "None"
+    },
+    "4DNFI61TAGXP": {
+        "ENCSR": "/experiments-seq/4DNEXHKQPX6M/",
+        "ENCLB": "None",
+        "target": "H2A.Z protein",
+        "ENCBS": "/biosources/4DNSRV3SKQ8M/",
+        "strain": "H1-hESC",
+        "assay": "CUT&RUN",
+        "assembly": "GRCh38",
+        "file_size": "10229433099",
+        "total_reads": "None",
+        "read_length": [
+            {
+                "/files-fastq/4DNFIOXB4NOH": 25,
+                "/files-fastq/4DNFIMTMXANT": 25,
+                "/files-fastq/4DNFIHKEPRLT": 25,
+                "/files-fastq/4DNFIW2Y8BBQ": 25,
+                "/files-fastq/4DNFIABI5ARW": 25,
+                "/files-fastq/4DNFI5TBKNYX": 25,
+                "/files-fastq/4DNFITUXPJN2": 25,
+                "/files-fastq/4DNFILMHOUZC": 25,
+                "/files-fastq/4DNFIPSB3Z5A": 25,
+                "/files-fastq/4DNFIZ9HJHMH": 25,
+                "/files-fastq/4DNFIBNA7Y2C": 25,
+                "/files-fastq/4DNFIT91ZD5W": 25,
+                "/files-fastq/4DNFI7MS4DBN": 25,
+                "/files-fastq/4DNFI2YHB4ZG": 25
+            }
+        ],
+        "run_type": [
+            {
+                "/files-fastq/4DNFIOXB4NOH": "pair-ended",
+                "/files-fastq/4DNFIMTMXANT": "pair-ended",
+                "/files-fastq/4DNFIHKEPRLT": "pair-ended",
+                "/files-fastq/4DNFIW2Y8BBQ": "pair-ended",
+                "/files-fastq/4DNFIABI5ARW": "pair-ended",
+                "/files-fastq/4DNFI5TBKNYX": "pair-ended",
+                "/files-fastq/4DNFITUXPJN2": "pair-ended",
+                "/files-fastq/4DNFILMHOUZC": "pair-ended",
+                "/files-fastq/4DNFIPSB3Z5A": "pair-ended",
+                "/files-fastq/4DNFIZ9HJHMH": "pair-ended",
+                "/files-fastq/4DNFIBNA7Y2C": "pair-ended",
+                "/files-fastq/4DNFIT91ZD5W": "pair-ended",
+                "/files-fastq/4DNFI7MS4DBN": "pair-ended",
+                "/files-fastq/4DNFI2YHB4ZG": "pair-ended"
+            }
+        ]
+    },
+    "4DNFICHIIXAT": {
+        "ENCSR": "/experiments-damid/4DNEXJ6SOGOE/",
+        "ENCLB": "None",
+        "target": "LMNB1 protein",
+        "ENCBS": "/biosources/4DNSRHGVFSRJ/",
+        "strain": "RPE-hTERT",
+        "assay": "pA-DamID",
+        "assembly": "GRCh38",
+        "file_size": "507523701",
+        "total_reads": "None",
+        "read_length": "None",
+        "run_type": "None"
+    }
+}
