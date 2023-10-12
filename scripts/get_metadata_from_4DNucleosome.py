@@ -168,18 +168,22 @@ if __name__ == '__main__':
                 run_type = "pair-ended"
             else:
                 run_type = "single-ended"
-            fastq_read_length_dict[key] = run_type
+            fastq_run_type_dict[key] = run_type
 
         # Get Read Length
         mapped_read_length = None  
         if assay_title == "CUT&RUN":
             mapped_read_length = [fastq_read_length_dict]
+        if mapped_read_length is None:
+            mapped_read_length = "None"
 
         # Get Run Type
         # May need to double check if this is extracted from the right place
         mapped_run_type = None
         if assay_title == "CUT&RUN":
-            mapped_read_length = [fastq_read_length_dict]
+            mapped_run_type = [fastq_run_type_dict]
+        if mapped_run_type is None:
+            mapped_run_type = "None"
 
         # Future work: add audit information
 
@@ -196,7 +200,7 @@ if __name__ == '__main__':
                 'file_size': str(file_size),
                 'total_reads': str(total_reads),
                 'read_length': (mapped_read_length),
-                'run_type': str(mapped_run_type)
+                'run_type': (mapped_run_type)
             }
         })
 
