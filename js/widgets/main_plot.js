@@ -44,6 +44,18 @@ $(function() {
             legend_items: []
         },
 
+        get_xscale: function(){
+            return this.xscale;
+        },
+
+        get_height: function(){
+            return this.height;
+        },
+
+        get_width: function(){
+            return this.width;
+        },
+
         _create: function() {
             // Create scales for raw values to svg coordinates
             let xscale = d3.scaleLinear()

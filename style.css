@@ -137,3 +137,7 @@ td.remove-row {
 .drag-highlight {
     background-color: #DDDDDD
 }
+
+.nucleosome-coord {
+    cursor: ew-resize;
+}
