@@ -156,7 +156,7 @@
                             </div>
                         </div>
                         <div class="text-right" style="width:270px; padding-right:20px; display: block;" id="nucleosome-slider-options">
-                            <div>
+                            <div id="nucleosome-slider">
                                 <svg id="nucleosome-svg" class="nucleosome-svg" style="display: inline; width:146px; height:50px; position:relative;" xmlns="http://www.w3.org/2000/svg">
                                     <rect width="100%" height="100%" style="fill:rgb(46, 139, 185);stroke-width:5;stroke:rgb(3, 100, 122)" />
                                 </svg>
@@ -172,7 +172,6 @@
                             <div>
                                 <label for="mark-nucleosome-text" style="display: inline-block; margin-top: 10px">Mark nucleosome</label>
                                 <input type="text" id="mark-nucleosome-text" value="" style="display: inline;border-style:solid; border-color:rgb(205, 233, 255); border-width:3px">
-                                <script src="js/events/nucleosome-projection-text.js"></script>
                             </div>
                             <div>
                                 <input type="button" id="generate-3D-button" value="Generate 3D Visual" style="margin-top: 10px;">
@@ -181,6 +180,7 @@
                     </div>
                     <input type="button" id="enable-nucleosome-button" value="Enable Nucleosome Slider" style="float: right; margin-bottom: 0px;">
                     <script src="js/events/enable_nucleosome_button.js"></script>
+                    <script src="js/widgets/nucleosome_slider.js"></script>
                 </div>
             </div>
             <div class="row">

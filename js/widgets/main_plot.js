@@ -48,12 +48,8 @@ $(function() {
             return this.xscale;
         },
 
-        get_height: function(){
-            return this.height;
-        },
-
-        get_width: function(){
-            return this.width;
+        get_dimensions: function(){
+            return [this.height, this.width, this.margins.right, this.margins.bottom, this.margins.left, this.margins.top];
         },
 
         _create: function() {
@@ -167,7 +163,7 @@ $(function() {
                 .attr("id", "composite-plot-tooltip");
 
             main_plot.on("mousemove", function(e) {
-                $("#main-plot").main_plot("move_tooltip", e)
+                // $("#main-plot").main_plot("move_tooltip", e)
             });
             main_plot.on("mouseleave", function() {
                 $("#main-plot").main_plot("hide_tooltip")

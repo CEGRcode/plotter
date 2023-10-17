@@ -141,3 +141,7 @@ td.remove-row {
 .nucleosome-coord {
     cursor: ew-resize;
 }
+
+#nucleosome-svg-plot {
+    cursor: ew-resize;
+}
