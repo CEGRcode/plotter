@@ -162,6 +162,12 @@ $(function() {
             this._elements.tooltip = main_plot.append("g")
                 .attr("id", "composite-plot-tooltip");
 
+            main_plot.append("g")
+                .attr("id", "nucleosome-svg-layer");
+
+            main_plot.append("g")
+                .attr("id", "coord-svg-layer");
+
             main_plot.on("mousemove", function(e) {
                 // $("#main-plot").main_plot("move_tooltip", e)
             });
