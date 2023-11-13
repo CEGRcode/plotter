@@ -74,7 +74,6 @@ $(function() {
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
                         $("#axes-input").axes_input("change_axis_limits", parseInt(self.xmin - self.xrange / 20), parseInt(self.xmax + self.xrange / 20), null, null, true, false)
-                        $("#nucleosome-slider").nucleosome_slider("plotNucleosome");
                     })
             
                 x_plus.append("path")
@@ -99,7 +98,6 @@ $(function() {
                     .attr("xmlns", "http://www.w3.org/2000/svg")
                     .on("click", function() {
                         $("#axes-input").axes_input("change_axis_limits", parseInt(self.xmin + self.xrange / 20), parseInt(self.xmax - self.xrange / 20), null, null, true, false)
-                        $("#nucleosome-slider").nucleosome_slider("plotNucleosome");
                     })
             
                 x_minus.append("path")

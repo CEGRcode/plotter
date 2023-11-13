@@ -61,6 +61,7 @@ $(function() {
             for (let row of this._elements.rows) {
                 $(row.node()).settings_row("plot_composite")
             }
+            $("#nucleosome-slider").nucleosome_slider("update_all");
         },
 
         insert_row: function(drag_idx, drop_idx, insert_after) {
