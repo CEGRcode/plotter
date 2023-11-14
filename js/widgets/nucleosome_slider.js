@@ -368,6 +368,10 @@ $(function() {
 
         get_starting_coord(){
             return this.start_coord;
+        },
+
+        get_length(){
+            return this.nucleosome_length;
         }
     });
     $("#nucleosome-slider").nucleosome_slider();
