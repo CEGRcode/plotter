@@ -11,6 +11,7 @@ $(function() {
                 .style("display", "inline");
             d3.select("#coord-svg-layer")
                 .style("display", "inline");
+            $("#main-plot").main_plot("toggle_tooltip", false);
             $("#nucleosome-slider").nucleosome_slider("update_all");
         } else {
             nucleosome_button.attr("value", "Enable Nucleosome Slider");
@@ -22,6 +23,7 @@ $(function() {
                 .style("display", "block");
             d3.select("#nucleosome-slider-options")
                 .style("display", "none");
+            $("#main-plot").main_plot("toggle_tooltip", true);
         }
     })
 })

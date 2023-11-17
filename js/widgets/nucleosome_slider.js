@@ -40,6 +40,15 @@ $(function() {
                 .on("mouseup", function() {
                     self.end_dragging();
                 });
+            self.svg.on("mousemove", function(e) {
+                    self.drag_svg_element(e);
+                })
+                .on("mouseup", function() {
+                    self.end_dragging();
+                })
+                .on("mouseleave", function() {
+                    self.end_dragging();
+                });
         },
 
         get_mouse_pos: function(e) {
@@ -68,15 +77,14 @@ $(function() {
             if (this.selected_element) {
                 var mousePos = this.get_mouse_pos(e);
                 var currentX = parseFloat(this.selected_element.getAttribute("x"));
-                var newX = currentX + (mousePos.x - this.offset.x);
+                var newX = currentX + (mousePos.x - this.offset.x) / (this.nucleosome_length * .01);
                 this.selected_element.setAttribute("x", newX + "%");
                 //Update plot and text box
                 if (this.selected_element.getAttribute("class").includes("mark-coord")){
                     this.plot_nucleosome();
-                } else if (this.selected_element.getAttribute("class").includes("projection-coord")){
-                    this.plot_projection_coords();
                 }
                 this.update_text_box();
+                this.plot_projection_coords();
                 this.offset = this.get_mouse_pos(e);
             }
         },
@@ -119,12 +127,12 @@ $(function() {
                 let start = this.start_coord;
                 if (this.selected_element.getAttribute("class").includes("svg-coord")){
                     if (this.selected_element.getAttribute("class").includes("mark-coord")){
-                        let mark_coords = this.svg.selectAll(".mark-coord");
-                        let positions = mark_coords.nodes().map((element) => parseInt(parseFloat(element.getAttribute("x")) * this.nucleosome_length * .01));
-                        this.mark_text.property("value", positions.join(","));
+                        let svg_coords = this.svg.selectAll(".mark-coord");
+                        this.mark_coords = svg_coords.nodes().map((element) => parseInt(parseFloat(element.getAttribute("x")) * this.nucleosome_length * .01));
+                        this.mark_text.property("value", this.mark_coords.join(","));
                     } else if (this.selected_element.getAttribute("class").includes("projection-coord")){
-                        let plottedCoords = this.svg.selectAll(".projection-coord");
-                        this.projection_coords = plottedCoords.nodes().map((element) => parseInt(parseFloat(element.getAttribute("x")) * this.nucleosome_length * .01 + parseInt(start)));
+                        let svg_coords = this.svg.selectAll(".projection-coord");
+                        this.projection_coords = svg_coords.nodes().map((element) => parseInt(parseFloat(element.getAttribute("x")) * this.nucleosome_length * .01 + parseInt(start)));
                         this.projection_text.property("value", this.projection_coords.join(","));
                     }
                 } else if (this.selected_element.getAttribute("class").includes("plotted-coord")) {
@@ -276,12 +284,7 @@ $(function() {
                         });
                     i += 1;
                 }
-                self.svg.on("mousemove", function(e) {
-                    self.drag_svg_element(e);
-                });
-                self.svg.on("mouseup", function() {
-                    self.end_dragging();
-                });
+
             }
         },
 
@@ -310,12 +313,6 @@ $(function() {
                         }
                         i += 1;
                     }
-                    self.svg.on("mousemove", function(e) {
-                        self.drag_svg_element(e);
-                    });
-                    self.svg.on("mouseup", function() {
-                        self.end_dragging();
-                    });
                 }
                 self.plot_nucleosome();
             });
