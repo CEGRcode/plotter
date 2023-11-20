@@ -22,6 +22,7 @@ $(function() {
 
             $("#settings-table").settings_table("plot_all_composites", {xmin: xmin, xmax: xmax, ymax: ymax}, allow_shrink=true);
             $("#main-plot").main_plot("update_legend")
+            $("#enable-nucleosome-button").prop("disabled", false);
         };
 
         reader.readAsText(file);
