@@ -122,16 +122,25 @@ td.remove-row {
     cursor: pointer
 }
 
-#settings-table .added-row {
-    cursor: grab
+#settings-table .added-table {
+    width: 100%;
+    cursor: grab;
 }
 
-#settings-table .added-row label {
+#settings-table .settings-row {
+    width: 100%;
+    height: 50px;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+#settings-table .added-table label {
     cursor: grab
 }
 
 .mouse-highlight {
-    border: 3px solid #8888FF
+    border: 3px solid #8888FF;
+    position: relative;
 }
 
 .drag-highlight {

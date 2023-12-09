@@ -30,13 +30,14 @@ $(function() {
 
         // Add a new row to the table
         add_row: function(ids=[]) {
-            let new_row = this._elements.table.append("tr"),
+            let new_row = this._elements.table.append("row"),
                 color = this.colors[this.rows_added % this.colors.length];
             $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color, ids: ids, separate_color: this.separate_color});
             this._elements.rows.push(new_row);
 
             // Add a new composite to the plot
-            $("#main-plot").main_plot("add_composite", "Composite " + this.rows_added++, color)
+            $("#main-plot").main_plot("add_composite", "Composite " + this.rows_added++, color);
+            $(new_row.node()).settings_row("change_name", this.rows_added, true);
         },
 
         // Remove a row from the table
@@ -194,6 +195,7 @@ $(function() {
 
         // Create a new row
         _create: function() {
+            let self = this;
             if (this.options.ids.length > 0) {
                 this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
                 this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
@@ -201,12 +203,14 @@ $(function() {
             };
 
             // Add event listeners
-            let row = d3.select(this.element.context)
-                .classed("added-row", true)
+            let row = d3.select(this.element.context)  
+
+            options_table = row.append("table")
                 .attr("draggable", true)
+                .classed("added-table", true)
                 .on("mouseover", function(e) {$(row.node()).settings_row("highlight_row", e, "mouse-highlight")})
                 .on("mouseleave", function(e) {$(row.node()).settings_row("unhighlight_row", e, "mouse-highlight")})
-                .on("dragstart", function(e) {e.dataTransfer.setData("text/plain", $(row.node()).settings_row("option", "idx"))})
+                .on("dragstart", function(e) {e.dataTransfer.setData("text/plain", self.options.idx)})
                 .on("dragover", function(e) {$(row.node()).settings_row("highlight_row", e, "drag-highlight")})
                 .on("dragleave", function(e) {$(row.node()).settings_row("unhighlight_row", e, "drag-highlight")})
                 .on("drop", function(e) {
@@ -215,29 +219,33 @@ $(function() {
                 }),
 
             // Add sliders and buttons
-                drag_col = row.append("td")
+                primary_row = options_table.append("tr")
+                    .classed("settings-row", true);
+                drag_col = primary_row.append("td")
                 .classed("drag-col", true)
                 .style("width", "48px"),
-                name_col = row.append("td")
+                name_col = primary_row.append("td")
                 .classed("name-col", true),
-                color_col = row.append("td")
+                color_col = primary_row.append("td")
                 .classed("color-col", true),
-                scale_col = row.append("td")
+                scale_col = primary_row.append("td")
                 .classed("scale-col", true),
-                opacity_col = row.append("td")
+                opacity_col = primary_row.append("td")
                 .classed("opacity-col", true),
-                smoothing_col = row.append("td")
+                smoothing_col = primary_row.append("td")
                 .classed("smoothing-col", true),
-                shift_col = row.append("td")
+                shift_col = primary_row.append("td")
                 .classed("shift-col", true),
-                hide_col = row.append("td")
+                hide_col = primary_row.append("td")
                 .classed("hide-col", true),
-                upload_col = row.append("td")
+                upload_col = primary_row.append("td")
                 .classed("upload-col", true),
-                id_col = row.append("td")
+                id_col = primary_row.append("td")
+                .style("width", "30%")
+                .style("white-space", "normal")
                 .classed("id-col", true),
-                reset_col = row.append("td")
-                .classed("reset-col", true);
+                more_options_col = primary_row.append("td")
+                .classed("more-options-col", true);
 
             // Add drag handle
             drag_col.append("div")
@@ -263,6 +271,7 @@ $(function() {
             name_col.append("div")
                 .attr("contenteditable", true)
                 .text(this.options.name)
+                .style("width", "auto")
                 .on("input", function() {$(row.node()).settings_row("change_name", this.textContent)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
@@ -426,9 +435,159 @@ $(function() {
                 .text(this.options.ids.join(", "));
 
             // Add reset button
+            more_options_col.append("input")
+                .attr("type", "button")
+                .attr("value", "More Options")
+                .style("float", "right")
+                .on("click", function() {$(row.node()).settings_row("toggle_second_row")});
+            
+            let more_options = options_table.append("tr")
+                .classed("settings-row", true)
+                .classed("second-row", true)
+                .style("margin-right", "0px")
+                .style("display", "none");
+
+            col_one = more_options.append("td"),
+            col_two = more_options.append("td"),
+            baseline_col = more_options.append("td")
+            .classed("baseline-col", true)
+            .attr("colspan", "2"),
+            col_four = more_options.append("td"),
+            col_five = more_options.append("td"),
+            hide_strand_col = more_options.append("td")
+            .classed("hide-strand-col", true)
+            .attr("colspan", "3")
+            .style("white-space", "nowrap"),
+            col_seven = more_options.append("td")
+            .style("width", "30%")
+            .style("white-space", "normal"),
+            reset_col = more_options.append("td")
+            .classed("reset-col", true);
+
+            baseline_col.append("label")
+                .text("Shift occupancy:");
+            baseline_col.append("input")
+                .attr("type", "text")
+                .classed("setting-text", true)
+                .attr("value", 1)
+                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+        
+            //creates a new slider for the scale input
+            baseline_col.append("input")
+                .style("margin-left","10px")
+                .attr("type", "range")
+                .classed("scale-slider", true)
+                .attr("value", 50)
+                .attr("min", 1)
+                .attr("max", 100)
+                .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+
+            positive = hide_strand_col.append("div")
+                .attr("title", "positive")
+                .style("float", "left")
+                .style("margin-right", "15px")
+            positive.append("label")
+                .text("Positive:")
+            let positive_open = positive.append("div")
+            .attr("title", "Hide")
+            .style("display", "inline")
+                .append("svg")
+                    .classed("hide-icon", true)
+                    .classed("eye-open", true)
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "-100 -100 200 200")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .on("click", function() {$(row.node()).settings_row("toggle_positive", true)})
+                    .append("g");
+            positive_open.append("path")
+                .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 3);
+            positive_open.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 30)
+                .attr("fill", "black")
+                .attr("stroke", "none");
+            let positive_closed = positive.append("div")
+                .attr("title", "Show")
+                .append("svg")
+                    .classed("hide-icon", true)
+                    .classed("eye-closed", true)
+                    .attr("title", "Show")
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "-100 -100 200 200")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .style("display", "none")
+                    .on("click", function() {$(row.node()).settings_row("toggle_positive", false)})
+                    .append("g");
+            positive_closed.append("path")
+                .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 3);
+            
+            negative = hide_strand_col.append("div")
+                .attr("title", "negative")
+            negative.append("label")
+                .text("Negative:")
+                .style("display", "inline")
+            
+            let negative_open = negative.append("div")
+            .attr("title", "Hide Negative")
+            .style("display", "inline")
+                .append("svg")
+                    .classed("hide-icon", true)
+                    .classed("eye-open", true)
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "-100 -100 200 200")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .on("click", function() {$(row.node()).settings_row("toggle_positive", true)})
+                    .append("g");
+            negative_open.append("path")
+                .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 3);
+            negative_open.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 30)
+                .attr("fill", "black")
+                .attr("stroke", "none");
+            let negative_closed = negative.append("div")
+                .attr("title", "Show")
+                .append("svg")
+                    .classed("hide-icon", true)
+                    .classed("eye-closed", true)
+                    .attr("title", "Show")
+                    .attr("baseProfile", "full")
+                    .attr("viewBox", "-100 -100 200 200")
+                    .attr("version", "1.1")
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .style("display", "none")
+                    .on("click", function() {$(row.node()).settings_row("toggle_positive", false)})
+                    .append("g");
+            negative_closed.append("path")
+                .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 3);
+
             reset_col.append("input")
                 .attr("type", "button")
                 .attr("value", "Reset")
+                .style("float", "right")
+                .style("color", "red")
                 .on("click", function() {$(row.node()).settings_row("reset")});
         },
 
@@ -445,14 +604,14 @@ $(function() {
         // Highlight the row
         highlight_row: function(ev, hl_class) {
             ev.preventDefault();
-            d3.select(this.element.context).classed(hl_class, true);
+            d3.select(this.element.context).select("table").classed(hl_class, true);
             $("#metadata-table").metadata_table("highlight_row", this.options.idx)
         },
 
         // Unhighlight the row
         unhighlight_row: function(ev, hl_class) {
             ev.preventDefault();
-            d3.select(this.element.context).classed(hl_class, false);
+            d3.select(this.element.context).select("table").classed(hl_class, false);
             $("#metadata-table").metadata_table("unhighlight_row", this.options.idx)
         },
 
@@ -587,12 +746,24 @@ $(function() {
         },
 
         toggle_draggable: function(val) {
-            d3.select(this.element.context).attr("draggable", val)
+            d3.select(this.element.context).select("table").attr("draggable", val)
         },
 
         change_name: function(new_name, change_text=false) {
             this.options.name = new_name;
             $("#main-plot").main_plot("change_name", this.options.idx, new_name);
+
+            let largestWidth = 0;
+            d3.selectAll('.name-col').each(function() {
+                let box = d3.select(this);
+                box.style("min-width", "0px");
+                let width = parseFloat(box.style('width'));
+                largestWidth = Math.max(largestWidth, width);
+            });
+
+            console.log(largestWidth);
+            d3.selectAll(".name-col")
+                .style("min-width", largestWidth + "px");
 
             if (change_text) {
                 d3.select(this.element.context).select("td.name-col div").text(new_name)
@@ -735,6 +906,17 @@ $(function() {
         autoscale_composite: function() {
             if (this.options.ids.length > 0) {
                 this.change_scale(1 / parseFloat(this.options.ids.length), false);
+            }
+        },
+
+        toggle_second_row: function(){
+            let button = d3.select(this.element.context).select("td.more-options-col input");
+            if (button.attr("value") === "More Options"){
+                button.attr("value", "Less Options");
+                d3.select(this.element.context).select("tr.second-row").style("display", "revert");
+            } else {
+                button.attr("value", "More Options");
+                d3.select(this.element.context).select("tr.second-row").style("display", "none");
             }
         },
 
