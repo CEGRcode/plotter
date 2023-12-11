@@ -182,6 +182,8 @@ $(function() {
         smoothing: false,
         bp_shift: false,
         hide: false,
+        hide_forward: false,
+        hide_reverse: false,
         files_loaded: 0,
         secondary_color: null,
 
@@ -487,101 +489,36 @@ $(function() {
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
-            positive = hide_strand_col.append("div")
-                .attr("title", "positive")
+            forward = hide_strand_col.append("div")
+                .attr("title", "forward")
                 .style("float", "left")
                 .style("margin-right", "15px")
-            positive.append("label")
-                .text("Positive:")
-            let positive_open = positive.append("div")
-            .attr("title", "Hide")
-            .style("display", "inline")
-                .append("svg")
-                    .classed("hide-icon", true)
-                    .classed("eye-open", true)
-                    .attr("baseProfile", "full")
-                    .attr("viewBox", "-100 -100 200 200")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .on("click", function() {$(row.node()).settings_row("toggle_positive", true)})
-                    .append("g");
-            positive_open.append("path")
-                .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 3);
-            positive_open.append("circle")
-                .attr("cx", 0)
-                .attr("cy", 0)
-                .attr("r", 30)
-                .attr("fill", "black")
-                .attr("stroke", "none");
-            let positive_closed = positive.append("div")
-                .attr("title", "Show")
-                .append("svg")
-                    .classed("hide-icon", true)
-                    .classed("eye-closed", true)
-                    .attr("title", "Show")
-                    .attr("baseProfile", "full")
-                    .attr("viewBox", "-100 -100 200 200")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .style("display", "none")
-                    .on("click", function() {$(row.node()).settings_row("toggle_positive", false)})
-                    .append("g");
-            positive_closed.append("path")
-                .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 3);
+            forward.append("label")
+                .text("Show forward:")
+            forward.append("input")
+                .attr("type", "checkbox")
+                .classed("direction_checkbox", true)
+                .style("transform", "scale(1.2)")
+                .on("input", function() {
+                    self.toggle_forward(!d3.select(this).property("checked"));
+                })
+
+           
             
-            negative = hide_strand_col.append("div")
-                .attr("title", "negative")
-            negative.append("label")
-                .text("Negative:")
+            reverse = hide_strand_col.append("div")
+                .attr("title", "reverse")
+            reverse.append("label")
+                .text("Show reverse:")
                 .style("display", "inline")
-            
-            let negative_open = negative.append("div")
-            .attr("title", "Hide Negative")
-            .style("display", "inline")
-                .append("svg")
-                    .classed("hide-icon", true)
-                    .classed("eye-open", true)
-                    .attr("baseProfile", "full")
-                    .attr("viewBox", "-100 -100 200 200")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .on("click", function() {$(row.node()).settings_row("toggle_positive", true)})
-                    .append("g");
-            negative_open.append("path")
-                .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 3);
-            negative_open.append("circle")
-                .attr("cx", 0)
-                .attr("cy", 0)
-                .attr("r", 30)
-                .attr("fill", "black")
-                .attr("stroke", "none");
-            let negative_closed = negative.append("div")
-                .attr("title", "Show")
-                .append("svg")
-                    .classed("hide-icon", true)
-                    .classed("eye-closed", true)
-                    .attr("title", "Show")
-                    .attr("baseProfile", "full")
-                    .attr("viewBox", "-100 -100 200 200")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .style("display", "none")
-                    .on("click", function() {$(row.node()).settings_row("toggle_positive", false)})
-                    .append("g");
-            negative_closed.append("path")
-                .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 3);
+            reverse.append("input")
+                .attr("type", "checkbox")
+                .classed("direction_checkbox", true)
+                .style("transform", "scale(1.2)")
+                .on("input", function() {
+                    self.toggle_reverse(!d3.select(this).property("checked"));
+                })
+
+            self.toggle_direction_checkboxes(false);
 
             reset_col.append("input")
                 .attr("type", "button")
@@ -589,6 +526,35 @@ $(function() {
                 .style("float", "right")
                 .style("color", "red")
                 .on("click", function() {$(row.node()).settings_row("reset")});
+        },
+
+        toggle_direction_checkboxes: function(hide){
+            this.hide_forward = hide;
+            this.hide_reverse = hide;
+            if (hide){
+                d3.select(this.element.context).selectAll("input.direction_checkbox")
+                    .attr("disabled", true)
+                    .property('checked', false);
+                d3.select(this.element.context).selectAll("td.hide-strand-col")
+                    .style("opacity", ".5");
+            } else {
+                d3.select(this.element.context).selectAll("input.direction_checkbox")
+                    .attr("disabled", null)
+                    .property('checked', true);
+                d3.select(this.element.context).selectAll("td.hide-strand-col")
+                    .style("opacity", "1");
+            }
+            this.plot_composite();
+        },
+
+        toggle_forward: function(hide){
+            this.hide_forward = hide;
+            this.plot_composite();
+        },
+
+        toggle_reverse: function(hide){
+            this.hide_reverse = hide;
+            this.plot_composite()
         },
 
         // Remove the row
@@ -732,7 +698,7 @@ $(function() {
         // Plot composite data
         plot_composite: function() {
             if (this.files_loaded) {
-                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide)
+                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide, this.hide_forward, this.hide_reverse)
             }
         },
 
@@ -867,6 +833,7 @@ $(function() {
                 .style("display", hide ? "none" : null);
             hide_col.select(".eye-closed")
                 .style("display", hide ? null : "none");
+            this.toggle_direction_checkboxes(hide)
 
             if (plot && this.files_loaded) {
                 $("#main-plot").main_plot("toggle_hide", this.options.idx, hide)
