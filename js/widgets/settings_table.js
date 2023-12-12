@@ -178,6 +178,7 @@ $(function() {
         anti: null,
         composites: null,
         scale: 1,
+        baseline: 0,
         opacity: false,
         smoothing: false,
         bp_shift: false,
@@ -231,7 +232,8 @@ $(function() {
                 color_col = primary_row.append("td")
                 .classed("color-col", true),
                 scale_col = primary_row.append("td")
-                .classed("scale-col", true),
+                .classed("scale-col", true)
+                .classed("slider-col", true),
                 opacity_col = primary_row.append("td")
                 .classed("opacity-col", true),
                 smoothing_col = primary_row.append("td")
@@ -273,7 +275,7 @@ $(function() {
             name_col.append("div")
                 .attr("contenteditable", true)
                 .text(this.options.name)
-                .style("width", "auto")
+                .style("min-width", "5px")
                 .on("input", function() {$(row.node()).settings_row("change_name", this.textContent)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
@@ -294,21 +296,9 @@ $(function() {
                     .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
             };
 
-            // Add scale input
-            scale_col.append("label")
-                .text("Scale:");
-            scale_col.append("input")
-                .attr("type", "text")
-                .classed("setting-text", true)
-                .attr("value", 1)
-                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
-                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
-                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
-                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
-            
+
             //creates a new slider for the scale input
             scale_col.append("input")
-                .style("margin-left","10px")
                 .attr("type", "range")
                 .classed("scale-slider", true)
                 .attr("value", 50)
@@ -317,6 +307,20 @@ $(function() {
                 .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+
+            scale_col.append("input")
+                .attr("type", "text")
+                .classed("setting-text", true)
+                .attr("value", 1)
+                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+
+            // Add scale input
+            scale_col.append("label")
+                .text("Scale:");
+
 
             // Add opacity input
             opacity_col.append("label")
@@ -450,10 +454,10 @@ $(function() {
                 .style("display", "none");
 
             col_one = more_options.append("td"),
-            col_two = more_options.append("td"),
             baseline_col = more_options.append("td")
             .classed("baseline-col", true)
-            .attr("colspan", "2"),
+            .classed("slider-col", true)
+            .attr("colspan", "3"),
             col_four = more_options.append("td"),
             col_five = more_options.append("td"),
             hide_strand_col = more_options.append("td")
@@ -466,28 +470,30 @@ $(function() {
             reset_col = more_options.append("td")
             .classed("reset-col", true);
 
-            baseline_col.append("label")
-                .text("Shift occupancy:");
-            baseline_col.append("input")
-                .attr("type", "text")
-                .classed("setting-text", true)
-                .attr("value", 1)
-                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
-                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
-                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
-                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
-        
             //creates a new slider for the scale input
             baseline_col.append("input")
-                .style("margin-left","10px")
+                .style("float", "right")
                 .attr("type", "range")
-                .classed("scale-slider", true)
+                .classed("shift-slider", true)
                 .attr("value", 50)
                 .attr("min", 1)
                 .attr("max", 100)
-                .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
+                .on("input", function() {$(row.node()).settings_row("change_baseline", (this.value - 50) * (1 / $("#main-plot").main_plot("export").ymax))})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+            baseline_col.append("input")
+                .attr("type", "text")
+                .classed("setting-text", true)
+                .attr("value", 0)
+                .style("float", "right")
+                .style("width", "50px")
+                .on("change", function() {$(row.node()).settings_row("change_baseline", this.value)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            baseline_col.append("label")
+                .text("Shift occupancy:")
+                .style("float", "right");
 
             forward = hide_strand_col.append("div")
                 .attr("title", "forward")
@@ -498,6 +504,7 @@ $(function() {
             forward.append("input")
                 .attr("type", "checkbox")
                 .classed("direction_checkbox", true)
+                .classed("forward_checkbox", true)
                 .style("transform", "scale(1.2)")
                 .on("input", function() {
                     self.toggle_forward(!d3.select(this).property("checked"));
@@ -513,12 +520,11 @@ $(function() {
             reverse.append("input")
                 .attr("type", "checkbox")
                 .classed("direction_checkbox", true)
+                .classed("reverse_checkbox", true)
                 .style("transform", "scale(1.2)")
                 .on("input", function() {
                     self.toggle_reverse(!d3.select(this).property("checked"));
                 })
-
-            self.toggle_direction_checkboxes(false);
 
             reset_col.append("input")
                 .attr("type", "button")
@@ -528,10 +534,10 @@ $(function() {
                 .on("click", function() {$(row.node()).settings_row("reset")});
         },
 
-        toggle_direction_checkboxes: function(hide){
-            this.hide_forward = hide;
-            this.hide_reverse = hide;
-            if (hide){
+        disable_direction_checkboxes: function(disable, plot=true){
+            this.hide_forward = disable;
+            this.hide_reverse = disable;
+            if (disable){
                 d3.select(this.element.context).selectAll("input.direction_checkbox")
                     .attr("disabled", true)
                     .property('checked', false);
@@ -544,17 +550,37 @@ $(function() {
                 d3.select(this.element.context).selectAll("td.hide-strand-col")
                     .style("opacity", "1");
             }
-            this.plot_composite();
+            if (plot){
+                this.plot_composite();
+            }
         },
 
         toggle_forward: function(hide){
             this.hide_forward = hide;
+            d3.select(this.element.context).select("input.forward_checkbox").property("checked", !hide);
             this.plot_composite();
         },
 
         toggle_reverse: function(hide){
             this.hide_reverse = hide;
+            d3.select(this.element.context).select("div.forward input").property("checked", !hide);
             this.plot_composite()
+        },
+
+        change_baseline: function(new_baseline, plot=true){
+            if (isNaN(new_baseline)) {
+                d3.select(this.element.context).select("td.baseline-col input.setting-text").node().value = this.baseline;
+                d3.select(this.element.context).select("td.baseline-col input.shift-slider").node().value = (this.baseline) * $("#main-plot").main_plot("export").ymax + 50;
+
+            } else {
+                new_baseline = new_baseline !== "" ? parseFloat(new_baseline) : 0;
+                this.baseline = new_baseline;
+                d3.select(this.element.context).select("td.baseline-col input.setting-text").node().value = (new_baseline > 0? "+": "") + Math.round(new_baseline * 100) / 100;
+                d3.select(this.element.context).select("td.baseline-col input.shift-slider").node().value = (new_baseline) * $("#main-plot").main_plot("export").ymax + 50;
+                if (plot) {
+                    this.plot_composite()
+                }
+            }
         },
 
         // Remove the row
@@ -698,7 +724,7 @@ $(function() {
         // Plot composite data
         plot_composite: function() {
             if (this.files_loaded) {
-                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide, this.hide_forward, this.hide_reverse)
+                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide, this.hide_forward, this.hide_reverse, this.baseline)
             }
         },
 
@@ -727,7 +753,6 @@ $(function() {
                 largestWidth = Math.max(largestWidth, width);
             });
 
-            console.log(largestWidth);
             d3.selectAll(".name-col")
                 .style("min-width", largestWidth + "px");
 
@@ -757,7 +782,7 @@ $(function() {
         change_scale: function(new_scale, plot=true) {
             if (isNaN(new_scale)) {
                 d3.select(this.element.context).select("td.scale-col input").node().value = this.scale;
-                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
+                d3.select(this.element.context).select("td.scale-slider-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
@@ -833,7 +858,7 @@ $(function() {
                 .style("display", hide ? "none" : null);
             hide_col.select(".eye-closed")
                 .style("display", hide ? null : "none");
-            this.toggle_direction_checkboxes(hide)
+            this.disable_direction_checkboxes(hide)
 
             if (plot && this.files_loaded) {
                 $("#main-plot").main_plot("toggle_hide", this.options.idx, hide)
@@ -895,10 +920,13 @@ $(function() {
             this.anti = null;
             this.options.name = "Composite " + this.options.idx;
             this.scale = 1;
+            this.baseline = 0;
             this.opacity = false;
             this.smoothing = false;
             this.bp_shift = false;
             this.hide = false;
+            this.hide_forward = false;
+            this.hide_reverse = false;
             this.options.ids = [];
             d3.select(this.element.context).select("td.name-col div").text(this.options.name);
             d3.select(this.element.context).select("td.scale-col input").node().value = 1;
@@ -921,10 +949,13 @@ $(function() {
                 color: this.options.color,
                 secondary_color: this.secondary_color,
                 scale: this.scale,
+                baseline: this.baseline,
                 opacity: this.opacity,
                 smoothing: this.smoothing,
                 bp_shift: this.bp_shift,
                 hide: this.hide,
+                hide_forward: this.hide_forward,
+                hide_reverse: this.hide_reverse,
                 files_loaded: this.files_loaded,
                 ids: this.options.ids
             }
@@ -974,6 +1005,15 @@ $(function() {
             };
             if ("anti" in data) {
                 this.anti = data.anti
+            };
+            if ("baseline" in data) {
+                this.baseline = data.baseline
+            };
+            if ("hide_forward" in data) {
+                this.toggle_forward(data.hide_forward);
+            };
+            if ("hide_reverse" in data) {
+                this.toggle_forward(data.hide_reverse);
             };
 
             d3.select(this.element.context).select("td.upload-col label")

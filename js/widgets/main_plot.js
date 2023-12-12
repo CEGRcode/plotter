@@ -295,7 +295,7 @@ $(function() {
             this.update_legend()
         },
 
-        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense, hide_anti) {
+        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false , hide_anti=false, baseline=0) {
             // Set composite visibility
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
@@ -323,9 +323,9 @@ $(function() {
                     {new_xdomain, new_occupancy: smoothed_occupancy} = sliding_window(shifted_xdomain, combined_occupancy, smoothing),
                     // Truncate x domain to x axis limits
                     truncated_xdomain = new_xdomain.filter(x => x >= this.xmin && x <= this.xmax),
-                    // Truncate occupancy and scale by scale factor
+                    // Truncate occupancy and scale by scale factor, adding baseline
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
-                        .map(d => d * scale);
+                        .map(d => ((value = d * scale + baseline) > 0)? value: 0);
 
                 // Set fill color
                 composite.select(".composite-gradient-top")
@@ -403,9 +403,9 @@ $(function() {
                     truncated_anti_domain = new_xdomain.map(x => x - bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
                     // Truncate sense and anti occupancy and scale by scale factor
                     scaled_sense = smoothed_sense.filter((_, j) => new_xdomain[j] + bp_shift >= this.xmin
-                        && new_xdomain[j] + bp_shift <= this.xmax).map(d => d * scale),
+                        && new_xdomain[j] + bp_shift <= this.xmax).map(d => (value = d * scale + baseline) > 0? value: 0),
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
-                        && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
+                        && new_xdomain[j] - bp_shift <= this.xmax).map(d => (value = d * scale + baseline) > 0? value: 0);
                 
                 let sense_path = "";
                 if (!hide_sense){
@@ -458,8 +458,6 @@ $(function() {
                             .attr("stop-color", secondary_color)
                             .attr("stop-opacity", d => (1 - d) * 0);
                 }
-                console.log(!hide_sense);
-                console.log(!hide_anti);
 
                 // Redraw composite trace
                 if (this.color_trace) {
@@ -663,14 +661,6 @@ $(function() {
                 .style("display", hide ? "none" : null);
 
             this.update_legend()
-        },
-
-        toggle_forward: function(i, hide){
-            console.log(this._elements.composites[i]);
-        },
-
-        toggle_reverse: function(i, hide){
-            console.log(this._elements.composites[i]);
         },
 
         change_order: function(drag_idx, drop_idx, insert_after) {

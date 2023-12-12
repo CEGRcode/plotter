@@ -127,15 +127,23 @@ td.remove-row {
     cursor: grab;
 }
 
+#settings-table .added-table td{
+    min-height: 60px;
+}
+
+#settings-table .slider-col > *{
+    float: right;
+    margin: 5px;
+}
+
 #settings-table .settings-row {
     width: 100%;
-    height: 50px;
     border: 1px solid;
     white-space: nowrap;
 }
 
 #settings-table .added-table label {
-    cursor: grab
+    cursor: grab;
 }
 
 .mouse-highlight {
