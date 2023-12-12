@@ -142,13 +142,8 @@ td.remove-row {
     white-space: nowrap;
 }
 
-#settings-table .added-table label {
-    cursor: grab;
-}
-
 .mouse-highlight {
     border: 3px solid #8888FF;
-    position: relative;
 }
 
 .drag-highlight {

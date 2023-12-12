@@ -295,7 +295,7 @@ $(function() {
             this.update_legend()
         },
 
-        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false , hide_anti=false, baseline=0) {
+        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false, hide_anti=false, baseline=0) {
             // Set composite visibility
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
@@ -323,7 +323,7 @@ $(function() {
                     {new_xdomain, new_occupancy: smoothed_occupancy} = sliding_window(shifted_xdomain, combined_occupancy, smoothing),
                     // Truncate x domain to x axis limits
                     truncated_xdomain = new_xdomain.filter(x => x >= this.xmin && x <= this.xmax),
-                    // Truncate occupancy and scale by scale factor, adding baseline
+                    // Truncate occupancy and scale by scale factor, adding baseline value
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
                         .map(d => ((value = d * scale + baseline) > 0)? value: 0);
 
@@ -407,10 +407,10 @@ $(function() {
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
                         && new_xdomain[j] - bp_shift <= this.xmax).map(d => (value = d * scale + baseline) > 0? value: 0);
                 
+                //Create sense path and gradient if not hidden
                 let sense_path = "";
                 if (!hide_sense){
                     sense_path = "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L");
-
                     composite.select(".composite-gradient-top")
                     .selectAll("stop")
                         .data([0, 1])
@@ -418,7 +418,6 @@ $(function() {
                             .attr("offset", d => d)
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
-                    // Redraw composite fill
                     composite.select(".composite-fill-top")
                         .attr("points", truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ")
                             + " " + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0)
@@ -433,6 +432,7 @@ $(function() {
                             .attr("stop-opacity", d => 0);
                 }
 
+                //Create anti path and gradient if not hidden
                 let anti_path = "";
                 if (!hide_anti){
                     anti_path = "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L");
@@ -459,7 +459,7 @@ $(function() {
                             .attr("stop-opacity", d => (1 - d) * 0);
                 }
 
-                // Redraw composite trace
+                // Redraw composite trace for visible strands
                 if (this.color_trace) {
                     composite.select(".white-line")
                         .style("display", "none")
