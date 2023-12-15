@@ -246,7 +246,6 @@ $(function() {
                 upload_col = primary_row.append("td")
                 .classed("upload-col", true),
                 id_col = primary_row.append("td")
-                .style("width", "30%")
                 .style("white-space", "normal")
                 .classed("id-col", true),
                 more_options_col = primary_row.append("td")
@@ -297,8 +296,20 @@ $(function() {
                     .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
             };
 
-            //Creates elements for scale column right-to-left
-            scale_col.append("input")
+            //Creates scale input
+            scale_div = scale_col.append("div")
+                .classed("slider-div", true)
+            scale_div.append("label")
+                .text("Scale:");
+            scale_div.append("input")
+                .attr("type", "text")
+                .classed("setting-text", true)
+                .attr("value", 1)
+                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            scale_div.append("input")
                 .attr("type", "range")
                 .classed("scale-slider", true)
                 .attr("value", 50)
@@ -307,18 +318,6 @@ $(function() {
                 .on("input", function() {$(row.node()).settings_row("change_scale", 10 ** ((this.value - 50)/50))})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
-
-            scale_col.append("input")
-                .attr("type", "text")
-                .classed("setting-text", true)
-                .attr("value", 1)
-                .on("change", function() {$(row.node()).settings_row("change_scale", this.value)})
-                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
-                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
-                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
-
-            scale_col.append("label")
-                .text("Scale:");
 
             // Add opacity input
             opacity_col.append("label")
@@ -468,17 +467,13 @@ $(function() {
             reset_col = secondary_row.append("td")
                 .classed("reset-col", true);
 
-            //Creates elements for baseline col, right-to-left
-            baseline_col.append("input")
-                .attr("type", "range")
-                .classed("shift-slider", true)
-                .attr("value", 50)
-                .attr("min", 1)
-                .attr("max", 100)
-                .on("input", function() {$(row.node()).settings_row("change_baseline", (this.value - 50) * (1 / $("#main-plot").main_plot("export").ymax))})
-                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
-                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
-            baseline_col.append("input")
+            //Creates input for shifting baseline
+            baseline_div = baseline_col.append("div")
+                .classed("slider-div", true)
+            baseline_div.append("label")
+                .text("Shift occupancy:")
+                .style("float", "right");
+            baseline_div.append("input")
                 .attr("type", "text")
                 .classed("setting-text", true)
                 .attr("value", 0)
@@ -488,9 +483,15 @@ $(function() {
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
-            baseline_col.append("label")
-                .text("Shift occupancy:")
-                .style("float", "right");
+            baseline_div.append("input")
+                .attr("type", "range")
+                .classed("shift-slider", true)
+                .attr("value", 50)
+                .attr("min", 1)
+                .attr("max", 100)
+                .on("input", function() {$(row.node()).settings_row("change_baseline", (this.value - 50) * (1 / $("#main-plot").main_plot("export").ymax))})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
 
             //Creates hide-strand input
             forward = hide_strand_col.append("div")
@@ -502,6 +503,7 @@ $(function() {
                 .text("Show forward:")
             forward.append("input")
                 .attr("type", "checkbox")
+                .property("checked", true)
                 .classed("direction_checkbox", true)
                 .classed("forward_checkbox", true)
                 .style("transform", "scale(1.2)")
@@ -515,6 +517,7 @@ $(function() {
                 .style("display", "inline")
             reverse.append("input")
                 .attr("type", "checkbox")
+                .property("checked", true)
                 .classed("direction_checkbox", true)
                 .classed("reverse_checkbox", true)
                 .style("transform", "scale(1.2)")
@@ -875,8 +878,24 @@ $(function() {
         },
 
         update_ids: function(new_ids) {
-            this.options.ids = new_ids;
-            d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
+            if (new_ids != null){
+                this.options.ids = new_ids;
+                d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
+            }
+
+            //Manually adjust width of id-list divs
+            let largestWidth = 0;
+            d3.selectAll('td.id-col').each(function() {
+                let box = d3.select(this);
+                box.style("min-width", "0px")
+                let width = box.node().getBoundingClientRect().width;
+                largestWidth = Math.max(largestWidth, width);
+            });
+            console.log(largestWidth);
+
+            //Largest width usually falls short by a few pixels
+            d3.selectAll('td.id-col')
+                .style("min-width", (largestWidth + 10) + "px");
         },
 
         toggle_color_separated_strands: function(separate) {
@@ -1026,3 +1045,7 @@ $(function() {
 
     $("#settings-table").settings_table()
 })
+
+$(window).resize(function() {
+    $("#settings-table").settings_table("update_ids", 0, null);
+});

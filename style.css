@@ -131,15 +131,20 @@ td.remove-row {
     min-height: 60px;
 }
 
-#settings-table .slider-col > *{
-    float: right;
-    margin: 5px;
+#settings-table .slider-div {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+#settings-table .slider-div > * {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 #settings-table .settings-row {
     width: 100%;
     border: 1px solid;
-    white-space: nowrap;
 }
 
 .mouse-highlight {
