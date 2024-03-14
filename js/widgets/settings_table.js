@@ -30,13 +30,14 @@ $(function() {
 
         // Add a new row to the table
         add_row: function(ids=[]) {
-            let new_row = this._elements.table.append("tr"),
+            let new_row = this._elements.table.append("row"),
                 color = this.colors[this.rows_added % this.colors.length];
             $(new_row.node()).settings_row({idx: this._elements.rows.length, name: "Composite " + this.rows_added, color: color, ids: ids, separate_color: this.separate_color});
             this._elements.rows.push(new_row);
 
             // Add a new composite to the plot
-            $("#main-plot").main_plot("add_composite", "Composite " + this.rows_added++, color)
+            $("#main-plot").main_plot("add_composite", "Composite " + this.rows_added++, color);
+            $(new_row.node()).settings_row("change_name", this.rows_added, true);
         },
 
         // Remove a row from the table
@@ -177,10 +178,13 @@ $(function() {
         anti: null,
         composites: null,
         scale: 1,
+        baseline: 0,
         opacity: false,
         smoothing: false,
         bp_shift: false,
         hide: false,
+        hide_forward: false,
+        hide_reverse: false,
         files_loaded: 0,
         secondary_color: null,
 
@@ -194,6 +198,7 @@ $(function() {
 
         // Create a new row
         _create: function() {
+            let self = this;
             if (this.options.ids.length > 0) {
                 this.xmin = Math.min(...this.options.ids.map(id => individual_composites[id].xmin));
                 this.xmax = Math.max(...this.options.ids.map(id => individual_composites[id].xmax));
@@ -201,12 +206,15 @@ $(function() {
             };
 
             // Add event listeners
-            let row = d3.select(this.element.context)
-                .classed("added-row", true)
+            let row = d3.select(this.element.context)  
+
+            //Create table for each row of the settings table
+            options_table = row.append("table")
                 .attr("draggable", true)
+                .classed("added-table", true)
                 .on("mouseover", function(e) {$(row.node()).settings_row("highlight_row", e, "mouse-highlight")})
                 .on("mouseleave", function(e) {$(row.node()).settings_row("unhighlight_row", e, "mouse-highlight")})
-                .on("dragstart", function(e) {e.dataTransfer.setData("text/plain", $(row.node()).settings_row("option", "idx"))})
+                .on("dragstart", function(e) {e.dataTransfer.setData("text/plain", self.options.idx)})
                 .on("dragover", function(e) {$(row.node()).settings_row("highlight_row", e, "drag-highlight")})
                 .on("dragleave", function(e) {$(row.node()).settings_row("unhighlight_row", e, "drag-highlight")})
                 .on("drop", function(e) {
@@ -214,30 +222,34 @@ $(function() {
                     $(row.node()).settings_row("direct_drop_event", e)
                 }),
 
-            // Add sliders and buttons
-                drag_col = row.append("td")
+            // Add sliders and buttons to first row
+                primary_row = options_table.append("tr")
+                    .classed("settings-row", true);
+                drag_col = primary_row.append("td")
                 .classed("drag-col", true)
                 .style("width", "48px"),
-                name_col = row.append("td")
+                name_col = primary_row.append("td")
                 .classed("name-col", true),
-                color_col = row.append("td")
+                color_col = primary_row.append("td")
                 .classed("color-col", true),
-                scale_col = row.append("td")
-                .classed("scale-col", true),
-                opacity_col = row.append("td")
+                scale_col = primary_row.append("td")
+                .classed("scale-col", true)
+                .classed("slider-col", true),
+                opacity_col = primary_row.append("td")
                 .classed("opacity-col", true),
-                smoothing_col = row.append("td")
+                smoothing_col = primary_row.append("td")
                 .classed("smoothing-col", true),
-                shift_col = row.append("td")
+                shift_col = primary_row.append("td")
                 .classed("shift-col", true),
-                hide_col = row.append("td")
+                hide_col = primary_row.append("td")
                 .classed("hide-col", true),
-                upload_col = row.append("td")
+                upload_col = primary_row.append("td")
                 .classed("upload-col", true),
-                id_col = row.append("td")
+                id_col = primary_row.append("td")
+                .style("white-space", "normal")
                 .classed("id-col", true),
-                reset_col = row.append("td")
-                .classed("reset-col", true);
+                more_options_col = primary_row.append("td")
+                .classed("more-options-col", true);
 
             // Add drag handle
             drag_col.append("div")
@@ -263,6 +275,7 @@ $(function() {
             name_col.append("div")
                 .attr("contenteditable", true)
                 .text(this.options.name)
+                .style("min-width", "5px")
                 .on("input", function() {$(row.node()).settings_row("change_name", this.textContent)})
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
@@ -283,10 +296,12 @@ $(function() {
                     .on("change", function() {$(row.node()).settings_row("change_secondary_color", this.value)});
             };
 
-            // Add scale input
-            scale_col.append("label")
+            //Creates scale input
+            scale_div = scale_col.append("div")
+                .classed("slider-div", true)
+            scale_div.append("label")
                 .text("Scale:");
-            scale_col.append("input")
+            scale_div.append("input")
                 .attr("type", "text")
                 .classed("setting-text", true)
                 .attr("value", 1)
@@ -294,10 +309,7 @@ $(function() {
                 .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
                 .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
                 .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
-            
-            //creates a new slider for the scale input
-            scale_col.append("input")
-                .style("margin-left","10px")
+            scale_div.append("input")
                 .attr("type", "range")
                 .classed("scale-slider", true)
                 .attr("value", 50)
@@ -426,9 +438,99 @@ $(function() {
                 .text(this.options.ids.join(", "));
 
             // Add reset button
+            more_options_col.append("input")
+                .attr("type", "button")
+                .attr("value", "More Options")
+                .style("float", "right")
+                .on("click", function() {$(row.node()).settings_row("toggle_second_row")});
+            
+            //Creates second row for additional options
+            let secondary_row = options_table.append("tr")
+                .classed("settings-row", true)
+                .classed("second-row", true)
+                .style("margin-right", "0px")
+                .style("display", "none");
+
+            //Adds options to secondary row, with cells for features which may be added in the future
+            secondary_row.append("td"),
+            baseline_col = secondary_row.append("td")
+                .classed("baseline-col", true)
+                .classed("slider-col", true)
+                .attr("colspan", "3"),
+            secondary_row.append("td"),
+            secondary_row.append("td"),
+            hide_strand_col = secondary_row.append("td")
+                .classed("hide-strand-col", true)
+                .attr("colspan", "3")
+                .style("white-space", "nowrap"),
+            secondary_row.append("td")
+            reset_col = secondary_row.append("td")
+                .classed("reset-col", true);
+
+            //Creates input for shifting baseline
+            baseline_div = baseline_col.append("div")
+                .classed("slider-div", true)
+            baseline_div.append("label")
+                .text("Shift occupancy:")
+                .style("float", "right");
+            baseline_div.append("input")
+                .attr("type", "text")
+                .classed("setting-text", true)
+                .attr("value", 0)
+                .style("float", "right")
+                .style("width", "50px")
+                .on("change", function() {$(row.node()).settings_row("change_baseline", this.value)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mouseleave", function() {$(row.node()).settings_row("toggle_draggable", true)});
+            baseline_div.append("input")
+                .attr("type", "range")
+                .classed("shift-slider", true)
+                .attr("value", 50)
+                .attr("min", 1)
+                .attr("max", 100)
+                .on("input", function() {$(row.node()).settings_row("change_baseline", (this.value - 50) * (1 / $("#main-plot").main_plot("export").ymax))})
+                .on("mouseup", function() {$(row.node()).settings_row("toggle_draggable", true)})
+                .on("mousedown", function() {$(row.node()).settings_row("toggle_draggable", false)})
+
+            //Creates hide-strand input
+            forward = hide_strand_col.append("div")
+                .attr("title", "forward")
+                .style("float", "left")
+                .style("margin-left", "10%")
+                .style("margin-right", "15px")
+            forward.append("label")
+                .text("Show forward:")
+            forward.append("input")
+                .attr("type", "checkbox")
+                .property("checked", true)
+                .classed("direction_checkbox", true)
+                .classed("forward_checkbox", true)
+                .style("transform", "scale(1.2)")
+                .on("input", function() {
+                    self.toggle_forward(!d3.select(this).property("checked"));
+                })
+            reverse = hide_strand_col.append("div")
+                .attr("title", "reverse")
+            reverse.append("label")
+                .text("Show reverse:")
+                .style("display", "inline")
+            reverse.append("input")
+                .attr("type", "checkbox")
+                .property("checked", true)
+                .classed("direction_checkbox", true)
+                .classed("reverse_checkbox", true)
+                .style("transform", "scale(1.2)")
+                .on("input", function() {
+                    self.toggle_reverse(!d3.select(this).property("checked"));
+                })
+
+            //Add reset button
             reset_col.append("input")
                 .attr("type", "button")
                 .attr("value", "Reset")
+                .style("float", "right")
+                .style("color", "red")
                 .on("click", function() {$(row.node()).settings_row("reset")});
         },
 
@@ -445,14 +547,14 @@ $(function() {
         // Highlight the row
         highlight_row: function(ev, hl_class) {
             ev.preventDefault();
-            d3.select(this.element.context).classed(hl_class, true);
+            d3.select(this.element.context).select("table").classed(hl_class, true);
             $("#metadata-table").metadata_table("highlight_row", this.options.idx)
         },
 
         // Unhighlight the row
         unhighlight_row: function(ev, hl_class) {
             ev.preventDefault();
-            d3.select(this.element.context).classed(hl_class, false);
+            d3.select(this.element.context).select("table").classed(hl_class, false);
             $("#metadata-table").metadata_table("unhighlight_row", this.options.idx)
         },
 
@@ -573,7 +675,7 @@ $(function() {
         // Plot composite data
         plot_composite: function() {
             if (this.files_loaded) {
-                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide)
+                $("#main-plot").main_plot("plot_composite", this.xmin, this.xmax, this.sense, this.anti, this.scale, this.options.color, this.options.separate_color && this.secondary_color, this.options.idx, this.opacity, this.smoothing, this.bp_shift, this.hide, this.hide_forward, this.hide_reverse, this.baseline)
             }
         },
 
@@ -587,12 +689,24 @@ $(function() {
         },
 
         toggle_draggable: function(val) {
-            d3.select(this.element.context).attr("draggable", val)
+            d3.select(this.element.context).select("table").attr("draggable", val)
         },
 
         change_name: function(new_name, change_text=false) {
             this.options.name = new_name;
             $("#main-plot").main_plot("change_name", this.options.idx, new_name);
+
+            //Manually adjust width of name divs
+            let largestWidth = 0;
+            d3.selectAll('.name-col').each(function() {
+                let box = d3.select(this);
+                box.style("min-width", "0px");
+                let width = parseFloat(box.style('width'));
+                largestWidth = Math.max(largestWidth, width);
+            });
+
+            d3.selectAll(".name-col")
+                .style("min-width", largestWidth + "px");
 
             if (change_text) {
                 d3.select(this.element.context).select("td.name-col div").text(new_name)
@@ -620,7 +734,7 @@ $(function() {
         change_scale: function(new_scale, plot=true) {
             if (isNaN(new_scale)) {
                 d3.select(this.element.context).select("td.scale-col input").node().value = this.scale;
-                d3.select(this.element.context).select("td.scale-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
+                d3.select(this.element.context).select("td.scale-slider-col input.scale-slider").node().value = Math.log10(this.scale) * 50 + 50
             } else {
                 new_scale = new_scale !== "" ? parseFloat(new_scale) : 1;
                 this.scale = new_scale;
@@ -696,9 +810,63 @@ $(function() {
                 .style("display", hide ? "none" : null);
             hide_col.select(".eye-closed")
                 .style("display", hide ? null : "none");
+            this.disable_direction_checkboxes(hide)
 
             if (plot && this.files_loaded) {
                 $("#main-plot").main_plot("toggle_hide", this.options.idx, hide)
+            }
+        },
+
+        //Disables direction checkboxes if composite is hidden
+        disable_direction_checkboxes: function(disable, plot=true){
+            this.hide_forward = disable;
+            this.hide_reverse = disable;
+            if (disable){
+                d3.select(this.element.context).selectAll("input.direction_checkbox")
+                    .attr("disabled", true)
+                    .property('checked', false);
+                d3.select(this.element.context).selectAll("td.hide-strand-col")
+                    .style("opacity", ".5");
+            } else {
+                d3.select(this.element.context).selectAll("input.direction_checkbox")
+                    .attr("disabled", null)
+                    .property('checked', true);
+                d3.select(this.element.context).selectAll("td.hide-strand-col")
+                    .style("opacity", "1");
+            }
+            if (plot){
+                this.plot_composite();
+            }
+        },
+
+        //Hides forward strand
+        toggle_forward: function(hide){
+            this.hide_forward = hide;
+            d3.select(this.element.context).select("input.forward_checkbox").property("checked", !hide);
+            this.plot_composite();
+        },
+
+        //Hides reverse strand
+        toggle_reverse: function(hide){
+            this.hide_reverse = hide;
+            d3.select(this.element.context).select("div.forward input").property("checked", !hide);
+            this.plot_composite()
+        },
+
+        //Changes baseline occupancy, adjusting slider for plot scale
+        change_baseline: function(new_baseline, plot=true){
+            if (isNaN(new_baseline)) {
+                d3.select(this.element.context).select("td.baseline-col input.setting-text").node().value = this.baseline;
+                d3.select(this.element.context).select("td.baseline-col input.shift-slider").node().value = (this.baseline) * $("#main-plot").main_plot("export").ymax + 50;
+
+            } else {
+                new_baseline = new_baseline !== "" ? parseFloat(new_baseline) : 0;
+                this.baseline = new_baseline;
+                d3.select(this.element.context).select("td.baseline-col input.setting-text").node().value = (new_baseline > 0? "+": "") + Math.round(new_baseline * 100) / 100;
+                d3.select(this.element.context).select("td.baseline-col input.shift-slider").node().value = (new_baseline) * $("#main-plot").main_plot("export").ymax + 50;
+                if (plot) {
+                    this.plot_composite()
+                }
             }
         },
 
@@ -710,8 +878,24 @@ $(function() {
         },
 
         update_ids: function(new_ids) {
-            this.options.ids = new_ids;
-            d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
+            if (new_ids != null){
+                this.options.ids = new_ids;
+                d3.select(this.element.context).select(".id-col .id-list").text(new_ids.join(", "))
+            }
+
+            //Manually adjust width of id-list divs
+            let largestWidth = 0;
+            d3.selectAll('td.id-col').each(function() {
+                let box = d3.select(this);
+                box.style("min-width", "0px")
+                let width = box.node().getBoundingClientRect().width;
+                largestWidth = Math.max(largestWidth, width);
+            });
+            console.log(largestWidth);
+
+            //Largest width usually falls short by a few pixels
+            d3.selectAll('td.id-col')
+                .style("min-width", (largestWidth + 10) + "px");
         },
 
         toggle_color_separated_strands: function(separate) {
@@ -738,6 +922,17 @@ $(function() {
             }
         },
 
+        toggle_second_row: function(){
+            let button = d3.select(this.element.context).select("td.more-options-col input");
+            if (button.attr("value") === "More Options"){
+                button.attr("value", "Less Options");
+                d3.select(this.element.context).select("tr.second-row").style("display", "revert");
+            } else {
+                button.attr("value", "More Options");
+                d3.select(this.element.context).select("tr.second-row").style("display", "none");
+            }
+        },
+
         reset: function() {
             this.files_loaded = 0;
             this.xmin = Infinity;
@@ -746,10 +941,13 @@ $(function() {
             this.anti = null;
             this.options.name = "Composite " + this.options.idx;
             this.scale = 1;
+            this.baseline = 0;
             this.opacity = false;
             this.smoothing = false;
             this.bp_shift = false;
             this.hide = false;
+            this.hide_forward = false;
+            this.hide_reverse = false;
             this.options.ids = [];
             d3.select(this.element.context).select("td.name-col div").text(this.options.name);
             d3.select(this.element.context).select("td.scale-col input").node().value = 1;
@@ -772,10 +970,13 @@ $(function() {
                 color: this.options.color,
                 secondary_color: this.secondary_color,
                 scale: this.scale,
+                baseline: this.baseline,
                 opacity: this.opacity,
                 smoothing: this.smoothing,
                 bp_shift: this.bp_shift,
                 hide: this.hide,
+                hide_forward: this.hide_forward,
+                hide_reverse: this.hide_reverse,
                 files_loaded: this.files_loaded,
                 ids: this.options.ids
             }
@@ -826,6 +1027,15 @@ $(function() {
             if ("anti" in data) {
                 this.anti = data.anti
             };
+            if ("baseline" in data) {
+                this.baseline = data.baseline
+            };
+            if ("hide_forward" in data) {
+                this.toggle_forward(data.hide_forward);
+            };
+            if ("hide_reverse" in data) {
+                this.toggle_forward(data.hide_reverse);
+            };
 
             d3.select(this.element.context).select("td.upload-col label")
                 .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
@@ -835,3 +1045,7 @@ $(function() {
 
     $("#settings-table").settings_table()
 })
+
+$(window).resize(function() {
+    $("#settings-table").settings_table("update_ids", 0, null);
+});

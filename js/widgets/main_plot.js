@@ -295,7 +295,7 @@ $(function() {
             this.update_legend()
         },
 
-        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide) {
+        plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false, hide_anti=false, baseline=0) {
             // Set composite visibility
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
@@ -323,9 +323,9 @@ $(function() {
                     {new_xdomain, new_occupancy: smoothed_occupancy} = sliding_window(shifted_xdomain, combined_occupancy, smoothing),
                     // Truncate x domain to x axis limits
                     truncated_xdomain = new_xdomain.filter(x => x >= this.xmin && x <= this.xmax),
-                    // Truncate occupancy and scale by scale factor
+                    // Truncate occupancy and scale by scale factor, adding baseline value
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
-                        .map(d => d * scale);
+                        .map(d => ((value = d * scale + baseline) > 0)? value: 0);
 
                 // Set fill color
                 composite.select(".composite-gradient-top")
@@ -403,79 +403,100 @@ $(function() {
                     truncated_anti_domain = new_xdomain.map(x => x - bp_shift).filter(x => x >= this.xmin && x <= this.xmax),
                     // Truncate sense and anti occupancy and scale by scale factor
                     scaled_sense = smoothed_sense.filter((_, j) => new_xdomain[j] + bp_shift >= this.xmin
-                        && new_xdomain[j] + bp_shift <= this.xmax).map(d => d * scale),
+                        && new_xdomain[j] + bp_shift <= this.xmax).map(d => (value = d * scale + baseline) > 0? value: 0),
                     scaled_anti = smoothed_anti.filter((_, j) => new_xdomain[j] - bp_shift >= this.xmin
-                        && new_xdomain[j] - bp_shift <= this.xmax).map(d => d * scale);
-
-                // Set fill color
-                secondary_color = secondary_color || color;
-                composite.select(".composite-gradient-top")
+                        && new_xdomain[j] - bp_shift <= this.xmax).map(d => (value = d * scale + baseline) > 0? value: 0);
+                
+                //Create sense path and gradient if not hidden
+                let sense_path = "";
+                if (!hide_sense){
+                    sense_path = "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L");
+                    composite.select(".composite-gradient-top")
                     .selectAll("stop")
                         .data([0, 1])
                         .join("stop")
                             .attr("offset", d => d)
                             .attr("stop-color", color)
                             .attr("stop-opacity", d => (1 - d) * opacity);
-                composite.select(".composite-gradient-bottom")
+                    composite.select(".composite-fill-top")
+                        .attr("points", truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ")
+                            + " " + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0)
+                            + " " + this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0));
+                } else {
+                    composite.select(".composite-gradient-top")
+                    .selectAll("stop")
+                        .data([0, 1])
+                        .join("stop")
+                            .attr("offset", d => d)
+                            .attr("stop-color", color)
+                            .attr("stop-opacity", d => 0);
+                }
+
+                //Create anti path and gradient if not hidden
+                let anti_path = "";
+                if (!hide_anti){
+                    anti_path = "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L");
+                    // Set fill color
+                    secondary_color = secondary_color || color;
+                    composite.select(".composite-gradient-bottom")
+                        .selectAll("stop")
+                            .data([0, 1])
+                            .join("stop")
+                                .attr("offset", d => d)
+                                .attr("stop-color", secondary_color)
+                                .attr("stop-opacity", d => (1 - d) * opacity);
+                    composite.select(".composite-fill-bottom")
+                        .attr("points", truncated_anti_domain.map((d, j) => this.xscale(d) + "," + this.yscale(-scaled_anti[j])).join(" ")
+                            + " " + this.xscale(truncated_anti_domain[truncated_anti_domain.length - 1]) + "," + this.yscale(0)
+                            + " " + this.xscale(truncated_anti_domain[0]) + "," + this.yscale(0))
+                } else {
+                    composite.select(".composite-gradient-bottom")
                     .selectAll("stop")
                         .data([0, 1])
                         .join("stop")
                             .attr("offset", d => d)
                             .attr("stop-color", secondary_color)
-                            .attr("stop-opacity", d => (1 - d) * opacity);
+                            .attr("stop-opacity", d => (1 - d) * 0);
+                }
 
-                // Redraw composite trace
+                // Redraw composite trace for visible strands
                 if (this.color_trace) {
                     composite.select(".white-line")
                         .style("display", "none")
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", sense_path + anti_path);
 
                     composite.select(".black-line")
                         .style("display", "none")
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", sense_path + anti_path);
 
                     composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", null)
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L"));
+                        .attr("d", sense_path);
 
                     composite.select(".color-line-bottom")
                         .attr("stroke", secondary_color)
                         .style("display", null)
-                        .attr("d", "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                        .attr("d", anti_path)
                 } else {
                     composite.select(".color-line-top")
                         .attr("stroke", color)
                         .style("display", "none")
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L"));
+                        .attr("d", sense_path);
 
                     composite.select(".color-line-bottom")
                         .attr("stroke", secondary_color)
                         .style("display", "none")
-                        .attr("d", "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", anti_path);
 
                     composite.select(".white-line")
                         .style("display", null)
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"));
+                        .attr("d", sense_path + anti_path);
 
                     composite.select(".black-line")
                         .style("display", null)
-                        .attr("d", "M" + truncated_sense_domain.map((d, j) => this.xscale(d) + " " + this.yscale(scaled_sense[j])).join("L")
-                            + "M" + truncated_anti_domain.map((d, j) => this.xscale(d) + " " + this.yscale(-scaled_anti[j])).join("L"))
+                        .attr("d", sense_path + anti_path)
                 };
-
-                // Redraw composite fill
-                composite.select(".composite-fill-top")
-                    .attr("points", truncated_sense_domain.map((d, j) => this.xscale(d) + "," + this.yscale(scaled_sense[j])).join(" ")
-                        + " " + this.xscale(truncated_sense_domain[truncated_sense_domain.length - 1]) + "," + this.yscale(0)
-                        + " " + this.xscale(truncated_sense_domain[0]) + "," + this.yscale(0));
-                composite.select(".composite-fill-bottom")
-                    .attr("points", truncated_anti_domain.map((d, j) => this.xscale(d) + "," + this.yscale(-scaled_anti[j])).join(" ")
-                        + " " + this.xscale(truncated_anti_domain[truncated_anti_domain.length - 1]) + "," + this.yscale(0)
-                        + " " + this.xscale(truncated_anti_domain[0]) + "," + this.yscale(0))
             }
         },
 

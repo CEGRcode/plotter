@@ -122,16 +122,33 @@ td.remove-row {
     cursor: pointer
 }
 
-#settings-table .added-row {
-    cursor: grab
+#settings-table .added-table {
+    width: 100%;
+    cursor: grab;
 }
 
-#settings-table .added-row label {
-    cursor: grab
+#settings-table .added-table td{
+    min-height: 60px;
+}
+
+#settings-table .slider-div {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+#settings-table .slider-div > * {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+#settings-table .settings-row {
+    width: 100%;
+    border: 1px solid;
 }
 
 .mouse-highlight {
-    border: 3px solid #8888FF
+    border: 3px solid #8888FF;
 }
 
 .drag-highlight {
