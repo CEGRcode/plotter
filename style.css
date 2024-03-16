@@ -154,3 +154,19 @@ td.remove-row {
 .drag-highlight {
     background-color: #DDDDDD
 }
+
+.svg-coord {
+    cursor: ew-resize;
+}
+
+.plotted-coord{
+    cursor: ew-resize;
+}
+
+#nucleosome-svg-plot {
+    cursor: ew-resize;
+}
+
+#nucleosome-svg-plot :hover{
+    opacity: 60%;
+}

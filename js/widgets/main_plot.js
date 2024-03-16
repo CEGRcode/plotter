@@ -44,6 +44,18 @@ $(function() {
             legend_items: []
         },
 
+        get_xscale: function(){
+            return this.xscale;
+        },
+
+        get_dimensions: function(){
+            return [this.height, this.width, this.margins.right, this.margins.bottom, this.margins.left, this.margins.top];
+        },
+
+        get_combined: function(){
+            return this.combined;
+        },
+
         _create: function() {
             // Create scales for raw values to svg coordinates
             let xscale = d3.scaleLinear()
@@ -154,6 +166,12 @@ $(function() {
             this._elements.tooltip = main_plot.append("g")
                 .attr("id", "composite-plot-tooltip");
 
+            main_plot.append("g")
+                .attr("id", "nucleosome-svg-layer");
+
+            main_plot.append("g")
+                .attr("id", "coord-svg-layer");
+
             main_plot.on("mousemove", function(e) {
                 $("#main-plot").main_plot("move_tooltip", e)
             });
@@ -226,12 +244,14 @@ $(function() {
             composite.append("polygon")
                 .classed("composite-fill-top", true)
                 .attr("fill", "url(#composite-gradient-top-" + this._elements.composites.length + ")")
-                .attr("stroke", "none");
+                .attr("stroke", "none")
+                .attr("id", "top-polygon-" + this._elements.composites.length);
 
             composite.append("polygon")
                 .classed("composite-fill-bottom", true)
                 .attr("fill", "url(#composite-gradient-bottom-" + this._elements.composites.length + ")")
-                .attr("stroke", "none");
+                .attr("stroke", "none")
+                .attr("id", "bottom-polygon-" + this._elements.composites.length);
 
             this._elements.composites.push(composite);
 
@@ -567,6 +587,7 @@ $(function() {
                 // Change axes input text boxes
                 $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
+            $("#nucleosome-slider").nucleosome_slider("update_all");
         },
 
         update_legend: function() {
