@@ -170,3 +170,25 @@ td.remove-row {
 #nucleosome-svg-plot :hover{
     opacity: 60%;
 }
+
+#plot-tabs{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+.plot-tab {
+    height: auto;
+    white-space: pre-wrap;
+    font-size: small;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 15%, 100% 100%, 0% 100%, 0% 15%);
+}
+
+.selected-tab{
+    filter: brightness(.9);
+}
+
+.plot-pane{
+    height: 406px;
+}

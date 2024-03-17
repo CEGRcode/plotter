@@ -345,7 +345,7 @@ $(function() {
         update_all(){
             //Update all plots and figures if a valid composite is loaded
             this.update_plot_stats();
-            if (this.plot_points){
+            if (this.plot_points && (d3.select("#keep-nucleosome").property("checked") == true || d3.select("#nucleosome-slider-tab").classed("selected-tab"))){
                 this.svg_mark_coords();
                 this.svg_mark_coords();
                 this.plot_projection_coords();
