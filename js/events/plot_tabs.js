@@ -4,6 +4,7 @@ $(function() {
     })
     d3.select("#reference-axes-tab").on("click", function() {
         showPane("reference-axes-pane", this);
+        $("#main-plot").main_plot("toggle_tooltip", false);
     })
     d3.select("#nucleosome-slider-tab").on("click", function() {
         showPane("nucleosome-slider-options", this);

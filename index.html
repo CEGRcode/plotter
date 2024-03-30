@@ -187,14 +187,29 @@
                                     <label for="keep-nucleosome" id="keep-nucleosome-lable">Keep nucleosome on plot</label>
                                     <input type="checkbox" id="keep-nucleosome" label="Plot Nucleosome" style="margin-top: 15px;">
                                 </div>
+                                <script src="js/widgets/nucleosome_slider.js"></script>
+                                <script src="js/events/generate_3D_Button.js"></script>
                             </div>
                             <div style="display: none;" id="reference-axes-pane" class="plot-pane">
-                                <table id="reference-axes"></table>
+                                <label for="y-axis-lines" style="float: left;">Y-Axis Lines</label>
+                                <div class="reference-table-div">
+                                    <table id="y-axis-lines" class="reference-lines-table"></table>
+                                </div>
+                                <svg id="y-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
+                                    <circle r="15" cx="15" cy="15" fill="grey" />
+                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
+                                </svg>
+                                <label for="x-axis-lines" style="float: left;">X-Axis Lines</label>
+                                <div class="reference-table-div">
+                                    <table id="x-axis-lines" class="reference-lines-table"></table>                                    </table>
+                                </div>
+                                <svg id="x-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
+                                    <circle r="15" cx="15" cy="15" fill="grey" />
+                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
+                                </svg>
                                 <script src="js/widgets/reference_axes.js"></script>
                             </div>
                         </div>
-                    <script src="js/widgets/nucleosome_slider.js"></script>
-                    <script src="js/events/generate_3D_Button.js"></script>
                 </div>
             </div>
             <div class="row">

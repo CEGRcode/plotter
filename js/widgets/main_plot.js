@@ -48,6 +48,10 @@ $(function() {
             return this.xscale;
         },
 
+        get_yscale: function(){
+            return this.yscale;
+        },
+
         get_dimensions: function(){
             return [this.height, this.width, this.margins.right, this.margins.bottom, this.margins.left, this.margins.top];
         },
@@ -171,6 +175,9 @@ $(function() {
 
             main_plot.append("g")
                 .attr("id", "coord-svg-layer");
+
+            main_plot.append("g")
+                .attr("id", "reference-axes-layer");
 
             main_plot.on("mousemove", function(e) {
                 $("#main-plot").main_plot("move_tooltip", e)
