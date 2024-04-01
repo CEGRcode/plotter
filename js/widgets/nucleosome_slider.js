@@ -8,12 +8,10 @@ $(function() {
             this.start_coord = 0;
             this.nucleosome_length = 146;
             this.plot_svg_height = 18;
-            this.main_plot_scale = $("#main-plot").main_plot("get_xscale");
-            this.plot_dimensions = $("#main-plot").main_plot("get_dimensions");
+            this.main_plot = $("#main-plot").main_plot("instance");
             this.plot_points = null;
             this.projection_coords = [];
             this.mark_coords = [];
-            this.bp_to_px = (this.plot_dimensions[1] - this.plot_dimensions[2] - this.plot_dimensions[4]) / (this.main_plot_scale.domain()[1] - this.main_plot_scale.domain()[0]);
 
             this.attach_event_handlers();
 
@@ -99,8 +97,8 @@ $(function() {
                     this.selected_element.setAttribute("x", newX + "px");
                     if (this.selected_element.getAttribute("class").includes("nucleosome-svg")) {
                         //Update start text if selected element is nucleosome
-                        this.start_coord = parseInt((newX - this.main_plot_scale(0)) * (1 / this.bp_to_px));
-                        this.start_text.property("value", this.start_coord);
+                        this.start_coord = this.main_plot.xscale.invert(newX);
+                        this.start_text.property("value", this.start_coord.toFixed(0));
                     } else if (this.selected_element.getAttribute("class").includes("plotted-coord")) {
                         //Otherwise use generic method
                         this.update_text_box();
@@ -137,7 +135,7 @@ $(function() {
                     }
                 } else if (this.selected_element.getAttribute("class").includes("plotted-coord")) {
                     let plottedCoords = d3.select("#coord-svg-layer").selectAll(".plotted-coord");
-                    this.projection_coords = plottedCoords.nodes().map((element) => parseInt(parseInt(parseFloat(element.getAttribute("x")) - this.main_plot_scale(0)) * (1 / this.bp_to_px)));
+                    this.projection_coords = plottedCoords.nodes().map((element) => this.main_plot.xscale.invert(parseInt(element.getAttribute("x"))).toFixed(0));
                     this.projection_text.property("value", this.projection_coords.join(","));
                 }
             }
@@ -154,23 +152,18 @@ $(function() {
             let new_nucleosome = d3.select(nucleosome_svg.cloneNode(true));
             //Calculate dimensions
             this.start_coord = d3.select("#nucleosome-start-text").property("value");
-            let new_width = this.nucleosome_length * this.bp_to_px;
-            let starting_pos = this.main_plot_scale(0) + this.start_coord * this.bp_to_px;
+            let new_width = this.nucleosome_length * (this.main_plot.xscale(1) - this.main_plot.xscale(0));
+            let starting_pos = this.main_plot.xscale(this.start_coord);
             new_nucleosome.attr("height", self.plot_svg_height + "px")
                 .attr("width", new_width + "px")
                 .attr("x", starting_pos + "px")
                 .attr("id", "nucleosome-svg-plot")
+                .attr("y", this.main_plot.yscale(0) - self.plot_svg_height / 2)
                 .selectAll(".mark-coord")
                     .attr("width", "2px")
                     .attr("stroke-width", "1px")
             new_nucleosome.selectAll(".projection-coord")
                     .remove();
-            //Place on x-axis if plot is combined
-            if ($("#main-plot").main_plot("get_combined")){
-                new_nucleosome.attr("y", self.plot_dimensions[0] - self.plot_dimensions[3] - self.plot_svg_height / 2 - 2 + "px");
-            } else {
-                new_nucleosome.attr("y", (self.plot_dimensions[0] - self.plot_svg_height) / 2 - 2 + "px");
-            }
             //Add dragging listeners
             new_nucleosome.on("mousedown", function(e) {
                 self.start_dragging(e, d3.select("#nucleosome-svg-plot").node());
@@ -203,18 +196,13 @@ $(function() {
                             .attr("width", "2px")
                             .attr("stroke-width", "1px")
                             .attr("stroke", "black")
-                            .attr("x", self.main_plot_scale(0) + coord * self.bp_to_px + "px")
-                            .attr("y", (self.plot_dimensions[0] - self.plot_svg_height) / 2 - 2 + "px") // 2px subtracted to account for outline 
+                            .attr("x", self.main_plot.xscale(coord))
+                            .attr("y", self.main_plot.yscale(0) - self.plot_svg_height / 2) // 2px subtracted to account for outline 
                             .attr("height", self.plot_svg_height + "px")
                             .style("fill", "rgb(255, 252, 97)")
                             .on("mousedown", function(e) {
                                 self.start_dragging(e, d3.select(this).node());
                             })
-                    if ($("#main-plot").main_plot("get_combined")){
-                        coordElement.attr("y", self.plot_dimensions[0] - self.plot_dimensions[3] - self.plot_svg_height / 2 - 2 + "px");
-                    } else {
-                        coordElement.attr("y", (self.plot_dimensions[0] - self.plot_svg_height) / 2 - 2 + "px");
-                    }
                     i += 1;
                 }
             }
@@ -225,12 +213,11 @@ $(function() {
             //Remove old pointers and add new ones to plot based on widget arrays
             let self = this; 
             d3.select("#coord-svg-layer").selectAll(".pointer").remove();
-            let y_axis = self.main_plot_scale(0);
             if (this.plot_points) {
                 let i = 0;
                 for (var coord of this.projection_coords) {
                     if (coord != "" && !isNaN(coord)){
-                        let x = y_axis + coord * self.bp_to_px;
+                        let x = this.main_plot.xscale(parseInt(coord));
                         let y = this.plot_points.get(parseInt(x));
                         d3.select("#coord-svg-layer").append("circle")
                             .attr("id", "projection-" + i)
@@ -242,8 +229,8 @@ $(function() {
                 }
                 i = 0;
                 for (var coord of this.mark_coords) {
-                    if (coord != ""){
-                    let x = y_axis + ((parseInt(coord) + parseInt(self.start_coord)) * self.bp_to_px);
+                    if (coord != "" && !isNaN(coord)) {
+                    let x = this.main_plot.xscale(parseInt(coord));
                     let y = this.plot_points.get(parseInt(x));
                     d3.select("#coord-svg-layer").append("circle")
                         .attr("id", "mark-" + i)
@@ -319,10 +306,7 @@ $(function() {
         },
 
         update_plot_stats(){
-            //Update plot dimensions and points on the composite plot
-            this.main_plot_scale = $("#main-plot").main_plot("get_xscale");
-            this.plot_dimensions = $("#main-plot").main_plot("get_dimensions");
-            this.bp_to_px = (this.plot_dimensions[1] - this.plot_dimensions[2] - this.plot_dimensions[4]) / (this.main_plot_scale.domain()[1] - this.main_plot_scale.domain()[0]);
+            //Points on the composite plot
             this.get_plot_points();
         },
 

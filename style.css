@@ -125,10 +125,13 @@ td.remove-row {
 #settings-table .added-table {
     width: 100%;
     cursor: grab;
+    border-collapse: separate;   
+    border: 1px solid black;
 }
 
 #settings-table .added-table td{
-    min-height: 60px;
+    min-height: 55px;
+    border-top: 0px;
 }
 
 #settings-table .slider-div {
@@ -144,11 +147,10 @@ td.remove-row {
 
 #settings-table .settings-row {
     width: 100%;
-    border: 1px solid;
 }
 
 .mouse-highlight {
-    border: 3px solid #8888FF;
+    border: 3px solid #8888FF !important;
 }
 
 .drag-highlight {
@@ -226,4 +228,13 @@ td.remove-row {
     background-color: white;
     border: 2px solid;
     display: none;
+}
+
+#main-plot text::selection{
+    background: none;
+}
+
+#axes-input::selection, #axes-input *> :not(input)::selection {
+    background: none;
+
 }

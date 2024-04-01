@@ -44,18 +44,6 @@ $(function() {
             legend_items: []
         },
 
-        get_xscale: function(){
-            return this.xscale;
-        },
-
-        get_yscale: function(){
-            return this.yscale;
-        },
-
-        get_dimensions: function(){
-            return [this.height, this.width, this.margins.right, this.margins.bottom, this.margins.left, this.margins.top];
-        },
-
         get_combined: function(){
             return this.combined;
         },
@@ -595,6 +583,7 @@ $(function() {
                 $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
             $("#nucleosome-slider").nucleosome_slider("update_all");
+            $("#reference-axes-pane").reference_axes("update_all");
         },
 
         update_legend: function() {

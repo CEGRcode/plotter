@@ -35,6 +35,7 @@ $(function() {
             console.log(this._elements.styles.dashed);
             this.add_row(0, "#FF0000", this._elements.styles.dashed, this.y_table);
             this.add_row(0, "#FF0000", this._elements.styles.dashed, this.x_table);
+            d3.select("#reference-axes-layer").attr("display", "none");
 
             this.attach_event_handlers();
         },
@@ -58,36 +59,38 @@ $(function() {
             self = this;
             if (self.selected_element){
                 var mousePos = this.get_mouse_pos(e);
-                if (mousePos.y >= 0){
-                    valid_y = (mousePos.y < this.main_plot.margins.bottom);
-                } else {
-                    valid_y = (mousePos.y * -1 < this.main_plot.height - (this.main_plot.margins.top + this.main_plot.margins.bottom * 2));
-                }
-                valid_x = this.main_plot.margins.left < mousePos.x &&  mousePos.x < this.main_plot.width - this.main_plot.margins.right
-                if (valid_x && valid_y){
-                    if (this.selected_element.getAttribute("class").includes("x-reference")){
+                if (this.selected_element.getAttribute("class").includes("x-reference")){
                         var currentX = parseFloat(this.selected_element.getAttribute("x1"));
+                        if (this.main_plot.margins.left < currentX &&  currentX < this.main_plot.width - this.main_plot.margins.right){
                         var newX = currentX + (mousePos.x - this.offset.x);
                         this.selected_element.setAttribute("x1", newX + "px");
                         this.selected_element.setAttribute("x2", newX + "px");
-                        var array  = this._elements.x_lines.find(x => x.number === parseInt(self.selected_element.getAttribute("number")));
+                        var array = this._elements.x_lines.find(x => {
+                            if (x !== undefined) {
+                                return x.number === parseInt(self.selected_element.getAttribute("number"));
+                            }
+                        });
                         array.coordinate = parseInt(this.main_plot.xscale.invert(newX));
-                    } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
-                        var currentY = parseFloat(this.selected_element.getAttribute("y2"));
+                    }
+                } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
+                    console.log(this._elements.y_lines);
+
+                    var currentY = parseFloat(this.selected_element.getAttribute("y2"));
+                    if(currentY > this.main_plot.margins.top && currentY < this.main_plot.height - this.main_plot.margins.bottom){
                         var newY = currentY + (mousePos.y - this.offset.y);
                         this.selected_element.setAttribute("y1", newY + "px");
                         this.selected_element.setAttribute("y2", newY + "px");
-                        var array  = this._elements.y_lines.find(y => y.number === parseInt(self.selected_element.getAttribute("number")));
+                        var array = this._elements.y_lines.find(y => {
+                            if (y !== undefined) {
+                                return y.number === parseInt(self.selected_element.getAttribute("number"));
+                            }
+                        });
                         array.coordinate = this.main_plot.yscale.invert(Math.abs(newY)).toFixed(2);
                     }
-                    this.offset = this.get_mouse_pos(e);
-                    this.update_tables();
-                    this.add_plot_numbers();
                 }
-                else {
-                    //End dragging if not on composite
-                    this.end_dragging();
-                }
+                this.offset = this.get_mouse_pos(e);
+                this.update_tables();
+                this.add_plot_numbers();
             }
         },
 
@@ -309,15 +312,18 @@ $(function() {
         add_plot_numbers: function(){
             d3.select("#reference-axes-layer").selectAll("text").remove();
             for (var line of self._elements.x_lines) {
-                d3.select("#reference-axes-layer").append("text")
-                    .attr("x", self.main_plot.xscale(line.coordinate) - 4)
-                    .attr("y", self.main_plot.yscale(self.main_plot.ymin) + 8)
-                    .style("text-align", "middle")
-                    .style("fill", line.color)
-                    .attr("font-size", "8px")
-                    .text(line.coordinate);
+                if (line !== undefined){
+                    d3.select("#reference-axes-layer").append("text")
+                        .attr("x", self.main_plot.xscale(line.coordinate) - 4)
+                        .attr("y", self.main_plot.yscale(self.main_plot.ymin) + 8)
+                        .style("text-align", "middle")
+                        .style("fill", line.color)
+                        .attr("font-size", "8px")
+                        .text(line.coordinate);
+                }
             }
             for (var line of self._elements.y_lines) {
+                if (line !== undefined){
                 d3.select("#reference-axes-layer").append("text")
                     .attr("x", self.main_plot.xscale(self.main_plot.xmax) + 5)
                     .attr("y", self.main_plot.yscale(line.coordinate) + 4)
@@ -325,18 +331,29 @@ $(function() {
                     .style("fill", line.color)
                     .attr("font-size", "8px")
                     .text(line.coordinate);
+                }
             }
         },
 
         update_tables:function(){
             for (var line of this._elements.x_lines) {
+                if (line !== undefined){
                 row =this.x_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
                 row.select(".coord_input").attr("value", line.coordinate);
+                }
             }
             for (var line of this._elements.y_lines) {
+                if (line !== undefined){
                 row =this.y_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
                 row.select(".coord_input").attr("value", line.coordinate);
+                }
             }
+        },
+
+        update_all:function(){
+            this.plot_lines();
+            this.update_tables();
+            this.add_plot_numbers();
         }
     });
 
