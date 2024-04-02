@@ -221,7 +221,7 @@ $(function() {
                         let y = this.plot_points.get(parseInt(x));
                         d3.select("#coord-svg-layer").append("circle")
                             .attr("id", "projection-" + i)
-                            .attr("cx", x + "px")
+                            .attr("cx", (x + 1.5) + "px")
                             .attr("cy", y + "px")
                             .style("fill", "rgb(255, 252, 97)");
                         i += 1;
@@ -230,11 +230,11 @@ $(function() {
                 i = 0;
                 for (var coord of this.mark_coords) {
                     if (coord != "" && !isNaN(coord)) {
-                    let x = this.main_plot.xscale(parseInt(coord));
+                    let x = this.main_plot.xscale(parseInt(coord) + parseInt(this.start_coord));
                     let y = this.plot_points.get(parseInt(x));
                     d3.select("#coord-svg-layer").append("circle")
                         .attr("id", "mark-" + i)
-                        .attr("cx", x + "px")
+                        .attr("cx", (x + 1.5) + "px")
                         .attr("cy", y + "px")
                         .style("fill", "rgb(205, 233, 255)");
                     i += 1;

@@ -6,7 +6,6 @@ $(function() {
     d3.select("#reference-axes-tab").on("click", function() {
         showPane("reference-axes-pane", this);
         $("#main-plot").main_plot("toggle_tooltip", false);
-        d3.select("#reference-axes-layer").attr("display", "block")
         $("#reference-axes-pane").reference_axes("plot_lines");
     })
     d3.select("#nucleosome-slider-tab").on("click", function() {
@@ -37,6 +36,11 @@ $(function() {
                 .selectAll("*")
                 .remove();
             d3.select("#coord-svg-layer")
+                .selectAll("*")
+                .remove();
+        }
+        if (d3.select("#keep-reference-lines").property("checked") == false){
+            d3.select("#reference-axes-layer")
                 .selectAll("*")
                 .remove();
         }

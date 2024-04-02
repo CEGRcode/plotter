@@ -7,7 +7,7 @@ $(function() {
             styles: {
                 dashed : "5,5",
                 solid : "0",
-                dotted : "2,1"
+                dotted : "2,1",
             }
         },
 
@@ -20,23 +20,24 @@ $(function() {
             this.x_table = d3.select("#x-axis-lines");
             this.selected_element = null;
             this.offset = { x: 0, y: 0 };
-
             this.main_plot = $("#main-plot").main_plot("instance");
 
+            //Attach drag event handlers
             d3.select("#main-plot-div").on("mousemove", function(e) {
                 self.drag_plot_element(e);
             });
             d3.select("#main-plot-div").on("mouseup", function() {
                 self.end_dragging();
             });
-
             this.y_table.append("tbody");
             this.x_table.append("tbody");
-            console.log(this._elements.styles.dashed);
             this.add_row(0, "#FF0000", this._elements.styles.dashed, this.y_table);
             this.add_row(0, "#FF0000", this._elements.styles.dashed, this.x_table);
-            d3.select("#reference-axes-layer").attr("display", "none");
 
+            //Hide axes until tab is selected
+            d3.select("#reference-axes-layer")
+                .selectAll("*")
+                .remove();
             this.attach_event_handlers();
         },
 
@@ -50,21 +51,24 @@ $(function() {
         },
 
         start_dragging: function(e, element) {
-            //Update plot stats and assign selected element
+            //Assign selected element
             this.selected_element = element;
             this.offset = this.get_mouse_pos(e);
         },
 
         drag_plot_element: function(e){
             self = this;
+            //If element is being dragged
             if (self.selected_element){
                 var mousePos = this.get_mouse_pos(e);
                 if (this.selected_element.getAttribute("class").includes("x-reference")){
                         var currentX = parseFloat(this.selected_element.getAttribute("x1"));
+                        //Check that line is still on plot
                         if (this.main_plot.margins.left < currentX &&  currentX < this.main_plot.width - this.main_plot.margins.right){
                         var newX = currentX + (mousePos.x - this.offset.x);
                         this.selected_element.setAttribute("x1", newX + "px");
                         this.selected_element.setAttribute("x2", newX + "px");
+                        //Find the corresponding element in the array and update coordinate
                         var array = this._elements.x_lines.find(x => {
                             if (x !== undefined) {
                                 return x.number === parseInt(self.selected_element.getAttribute("number"));
@@ -73,13 +77,13 @@ $(function() {
                         array.coordinate = parseInt(this.main_plot.xscale.invert(newX));
                     }
                 } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
-                    console.log(this._elements.y_lines);
-
                     var currentY = parseFloat(this.selected_element.getAttribute("y2"));
+                    //Check that line is still on plot
                     if(currentY > this.main_plot.margins.top && currentY < this.main_plot.height - this.main_plot.margins.bottom){
                         var newY = currentY + (mousePos.y - this.offset.y);
                         this.selected_element.setAttribute("y1", newY + "px");
                         this.selected_element.setAttribute("y2", newY + "px");
+                        //Find the corresponding element in the array and update coordinate
                         var array = this._elements.y_lines.find(y => {
                             if (y !== undefined) {
                                 return y.number === parseInt(self.selected_element.getAttribute("number"));
@@ -88,6 +92,7 @@ $(function() {
                         array.coordinate = this.main_plot.yscale.invert(Math.abs(newY)).toFixed(2);
                     }
                 }
+                //Update offset, tables, and add numbers to plot
                 this.offset = this.get_mouse_pos(e);
                 this.update_tables();
                 this.add_plot_numbers();
@@ -101,6 +106,7 @@ $(function() {
 
         attach_event_handlers: function() {
             let self = this;
+            //Add default rows
             this.y_plus.on("click", function(){
                 self.add_row(0, "#FF0000", self._elements.styles.dashed, self.y_table);
             })
@@ -109,21 +115,25 @@ $(function() {
             })
         },
             
+        //Adds a row to x or y table and plots line
         add_row: function(coord, col, style, table) {
             let self = this;
             let lines;
-
+            //Use proper array
             if (table == this.y_table) {
                 lines = this._elements.y_lines;
             } else {
                 lines = this._elements.x_lines;
             }
             num_rows = table.selectAll("tr").size();
+            //Limited to 4 rows so that style selectors are positioned properly
             if (num_rows <= 3) {
+                //Assign array values
                 let row_number = lines.length;
                 lines.push({ coordinate: coord, color: col, style: style, number: row_number });
                 let row = table.append("tr")
                     .attr("number", row_number);
+                //Append text input
                 row.append("td")
                     .style("width", "30%")
                     .append("input")
@@ -135,6 +145,7 @@ $(function() {
                         lines[row_number].coordinate = parseFloat(this.value);
                         self.plot_lines();
                     });
+                //Append color input
                 row.append("td")
                     .style("width", "30%")
                     .append("input")
@@ -144,6 +155,7 @@ $(function() {
                         lines[row_number].color = this.value;
                         self.plot_lines();
                     });
+                //Append style column with given style parameter
                 style_col = row.append("td")
                     .style("width", "30%");
                 style_div = style_col.append("div")
@@ -169,6 +181,7 @@ $(function() {
                     .attr("stroke-width", "1.5px")
                     .attr("fill", "none")
                     .attr("id", "diagonal-line");
+                //Append style selector with all styles
                 let style_selector = style_div.append("div")
                     .classed("style-selector", true);
                 for (let s in self._elements.styles) {
@@ -206,6 +219,7 @@ $(function() {
                 style_svg.on("click", function(){
                    style_selector.style("display", "block");
                 });
+                //Append remove button
                 remove = row.append("td")
                     .style("width", "10%")
                     .append("svg")
@@ -237,11 +251,10 @@ $(function() {
                                 self.x_plus.style("display", "block");
                             }
                         }
-                        console.log(number_rows); 
                         self.plot_lines();
                     });
+                //If there are more than 4 rows, hide new row button
                 if (num_rows >= 3) {
-                    console.log(num_rows);
                     if (lines == self._elements.y_lines){
                         self.y_plus.style("display", "none");
                     } else if (lines === self._elements.x_lines){
@@ -254,8 +267,10 @@ $(function() {
         
 
         plot_lines:function(){
+            //Remove old lines
             d3.select("#reference-axes-layer").selectAll("*").remove();
             let self = this;
+            //Add x-axis lines to plot with drag event handlers and labels
             for (let line of self._elements.x_lines) {
                 if (line != null && !isNaN(line.coordinate)) {
                     plotted_line = d3.select("#reference-axes-layer").append("line")
@@ -272,15 +287,9 @@ $(function() {
                         self.selected_element = this;
                         self.start_dragging(e, d3.select(this).node());
                     });
-                    d3.select("#reference-axes-layer").append("text")
-                        .attr("x", self.main_plot.xscale(line.coordinate) - 4)
-                        .attr("y", self.main_plot.yscale(self.main_plot.ymin) + 8)
-                        .style("text-align", "middle")
-                        .style("fill", line.color)
-                        .attr("font-size", "8px")
-                        .text(line.coordinate);
                 }
             }
+            //Add y-axis lines to plot with event handlers and labels
             for (let line of self._elements.y_lines) {
                 if (line != null && !isNaN(line.coordinate)){
                     plotted_line = d3.select("#reference-axes-layer").append("line")
@@ -297,21 +306,16 @@ $(function() {
                             self.selected_element = this;
                             self.start_dragging(e, d3.select(this).node());
                         });
-                    d3.select("#reference-axes-layer").append("text")
-                        .attr("x", self.main_plot.xscale(self.main_plot.xmax) + 5)
-                        .attr("y", self.main_plot.yscale(line.coordinate) + 4)
-                        .style("text-align", "middle")
-                        .style("fill", line.color)
-                        .attr("font-size", "8px")
-                        .text(line.coordinate);
                 }
             }
-            //Fix the rest of the nucleosome slider to not save variables
+            this.add_plot_numbers();
         },
 
         add_plot_numbers: function(){
+            self = this;
+            //Adds coord labels to x-axis lines
             d3.select("#reference-axes-layer").selectAll("text").remove();
-            for (var line of self._elements.x_lines) {
+            for (let line of self._elements.x_lines) {
                 if (line !== undefined){
                     d3.select("#reference-axes-layer").append("text")
                         .attr("x", self.main_plot.xscale(line.coordinate) - 4)
@@ -322,7 +326,8 @@ $(function() {
                         .text(line.coordinate);
                 }
             }
-            for (var line of self._elements.y_lines) {
+            //Adds occupancy labels to y-axis lines
+            for (let line of self._elements.y_lines) {
                 if (line !== undefined){
                 d3.select("#reference-axes-layer").append("text")
                     .attr("x", self.main_plot.xscale(self.main_plot.xmax) + 5)
@@ -336,28 +341,28 @@ $(function() {
         },
 
         update_tables:function(){
+            //Updates tables based on line's position on plot
             for (var line of this._elements.x_lines) {
                 if (line !== undefined){
-                row =this.x_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
+                row = this.x_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
                 row.select(".coord_input").attr("value", line.coordinate);
                 }
             }
             for (var line of this._elements.y_lines) {
                 if (line !== undefined){
-                row =this.y_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
+                row = this.y_table.selectAll("tr").filter(function() {return parseInt(d3.select(this).attr("number")) == parseInt(line.number);});
                 row.select(".coord_input").attr("value", line.coordinate);
                 }
             }
         },
 
         update_all:function(){
-            this.plot_lines();
-            this.update_tables();
-            this.add_plot_numbers();
+            if (d3.select("#keep-reference-lines").property("checked") || d3.select("#reference-axes-tab").classed("selected-tab")){
+                this.plot_lines();
+                this.update_tables();
+                this.add_plot_numbers();
+            }
         }
     });
-
-
-
     $("#reference-axes-pane").reference_axes();
 })

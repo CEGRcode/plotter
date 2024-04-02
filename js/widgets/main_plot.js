@@ -156,6 +156,7 @@ $(function() {
 
             // Create tooltip
             this._elements.tooltip = d3.select("body").append("svg")
+                .style("scale", "1.4")
                 .attr("id", "composite-plot-tooltip");
 
             main_plot.append("g")
@@ -173,6 +174,8 @@ $(function() {
             main_plot.on("mouseleave", function() {
                 // $("#main-plot").main_plot("hide_tooltip")
             });
+
+            this.enable_tooltip = true;
         },
 
         _destroy: function() {
@@ -816,8 +819,8 @@ $(function() {
                     // Update tooltip border
                     tooltip_border.attr("d", "M" + (w + 4) + " 5 H " + (w + 20) / 2 + " l -5 -5 l-5 5 H 0 V " + (h + 20) + " H " + (w + 4)  + " z")
                     this._elements.tooltip
-                        .style("top", ev.clientY)
-                        .style("left",  ev.clientX - ((w + 8) / 2));
+                        .style("top", ev.clientY + 0.7 * h)
+                        .style("left",  ev.clientX - ((w + 8) / 2) * 0.57)
                 } else {
                     this._elements.tooltip.style("display", "none")
                 }

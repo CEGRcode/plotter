@@ -51,7 +51,6 @@ $(function() {
             if (data.preset) {
                 $("#settings-dropdown").settings_dropdown("set_value", data.preset)
             }
-            $("#enable-nucleosome-button").prop("disabled", false);
         };
         reader.readAsText(file)
     })
