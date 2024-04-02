@@ -23,10 +23,10 @@ $(function() {
 
             this.main_plot = $("#main-plot").main_plot("instance");
 
-            d3.select("body").on("mousemove", function(e) {
+            d3.select("#main-plot-div").on("mousemove", function(e) {
                 self.drag_plot_element(e);
             });
-            d3.select("body").on("mouseup", function() {
+            d3.select("#main-plot-div").on("mouseup", function() {
                 self.end_dragging();
             });
 

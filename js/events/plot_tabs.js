@@ -11,6 +11,8 @@ $(function() {
     })
     d3.select("#nucleosome-slider-tab").on("click", function() {
         showPane("nucleosome-slider-options", this);
+        $("#main-plot").main_plot("toggle_tooltip", false);
+        $("#nucleosome-slider").nucleosome_slider("update_all");
     })
 
     function showPane(id, tab){

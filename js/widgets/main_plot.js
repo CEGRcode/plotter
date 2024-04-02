@@ -155,7 +155,7 @@ $(function() {
                 .attr("transform", "translate(" + (this.width - this.margins.right + 25) + " " + this.margins.top + ")");
 
             // Create tooltip
-            this._elements.tooltip = main_plot.append("g")
+            this._elements.tooltip = d3.select("body").append("svg")
                 .attr("id", "composite-plot-tooltip");
 
             main_plot.append("g")
@@ -171,7 +171,7 @@ $(function() {
                 $("#main-plot").main_plot("move_tooltip", e)
             });
             main_plot.on("mouseleave", function() {
-                $("#main-plot").main_plot("hide_tooltip")
+                // $("#main-plot").main_plot("hide_tooltip")
             });
         },
 
@@ -763,6 +763,7 @@ $(function() {
         },
 
         move_tooltip: function(ev) {
+            let self = this;
             if (this.enable_tooltip) {
                 // Get data for all composites that are plotted and have files loaded
                 let data = $("#settings-table").settings_table("export").filter(d => d.files_loaded > 0 && !d.hide),
@@ -780,7 +781,11 @@ $(function() {
                     // Move tooltip to mouse position
                     this._elements.tooltip
                         .style("display", null)
-                        .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
+                        .style("position", "absolute")
+                        .style("top", ev.clientY)
+                        .style("left", ev.clientX)
+                        .style("pointer-events", "none");
+                        // .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
 
                     // Create tooltip border and text
                     let tooltip_border = this._elements.tooltip.selectAll("path")
@@ -807,9 +812,12 @@ $(function() {
                                 : parseFloat(d.sense[mouse_x_scaled - d.xmin].toPrecision(2)) + "; " + parseFloat(d.anti[mouse_x_scaled - d.xmin].toPrecision(2))));
                     // Get bounding box of text
                     let {y, width: w, height: h} = tooltip_text.node().getBBox();
-                    tooltip_text.attr("transform", "translate(" + (-w / 2) + " " + (15 - y) + ")");
+                    tooltip_text.attr("transform", "translate(" + 2 + " " + (15 - y) + ")");
                     // Update tooltip border
-                    tooltip_border.attr("d", "M" + (-w / 2 - 10) + ",5H-5l5,-5l5,5H" + (w / 2 + 10) + "v" + (h + 20) + "h-" + (w + 20) + "z")
+                    tooltip_border.attr("d", "M" + (w + 4) + " 5 H " + (w + 20) / 2 + " l -5 -5 l-5 5 H 0 V " + (h + 20) + " H " + (w + 4)  + " z")
+                    this._elements.tooltip
+                        .style("top", ev.clientY)
+                        .style("left",  ev.clientX - ((w + 8) / 2));
                 } else {
                     this._elements.tooltip.style("display", "none")
                 }
