@@ -362,6 +362,23 @@ $(function() {
                 this.update_tables();
                 this.add_plot_numbers();
             }
+        },
+
+        export: function(){
+            return{
+                y_lines: this._elements.y_lines,
+                x_lines: this._elements.x_lines,
+            }
+        },
+
+        import: function(data){
+            if ("y_lines" in data){
+                this._elements.y_lines = data.y_lines;
+            }
+            if ("x_lines" in data){
+                this._elements.x_lines = data.x_lines;
+            }
+            this.update_all();
         }
     });
     $("#reference-axes-pane").reference_axes();

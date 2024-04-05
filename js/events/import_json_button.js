@@ -47,6 +47,12 @@ $(function() {
             };
             $("#settings-table").settings_table("import", data.settings);
             $("#metadata-table").metadata_table("import", data.metadata);
+            if ("reference_axes" in data){
+                $("#reference-axes-pane").reference_axes("import", data.reference_axes);
+            }
+            if ("nucleosome_slider" in data){
+                $("#nucleosome-slider").nucleosome_slider("import", data.nucleosome_slider);
+            }
             $("#main-plot").main_plot("update_legend");
             if (data.preset) {
                 $("#settings-dropdown").settings_dropdown("set_value", data.preset)
