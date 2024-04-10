@@ -123,7 +123,7 @@ td.remove-row {
 }
 
 #settings-table .added-table {
-    width: 100%;
+    width: 100vw;
     cursor: grab;
     border-collapse: separate;   
     border: 1px solid black;
