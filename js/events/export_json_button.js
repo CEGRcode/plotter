@@ -4,6 +4,8 @@ $(function() {
             metadata: $("#metadata-table").metadata_table("export"),
             settings: $("#settings-table").settings_table("export"),
             plot: $("#main-plot").main_plot("export"),
+            reference_axes: $("#reference-axes-pane").reference_axes("export"),
+            nucleosome_slider: $("#nucleosome-slider").nucleosome_slider("export"),
             preset: $("#settings-dropdown").settings_dropdown("get_value"),
             separate_color: d3.select("#separate-color-checkbox").property("checked")
         },

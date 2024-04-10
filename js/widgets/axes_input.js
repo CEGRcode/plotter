@@ -27,11 +27,13 @@ $(function() {
             let container = d3.select(this.element.context),
                 xaxis = container.append("div")
                     .style("user-select","none")
+                    .style("padding-left","30px")
                     .attr("class", "row")
                     .append("div")
                         .attr("class", "col"),
                 yaxis = container.append("div")
                     .style("user-select","none")
+                    .style("padding-left","30px")
                     .attr("class", "row")
                     .append("div")
                         .attr("class", "col");

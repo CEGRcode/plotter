@@ -111,51 +111,109 @@
                 </div>
                 <div class="col-8">
                     <div class="row" style="display:flex; align-items:center;">
-                        <div style="max-width:calc(100% - 270px);">
+                        <div style="max-width:calc(100% - 270px);" id="main-plot-div">
                             <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: hide;"></svg>
                             <script src="js/sliding_window.js"></script>
                             <script src="js/widgets/main_plot.js"></script>
                         </div>
                         <div class="text-right" style="width:270px; padding-right:20px;">
-                            <div id="settings-dropdown"></div>
-                            <script src="js/widgets/preset_dropdown.js"></script>
-                            <div id="opacity-input"></div>
-                            <script src="js/widgets/opacity_input.js"></script>
-                            <div id="smoothing-input"></div>
-                            <script src="js/widgets/smoothing_input.js"></script>
-                            <div id="shift-input"></div>
-                            <script src="js/widgets/shift_input.js"></script>
-                            <div>
-                                <label for="combined-checkbox" id="combined-label">Combined</label>
-                                <input id="combined-checkbox" type="checkbox">
-                                <script src="js/events/combined_checkbox.js"></script>
+                            <div id="plot-tabs">
+                                <input type="button" id="plot-options-tab" value="Plot Options" style="grid-column:1; height: auto;" class="plot-tab selected-tab">
+                                <input type="button" id="reference-axes-tab" value="Reference Axes" style="grid-column:2; height: auto;" class="plot-tab">
+                                <input type="button" id="nucleosome-slider-tab" value="Nucleosome Slider" style="grid-column:3; height: auto;" class="plot-tab">
+                                <script src="js/events/plot_tabs.js"></script>
                             </div>
-                            <div>
-                                <label for="separate-color-checkbox" id="seperate-color-label">Separate colors for strands</label>
-                                <input id="separate-color-checkbox" type="checkbox">
-                                <script src="js/events/separate_color_checkbox.js"></script>
+                            <div style="display: block;" id="plot-options" class="plot-pane">
+                                <div id="settings-dropdown"></div>
+                                <script src="js/widgets/preset_dropdown.js"></script>
+                                <div id="opacity-input"></div>
+                                <script src="js/widgets/opacity_input.js"></script>
+                                <div id="smoothing-input"></div>
+                                <script src="js/widgets/smoothing_input.js"></script>
+                                <div id="shift-input"></div>
+                                <script src="js/widgets/shift_input.js"></script>
+                                <div>
+                                    <label for="combined-checkbox" id="combined-label">Combined</label>
+                                    <input id="combined-checkbox" type="checkbox">
+                                    <script src="js/events/combined_checkbox.js"></script>
+                                </div>
+                                <div>
+                                    <label for="separate-color-checkbox" id="seperate-color-label">Separate colors for strands</label>
+                                    <input id="separate-color-checkbox" type="checkbox">
+                                    <script src="js/events/separate_color_checkbox.js"></script>
+                                </div>
+                                <div>
+                                    <label for="color-trace-checkbox" id="color-trace-label">Color trace</label>
+                                    <input id="color-trace-checkbox" type="checkbox">
+                                    <script src="js/events/color_trace_checkbox.js"></script>
+                                </div>
+                                <div>
+                                    <label for="tooltip-checkbox" id="tooltip-label">Enable tooltip</label>
+                                    <input id="tooltip-checkbox" type="checkbox" checked>
+                                    <script src="js/events/tooltip_checkbox.js"></script>
+                                </div>
+                                <div>
+                                    <label for="show-legend-checkbox" id="show-legend-label">Show legend</label>
+                                    <input id="show-legend-checkbox" type="checkbox" checked>
+                                    <script src="js/events/show_legend_checkbox.js"></script>
+                                </div>
+                                <div>
+                                    <input type="button" id="download-svg-button" value="Download as SVG">
+                                    <script src="js/events/download_svg_button.js"></script>
+                                </div>
                             </div>
-                            <div>
-                                <label for="color-trace-checkbox" id="color-trace-label">Color trace</label>
-                                <input id="color-trace-checkbox" type="checkbox">
-                                <script src="js/events/color_trace_checkbox.js"></script>
+                            <div style="display: none;" id="nucleosome-slider-options" class="plot-pane">
+                                <div id="nucleosome-slider">
+                                    <svg id="nucleosome-svg" class="nucleosome-svg" style="display: inline; width:146px; height:50px; position:relative;" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="100%" height="100%" style="fill:rgb(46, 139, 185);stroke-width:5;stroke:rgb(3, 100, 122)" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <label for="nucleosome-start-text" style="display: inline-block; margin-top: 10px;">Starting coord</label>
+                                    <input type="text" id="nucleosome-start-text" value="0" style="display: inline;">
+                                </div>
+                                <div>
+                                    <label for="nucleosome-projection-text" style="display: inline-block;">Project to nucleosome</label>
+                                    <input type="text" id="nucleosome-projection-text" value="" style="display: inline;border-style:solid; border-color:yellow; border-width:3px">
+                                </div>
+                                <div>
+                                    <label for="mark-nucleosome-text" style="display: inline-block; margin-top: 10px">Mark nucleosome</label>
+                                    <input type="text" id="mark-nucleosome-text" value="" style="display: inline;border-style:solid; border-color:rgb(205, 233, 255); border-width:3px">
+                                </div>
+                                <div>
+                                    <input type="button" id="generate-3D-button" value="Generate 3D Visual" style="margin-top: 10px;">
+                                </div>
+                                <div>
+                                    <label for="keep-nucleosome" id="keep-nucleosome-lable">Keep nucleosome on plot</label>
+                                    <input type="checkbox" id="keep-nucleosome" label="Plot Nucleosome" style="margin-top: 15px;">
+                                </div>
+                                <script src="js/widgets/nucleosome_slider.js"></script>
+                                <script src="js/events/generate_3D_Button.js"></script>
                             </div>
-                            <div>
-                                <label for="tooltip-checkbox" id="tooltip-label">Enable tooltip</label>
-                                <input id="tooltip-checkbox" type="checkbox" checked>
-                                <script src="js/events/tooltip_checkbox.js"></script>
-                            </div>
-                            <div>
-                                <label for="show-legend-checkbox" id="show-legend-label">Show legend</label>
-                                <input id="show-legend-checkbox" type="checkbox" checked>
-                                <script src="js/events/show_legend_checkbox.js"></script>
-                            </div>
-                            <div>
-                                <input type="button" id="download-svg-button" value="Download as SVG">
-                                <script src="js/events/download_svg_button.js"></script>
+                            <div style="display: none;" id="reference-axes-pane" class="plot-pane">
+                                <label for="y-axis-lines" style="float: left;">Y-Axis Lines</label>
+                                <div class="reference-table-div">
+                                    <table id="y-axis-lines" class="reference-lines-table"></table>
+                                </div>
+                                <svg id="y-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
+                                    <circle r="15" cx="15" cy="15" fill="grey" />
+                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
+                                </svg>
+                                <label for="x-axis-lines" style="float: left;">X-Axis Lines</label>
+                                <div class="reference-table-div">
+                                    <table id="x-axis-lines" class="reference-lines-table"></table>                                    </table>
+                                </div>
+                                <svg id="x-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
+                                    <circle r="15" cx="15" cy="15" fill="grey" />
+                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
+                                </svg>
+                                <div>
+                                    <label for="keep-reference-lines" id="keep-reference-lable">Keep reference lines on plot</label>
+                                    <input type="checkbox" id="keep-reference-lines" style="margin-top: 15px;">
+                                </div>
+                                <script src="js/widgets/reference_axes.js"></script>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
             <div class="row">
