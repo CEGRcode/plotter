@@ -168,7 +168,7 @@ $(function() {
             main_plot.append("g")
                 .attr("id", "reference-axes-layer");
 
-            main_plot.on("mousemove", function(e) {
+            d3.select("#main-plot-div").on("mousemove", function(e) {
                 $("#main-plot").main_plot("move_tooltip", e)
             });
             main_plot.on("mouseleave", function() {

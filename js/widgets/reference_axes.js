@@ -21,13 +21,12 @@ $(function() {
             this.selected_element = null;
             this.offset = { x: 0, y: 0 };
             this.main_plot = $("#main-plot").main_plot("instance");
-            this.dragging_rect_width = 4;
-
+            this.dragging_rect_width = 6;
             //Attach drag event handlers
-            d3.select("#main-plot-div").on("mousemove", function(e) {
+            document.getElementById("main-plot-div").addEventListener("mousemove", function(e) {
                 self.drag_plot_element(e);
             });
-            d3.select("#main-plot-div").on("mouseup", function() {
+            document.getElementById("main-plot-div").addEventListener("mouseup", function() {
                 self.end_dragging();
             });
             this.y_table.append("tbody");
@@ -65,48 +64,54 @@ $(function() {
                 let marginRight = this.main_plot.width - this.main_plot.margins.right;
                 let marginTop = this.main_plot.height - this.main_plot.margins.bottom;
                 let marginBottom = this.main_plot.margins.top;
-                let buffer = 2;
                 var mousePos = this.get_mouse_pos(e);
                 if (this.selected_element.getAttribute("class").includes("x-reference")){
-                    var currentX = parseFloat(this.selected_element.getAttribute("x1"));
-                    //Check that line is still on plot, if outside of plot end dragging
-                    if (marginLeft <= currentX &&  currentX <= marginRight){
-                        var newX = currentX + (mousePos.x - this.offset.x);
-                        this.move_plot_group(newX);
-                    } else if (currentX > marginRight) {
-                        this.move_plot_group(marginRight - buffer);
-                        this.end_dragging();
-                    } else if (currentX < marginLeft) {
-                        this.move_plot_group(marginLeft + buffer);
-                        this.end_dragging();
-                    }
                     //Find the corresponding element in the array and update coordinate
                     var array = this._elements.x_lines.find(x => {
                         if (x !== undefined) {
                             return x.number === parseInt(self.selected_element.getAttribute("number"));
                         }
                     });
-                    array.coordinate = parseInt(this.main_plot.xscale.invert(currentX));
-                } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
-                    var currentY = parseFloat(this.selected_element.getAttribute("y2"));
-                    //Check that line is still on plot, if outside of plot end dragging
-                    if(currentY > marginBottom && currentY < marginTop){
-                        var newY = currentY + (mousePos.y - this.offset.y);
-                        this.move_plot_group(newY);
-                    } else if (currentY > marginBottom) {
-                        this.move_plot_group(marginTop - buffer);
+                    var currentX = parseFloat(this.selected_element.getAttribute("x1"));
+                    var newX = currentX + (mousePos.x - this.offset.x);
+                    //Check that line is still on plot, if outside of plot end dragging and put line on margin
+                    if (marginLeft <= mousePos.x &&  mousePos.x <= marginRight){
+                        this.move_plot_group(newX);
+                    } else if (mousePos.x > marginRight) {
+                        newX = Math.min(marginRight, mousePos.x);
+                        this.move_plot_group(newX);
                         this.end_dragging();
-                    } else if (currentY < marginTop) {
-                        this.move_plot_group(marginBottom + buffer);
+                    } else if (mousePos.x < marginLeft) {
+                        newX = Math.max(marginLeft, mousePos.x);
+                        this.move_plot_group(newX);
                         this.end_dragging();
                     }
+                    array.coordinate = parseInt(this.main_plot.xscale.invert(newX));
+                } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
                     //Find the corresponding element in the array and update coordinate
                     var array = this._elements.y_lines.find(y => {
                         if (y !== undefined) {
                             return y.number === parseInt(self.selected_element.getAttribute("number"));
                         }
                     });
-                    array.coordinate = this.main_plot.yscale.invert(Math.abs(currentY)).toFixed(2);
+                    var currentY = parseFloat(this.selected_element.getAttribute("y2"));
+                    var newY = currentY + (mousePos.y - this.offset.y);
+                    console.log(mousePos.y);
+                    console.log(marginBottom);
+                    console.log(marginTop);
+                    //Check that line is still on plot, if outside of plot end dragging and put line on margin
+                    if(newY >= marginBottom && newY <= marginTop){
+                        this.move_plot_group(newY);
+                    } else if (newY < marginBottom) {
+                        newY = Math.max(marginBottom, newY);
+                        this.move_plot_group(newY);
+                        this.end_dragging();
+                    } else if (newY > marginTop) {
+                        newY = Math.min(newY, marginTop);
+                        this.move_plot_group(newY);
+                        this.end_dragging();
+                    }
+                    array.coordinate = this.main_plot.yscale.invert(Math.abs(newY)).toFixed(2);
                 }
                 //Update offset, tables, and add numbers to plot
                 this.offset = this.get_mouse_pos(e);
