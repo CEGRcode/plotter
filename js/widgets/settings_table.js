@@ -177,6 +177,7 @@ $(function() {
         xmax: -Infinity,
         sense: null,
         anti: null,
+        swapped: false,
         composites: null,
         scale: 1,
         baseline: 0,
@@ -463,8 +464,7 @@ $(function() {
             hide_strand_col = secondary_row.append("td")
                 .classed("hide-strand-col", true)
                 .attr("colspan", "3")
-                .style("white-space", "nowrap"),
-            secondary_row.append("td")
+            swap_senses_col = secondary_row.append("td")
             reset_col = secondary_row.append("td")
                 .classed("reset-col", true);
 
@@ -498,7 +498,6 @@ $(function() {
             forward = hide_strand_col.append("div")
                 .attr("title", "forward")
                 .style("float", "left")
-                .style("margin-left", "10%")
                 .style("margin-right", "15px")
             forward.append("label")
                 .text("Show forward:")
@@ -513,9 +512,11 @@ $(function() {
                 })
             reverse = hide_strand_col.append("div")
                 .attr("title", "reverse")
+                .style("width", "initial")
             reverse.append("label")
                 .text("Show reverse:")
                 .style("display", "inline")
+                .style("white-space", "nowrap")
             reverse.append("input")
                 .attr("type", "checkbox")
                 .property("checked", true)
@@ -525,6 +526,18 @@ $(function() {
                 .on("input", function() {
                     self.toggle_reverse(!d3.select(this).property("checked"));
                 })
+
+            swap_senses_col.append("label")
+                .attr("for", "swap_senses_checkbox")
+                .text("Swap sense and antisense")
+            swap_senses_col.append("input")
+                .attr("type", "checkbox")
+                .attr("id", "swap-senses-checkbox")
+                .property("checked", false)
+                .style("transform", "scale(1.2)")
+                .on("input", function() {
+                    self.swap_senses(d3.select(this).property("checked"));
+                });
 
             //Add reset button
             reset_col.append("input")
@@ -854,6 +867,15 @@ $(function() {
             this.plot_composite()
         },
 
+        swap_senses: function(swapped){
+            this.swapped = swapped;
+            let temp = this.sense;
+            this.sense = this.anti;
+            this.anti = temp;
+            d3.select(swap_senses_col.node()).select("#swap-senses-checkbox").property("checked", swapped);
+            this.plot_composite()
+        },
+
         //Changes baseline occupancy, adjusting slider for plot scale
         change_baseline: function(new_baseline, plot=true){
             if (isNaN(new_baseline)) {
@@ -940,6 +962,7 @@ $(function() {
             this.xmax = -Infinity;
             this.sense = null;
             this.anti = null;
+            this.swapped = false;
             this.options.name = "Composite " + this.options.idx;
             this.scale = 1;
             this.baseline = 0;
@@ -968,6 +991,7 @@ $(function() {
                 xmax: this.xmax,
                 sense: this.sense,
                 anti: this.anti,
+                swapped: this.swapped,
                 color: this.options.color,
                 secondary_color: this.secondary_color,
                 scale: this.scale,
@@ -1027,6 +1051,9 @@ $(function() {
             };
             if ("anti" in data) {
                 this.anti = data.anti
+            };
+            if ("swapped" in data) {
+                this.swap_senses(data.swapped)
             };
             if ("baseline" in data) {
                 this.baseline = data.baseline
