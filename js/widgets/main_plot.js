@@ -585,7 +585,7 @@ $(function() {
                 // Change axes input text boxes
                 $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
-            $("#nucleosome-slider").nucleosome_slider("update_all");
+            // $("#nucleosome-slider").nucleosome_slider("update_all");
             $("#reference-axes-pane").reference_axes("update_all");
         },
 

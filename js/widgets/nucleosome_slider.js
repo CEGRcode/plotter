@@ -313,7 +313,6 @@ $(function() {
                 this.plot_pointers();
                 this.update_text_boxes();
             }
-            console.log(this.projection_coords);
         },
 
         get_projection_coords(){
