@@ -21,12 +21,12 @@ $(function() {
             this.selected_element = null;
             this.offset = { x: 0, y: 0 };
             this.main_plot = $("#main-plot").main_plot("instance");
-
+            this.dragging_rect_width = 6;
             //Attach drag event handlers
-            d3.select("#main-plot-div").on("mousemove", function(e) {
+            document.getElementById("main-plot-div").addEventListener("mousemove", function(e) {
                 self.drag_plot_element(e);
             });
-            d3.select("#main-plot-div").on("mouseup", function() {
+            document.getElementById("main-plot-div").addEventListener("mouseup", function() {
                 self.end_dragging();
             });
             this.y_table.append("tbody");
@@ -60,37 +60,58 @@ $(function() {
             self = this;
             //If element is being dragged
             if (self.selected_element){
+                let marginLeft = this.main_plot.margins.left;
+                let marginRight = this.main_plot.width - this.main_plot.margins.right;
+                let marginTop = this.main_plot.height - this.main_plot.margins.bottom;
+                let marginBottom = this.main_plot.margins.top;
                 var mousePos = this.get_mouse_pos(e);
                 if (this.selected_element.getAttribute("class").includes("x-reference")){
-                        var currentX = parseFloat(this.selected_element.getAttribute("x1"));
-                        //Check that line is still on plot
-                        if (this.main_plot.margins.left < currentX &&  currentX < this.main_plot.width - this.main_plot.margins.right){
-                        var newX = currentX + (mousePos.x - this.offset.x);
-                        this.selected_element.setAttribute("x1", newX + "px");
-                        this.selected_element.setAttribute("x2", newX + "px");
-                        //Find the corresponding element in the array and update coordinate
-                        var array = this._elements.x_lines.find(x => {
-                            if (x !== undefined) {
-                                return x.number === parseInt(self.selected_element.getAttribute("number"));
-                            }
-                        });
-                        array.coordinate = parseInt(this.main_plot.xscale.invert(newX));
+                    //Find the corresponding element in the array and update coordinate
+                    var array = this._elements.x_lines.find(x => {
+                        if (x !== undefined) {
+                            return x.number === parseInt(self.selected_element.getAttribute("number"));
+                        }
+                    });
+                    var currentX = parseFloat(this.selected_element.getAttribute("x1"));
+                    var newX = currentX + (mousePos.x - this.offset.x);
+                    //Check that line is still on plot, if outside of plot end dragging and put line on margin
+                    if (marginLeft <= mousePos.x &&  mousePos.x <= marginRight){
+                        this.move_plot_group(newX);
+                    } else if (mousePos.x > marginRight) {
+                        newX = Math.min(marginRight, mousePos.x);
+                        this.move_plot_group(newX);
+                        this.end_dragging();
+                    } else if (mousePos.x < marginLeft) {
+                        newX = Math.max(marginLeft, mousePos.x);
+                        this.move_plot_group(newX);
+                        this.end_dragging();
                     }
+                    array.coordinate = parseInt(this.main_plot.xscale.invert(newX));
                 } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
+                    //Find the corresponding element in the array and update coordinate
+                    var array = this._elements.y_lines.find(y => {
+                        if (y !== undefined) {
+                            return y.number === parseInt(self.selected_element.getAttribute("number"));
+                        }
+                    });
                     var currentY = parseFloat(this.selected_element.getAttribute("y2"));
-                    //Check that line is still on plot
-                    if(currentY > this.main_plot.margins.top && currentY < this.main_plot.height - this.main_plot.margins.bottom){
-                        var newY = currentY + (mousePos.y - this.offset.y);
-                        this.selected_element.setAttribute("y1", newY + "px");
-                        this.selected_element.setAttribute("y2", newY + "px");
-                        //Find the corresponding element in the array and update coordinate
-                        var array = this._elements.y_lines.find(y => {
-                            if (y !== undefined) {
-                                return y.number === parseInt(self.selected_element.getAttribute("number"));
-                            }
-                        });
-                        array.coordinate = this.main_plot.yscale.invert(Math.abs(newY)).toFixed(2);
+                    var newY = currentY + (mousePos.y - this.offset.y);
+                    console.log(mousePos.y);
+                    console.log(marginBottom);
+                    console.log(marginTop);
+                    //Check that line is still on plot, if outside of plot end dragging and put line on margin
+                    if(newY >= marginBottom && newY <= marginTop){
+                        this.move_plot_group(newY);
+                    } else if (newY < marginBottom) {
+                        newY = Math.max(marginBottom, newY);
+                        this.move_plot_group(newY);
+                        this.end_dragging();
+                    } else if (newY > marginTop) {
+                        newY = Math.min(newY, marginTop);
+                        this.move_plot_group(newY);
+                        this.end_dragging();
                     }
+                    array.coordinate = this.main_plot.yscale.invert(Math.abs(newY)).toFixed(2);
                 }
                 //Update offset, tables, and add numbers to plot
                 this.offset = this.get_mouse_pos(e);
@@ -102,6 +123,19 @@ $(function() {
         end_dragging: function() {
             //Reset selected element and update all text and figures
             this.selected_element = null;
+        },
+
+        move_plot_group: function(pos) {
+            //Move plotted line group to a position
+            if (this.selected_element.getAttribute("class").includes("x-reference")) {
+                this.selected_element.setAttribute("x1", pos + "px");
+                this.selected_element.setAttribute("x2", pos + "px");
+                d3.select(this.selected_element.parentNode).select("rect").attr("x", (pos - this.dragging_rect_width / 2) + "px");
+            } else if (this.selected_element.getAttribute("class").includes("y-reference")) {
+                this.selected_element.setAttribute("y1", pos + "px");
+                this.selected_element.setAttribute("y2", pos + "px");
+                d3.select(this.selected_element.parentNode).select("rect").attr("y", (pos - this.dragging_rect_width / 2) + "px");
+            }
         },
 
         attach_event_handlers: function() {
@@ -142,8 +176,11 @@ $(function() {
                     .style("text-align", "center")
                     .attr("value", coord)
                     .on("input", function() {
-                        lines[row_number].coordinate = parseFloat(this.value);
-                        self.plot_lines();
+                        let val = parseFloat(this.value)
+                        if (!(isNaN(val))){
+                            lines[row_number].coordinate = val;
+                            self.plot_lines();
+                        }
                     });
                 //Append color input
                 row.append("td")
@@ -273,7 +310,8 @@ $(function() {
             //Add x-axis lines to plot with drag event handlers and labels
             for (let line of self._elements.x_lines) {
                 if (line != null && !isNaN(line.coordinate)) {
-                    plotted_line = d3.select("#reference-axes-layer").append("line")
+                    line_group = d3.select("#reference-axes-layer").append("g")
+                    plotted_line = line_group.append("line")
                         .attr("x1", self.main_plot.xscale(line.coordinate))
                         .attr("x2", self.main_plot.xscale(line.coordinate))
                         .attr("y1", self.main_plot.yscale(self.main_plot.ymin))
@@ -283,16 +321,24 @@ $(function() {
                         .attr("stroke-dasharray", line.style)
                         .attr("number", line.number)
                         .classed("x-reference", true);
-                    plotted_line.on("mousedown", function(e) {
-                        self.selected_element = this;
-                        self.start_dragging(e, d3.select(this).node());
+                    dragging_rect = line_group.append("rect")
+                        .attr("width", this.dragging_rect_width)
+                        .attr("x", self.main_plot.xscale(line.coordinate) - this.dragging_rect_width / 2)
+                        .attr("y", self.main_plot.yscale(self.main_plot.ymax))
+                        .attr("height", (self.main_plot.yscale(self.main_plot.ymin) - self.main_plot.yscale(self.main_plot.ymax)) + "px")
+                        .attr("opacity", "0")
+                        .style("cursor", "ew-resize");
+                    dragging_rect.on("mousedown", function(e) {
+                        self.selected_element = plotted_line;
+                        self.start_dragging(e, d3.select(this.parentNode).select("line").node());
                     });
                 }
             }
             //Add y-axis lines to plot with event handlers and labels
             for (let line of self._elements.y_lines) {
                 if (line != null && !isNaN(line.coordinate)){
-                    plotted_line = d3.select("#reference-axes-layer").append("line")
+                    line_group = d3.select("#reference-axes-layer").append("g")
+                    plotted_line = line_group.append("line")
                         .attr("y1", self.main_plot.yscale(line.coordinate))
                         .attr("y2", self.main_plot.yscale(line.coordinate))
                         .attr("x1", self.main_plot.xscale(self.main_plot.xmin))
@@ -302,10 +348,17 @@ $(function() {
                         .attr("stroke-dasharray", line.style)
                         .attr("number", line.number)
                         .classed("y-reference", true);
-                        plotted_line.on("mousedown", function(e) {
-                            self.selected_element = this;
-                            self.start_dragging(e, d3.select(this).node());
-                        });
+                    dragging_rect = line_group.append("rect")
+                        .attr("height", this.dragging_rect_width)
+                        .attr("x", self.main_plot.xscale(self.main_plot.xmin))
+                        .attr("y", self.main_plot.yscale(line.coordinate) - this.dragging_rect_width / 2)
+                        .attr("width", (self.main_plot.xscale(self.main_plot.xmax) - self.main_plot.xscale(self.main_plot.xmin)) + "px")
+                        .attr("opacity", "0")
+                        .style("cursor", "ns-resize");
+                    dragging_rect.on("mousedown", function(e) {
+                        self.selected_element = plotted_line;
+                        self.start_dragging(e, d3.select(this.parentNode).select("line").node());
+                    });
                 }
             }
             this.add_plot_numbers();

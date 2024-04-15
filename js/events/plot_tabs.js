@@ -1,7 +1,7 @@
 $(function() {
     d3.select("#plot-options-tab").on("click", function() {
         showPane("plot-options", this);
-        $("#main-plot").main_plot("toggle_tooltip", true);
+        $("#main-plot").main_plot("toggle_tooltip", d3.select("#tooltip-checkbox").property("checked"));
     })
     d3.select("#reference-axes-tab").on("click", function() {
         showPane("reference-axes-pane", this);
