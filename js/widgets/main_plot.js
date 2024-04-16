@@ -585,7 +585,6 @@ $(function() {
                 // Change axes input text boxes
                 $("#axes-input").axes_input("change_axis_limits", this.xmin, this.xmax, this.ymin, this.ymax, false)
             }
-            // $("#nucleosome-slider").nucleosome_slider("update_all");
             $("#reference-axes-pane").reference_axes("update_all");
         },
 
@@ -785,11 +784,8 @@ $(function() {
                     this._elements.tooltip
                         .style("display", null)
                         .style("position", "absolute")
-                        .style("top", ev.clientY)
-                        .style("left", ev.clientX)
                         .style("pointer-events", "none");
-                        // .attr("transform", "translate(" + this.xscale(mouse_x_scaled) + " " + mouse_y + ")");
-
+                        
                     // Create tooltip border and text
                     let tooltip_border = this._elements.tooltip.selectAll("path")
                         .data([null])
@@ -817,10 +813,11 @@ $(function() {
                     let {y, width: w, height: h} = tooltip_text.node().getBBox();
                     tooltip_text.attr("transform", "translate(" + 2 + " " + (15 - y) + ")");
                     // Update tooltip border
-                    tooltip_border.attr("d", "M" + (w + 4) + " 5 H " + (w + 20) / 2 + " l -5 -5 l-5 5 H 0 V " + (h + 20) + " H " + (w + 4)  + " z")
+                    tooltip_border.attr("d", "M" + (w + 4) + " 5 H " + (w + 20) / 2 + " l -5 -5 l-5 5 H 0 V " + (h + 20) + " H " + (w + 4)  + " z");
+                    ({y, width: w, height: h} = tooltip_border.node().getBBox());
                     this._elements.tooltip
-                        .style("top", ev.clientY + 0.7 * h)
-                        .style("left",  ev.clientX - ((w + 8) / 2) * 0.57)
+                        .style("top", ev.clientY + 30)
+                        .style("left",  ev.clientX - (w - 80) / 1.4)
                 } else {
                     this._elements.tooltip.style("display", "none")
                 }
