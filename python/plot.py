@@ -12,7 +12,7 @@ class XScale:
     def __init__(self, plot):
         self.domain = [plot.xmin, plot.xmax, plot.xmax - plot.xmin]
         self.range = [plot.margins.get('left'), plot.width - plot.margins.get('right'), plot.width - (plot.margins.get('right') + plot.margins.get('left'))]
-        self.zero = (plot.width - (plot.margins.get('right') + plot.margins.get('left'))) / 2 + plot.margins.get('left')
+        self.zero = (plot.width - (plot.margins.get('right') + plot.margins.get('left'))) * (abs(plot.xmin) / (abs(plot.xmin) + abs(plot.xmax))) + plot.margins.get('left')
     
     def get(self, value):
         return (self.range[2] / self.domain[2]) * value + self.zero
@@ -72,7 +72,6 @@ class Plot:
             self.num_composites += 1
         else:
             i = i
-
         # Set x domain as array of integers from xmin to xmax
         xdomain = [i + xmin for i in range(xmax - xmin + 1)]
         if (self.combined):
@@ -88,33 +87,28 @@ class Plot:
             # Smooth occupancy with moving average
             new_xdomain, smoothed_occupancy = slidingWindow.sliding_window(shifted_xdomain, combined_occupancy, smoothing).values()
             # Truncate x domain to x axis limits
-            truncated_xdomain = [x for x in xdomain if x >= self.xmin and x <= self.xmax]
+            truncated_xdomain = [x for x in new_xdomain if x >= self.xmin and x <= self.xmax]
             # Truncate occupancy and scale by scale factor, adding baseline value
             scaled_occupancy = [value if (value := d * scale + baseline) > 0 else 0 for j, d in enumerate(smoothed_occupancy) 
                     if int(new_xdomain[j]) >= self.xmin and int(new_xdomain[j]) <= self.xmax]
-            #Create Composite Trace
-            document = dom.Document()
-            if self.color_trace:
-                white_line = document.createElement("path")
-
             composite_fill_top = document.createElement("polygon")
             composite_fill_top.setAttribute("points", " ".join(points := [f"{self.xscale.get(d)},{self.yscale.get(-scaled_occupancy[j])}" for j, d in enumerate(truncated_xdomain)]) + f" {self.xscale.get(truncated_xdomain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_xdomain[0])},{self.yscale.get(0)}")
             composite_fill_top.setAttribute("fill", "url(#composite-gradient-top" + str(i) + ")")
             self.composite_group.appendChild(composite_fill_top)
-
+            #Create outline
             wide_trace = document.createElement("path")
             wide_trace.setAttribute("stroke-width", "1")
             wide_trace.setAttribute("stroke", color)
             wide_trace.setAttribute("fill", "none")
             wide_trace.setAttribute("d", "M" + "L".join(points))
+            self.composite_group.appendChild(wide_trace)
             if not self.color_trace:
                 wide_trace.setAttribute("stroke", "#FFFFFF")
                 narrow_trace = copy.deepcopy(wide_trace)
                 narrow_trace.setAttribute("stroke-width", "0.5")
                 narrow_trace.setAttribute("stroke", "#000000")
                 narrow_trace.setAttribute("d", "M" + "L".join(points))
-            self.composite_group.appendChild(wide_trace)
-            self.composite_group.appendChild(narrow_trace)
+                self.composite_group.appendChild(narrow_trace)
         else:
             # Smooth sense and anti occupancy with moving average
             new_xdomain, smoothed_sense = slidingWindow.sliding_window(xdomain, sense, smoothing).values()
@@ -127,19 +121,49 @@ class Plot:
                     if int(new_xdomain[j] + bp_shift) >= self.xmin and int(new_xdomain[j] + bp_shift) <= self.xmax]
             scaled_anti = [value if (value := d * scale + baseline) > 0 else 0 for j, d in enumerate(smoothed_anti) 
                     if int(new_xdomain[j] - bp_shift) >= self.xmin and int(new_xdomain[j] - bp_shift) <= self.xmax]
-            # Create sense path and gradient if not hidden
-            # Create top polygon
-            composite_fill_top = document.createElement("polygon")
-            composite_fill_top.setAttribute("points", pointsA := " ".join([f"{self.xscale.get(d)},{self.yscale.get(-scaled_sense[j])}" for j, d in enumerate(truncated_sense_domain)]) + f" {self.xscale.get(truncated_sense_domain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_sense_domain[0])},{self.yscale.get(0)}")
-            composite_fill_top.setAttribute("fill", "url(#composite-gradient-top" + str(i) + ")")
-            # Create bottom polygon
-            composite_fill_bottom = document.createElement("polygon")
-            composite_fill_bottom.setAttribute("points", pointsB := " ".join([f"{self.xscale.get(d)},{self.yscale.get(scaled_anti[j])}" for j, d in enumerate(truncated_anti_domain)]) + f" {self.xscale.get(truncated_anti_domain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_anti_domain[0])},{self.yscale.get(0)}")
-            composite_fill_bottom.setAttribute("fill", "url(#composite-gradient-bottom" + str(i) + ")")
-
-            self.composite_group.appendChild(composite_fill_top)
-            self.composite_group.appendChild(composite_fill_bottom)
-        self.generateGradients(1, i, color, secondary_color=secondary_color)
+            # Create sense trace and polygon if not hidden
+            if not hide_anti:
+                # Create top polygon
+                composite_fill_top = document.createElement("polygon")
+                composite_fill_top.setAttribute("points", " ".join(sense_points := [f"{self.xscale.get(d)},{self.yscale.get(-scaled_sense[j])}" for j, d in enumerate(truncated_sense_domain)]) + f" {self.xscale.get(truncated_sense_domain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_sense_domain[0])},{self.yscale.get(0)}")
+                composite_fill_top.setAttribute("fill", "url(#composite-gradient-top" + str(i) + ")")
+                self.composite_group.appendChild(composite_fill_top)
+                #Create trace
+                top_wide_trace = document.createElement("path")
+                top_wide_trace.setAttribute("stroke-width", "1")
+                top_wide_trace.setAttribute("stroke", color)
+                top_wide_trace.setAttribute("fill", "none")
+                top_wide_trace.setAttribute("d", "M" + "L".join(sense_points))
+                self.composite_group.appendChild(top_wide_trace)
+                if not self.color_trace:
+                    top_wide_trace.setAttribute("stroke", "#FFFFFF")
+                    top_narrow_trace = copy.deepcopy(top_wide_trace)
+                    top_narrow_trace.setAttribute("stroke-width", "0.5")
+                    top_narrow_trace.setAttribute("stroke", "#000000")
+                    top_narrow_trace.setAttribute("d", "M" + "L".join(sense_points))
+                    self.composite_group.appendChild(top_narrow_trace)
+            # Create anti trace and polygon if not hidden
+            if not hide_anti:
+                # Create polygon
+                composite_fill_bottom = document.createElement("polygon")
+                composite_fill_bottom.setAttribute("points", " ".join(anti_points := [f"{self.xscale.get(d)},{self.yscale.get(scaled_anti[j])}" for j, d in enumerate(truncated_anti_domain)]) + f" {self.xscale.get(truncated_anti_domain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_anti_domain[0])},{self.yscale.get(0)}")
+                composite_fill_bottom.setAttribute("fill", "url(#composite-gradient-bottom" + str(i) + ")")
+                self.composite_group.appendChild(composite_fill_bottom)
+                #Create trace
+                bottom_wide_trace = document.createElement("path")
+                bottom_wide_trace.setAttribute("stroke-width", "1")
+                bottom_wide_trace.setAttribute("stroke", secondary_color)
+                bottom_wide_trace.setAttribute("fill", "none")
+                bottom_wide_trace.setAttribute("d", "M" + "L".join(anti_points))
+                self.composite_group.appendChild(bottom_wide_trace)
+                if not self.color_trace:
+                    bottom_wide_trace.setAttribute("stroke", "#FFFFFF")
+                    bottom_narrow_trace = copy.deepcopy(bottom_wide_trace)
+                    bottom_narrow_trace.setAttribute("stroke-width", "0.5")
+                    bottom_narrow_trace.setAttribute("stroke", "#000000")
+                    bottom_narrow_trace.setAttribute("d", "M" + "L".join(anti_points))
+                    self.composite_group.appendChild(bottom_narrow_trace)
+        self.generateGradients(opacity, i, color, secondary_color=secondary_color)
         self.super_group.appendChild(self.gradients_group)
         self.super_group.appendChild(self.composite_group)
         return self.super_group
