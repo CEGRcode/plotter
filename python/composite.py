@@ -17,13 +17,23 @@ class Composite:
         return "Sense: " + str(self.sense) + "\nAnti: " + str(self.anti) + "\nXMin: " + str(self.xmin) + "\nXMax: " + str(self.xmax) + "\nID:" + str(self.id)
 
 class CompositeGroup:
-    def __init__(self):
+    def __init__(self, scale=1, color=None, secondary_color=None, i=None, opacity=None, smoothing=None, bp_shift=None, hide_sense=False, hide_anti=False, baseline=0, name=None):
         self.xmin = 0
         self.xmax = 0
         self.sense = []
         self.anti = []
+        self.scale = scale
+        self.color = color
+        self.secondary_color = secondary_color if secondary_color is not None else color
+        self.opacity = opacity
+        self.smoothing = smoothing
+        self.bp_shift = bp_shift
+        self.hide_anti = hide_anti
+        self.baseline = baseline
+        self.hide_sense = hide_sense
         self.individual_composites = {}
         self.files_loaded = len(self.individual_composites)
+        self.name = name
     
     def loadComposite(self,composite: Composite):
         # If no files, initialize sense and anti arrays; otherwise, pad sense and anti arrays to new xdomain

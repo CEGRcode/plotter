@@ -171,8 +171,8 @@ $(function() {
             d3.select("#main-plot-div").on("mousemove", function(e) {
                 $("#main-plot").main_plot("move_tooltip", e)
             });
-            main_plot.on("mouseleave", function() {
-                // $("#main-plot").main_plot("hide_tooltip")
+            d3.select("#main-plot-div").on("mouseleave", function() {
+                $("#main-plot").main_plot("hide_tooltip")
             });
 
             this.enable_tooltip = true;
@@ -315,6 +315,8 @@ $(function() {
 
         plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false, hide_anti=false, baseline=0) {
             // Set composite visibility
+            console.log("xmin:" + xmin)
+            console.log("xmax:" + xmax)
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
                 .style("display", hide ? "none" : null),
@@ -345,6 +347,7 @@ $(function() {
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
                         .map(d => ((value = d * scale + baseline) > 0)? value: 0);
 
+                console.log(truncated_xdomain)
                 // Set fill color
                 composite.select(".composite-gradient-top")
                     .selectAll("stop")
@@ -737,8 +740,10 @@ $(function() {
             if (color_trace) {
                 this._elements.composite_group.selectAll(".composite .color-line-top")
                     .style("display", null);
-                this._elements.composite_group.selectAll(".composite .color-line-bottom")
-                    .style("display", null);
+                if (!this.combined){
+                    this._elements.composite_group.selectAll(".composite .color-line-bottom")
+                        .style("display", null);
+                    }
                 this._elements.composite_group.selectAll(".composite .white-line")
                     .style("display", "none");
                 this._elements.composite_group.selectAll(".composite .black-line")
@@ -820,12 +825,13 @@ $(function() {
                         .style("left",  ev.clientX - (w - 80) / 1.4)
                 } else {
                     this._elements.tooltip.style("display", "none")
+                    d3.selectAll("#composite-plot-tooltip").remove();
                 }
             }
         },
 
         hide_tooltip: function() {
-            this._elements.tooltip.style("display", "none")
+            d3.selectAll("#composite-plot-tooltip").remove();
         },
 
         download_as_svg: function() {
