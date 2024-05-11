@@ -10,6 +10,7 @@ import parseComposite
 import sys
 from enum import Enum
 import svgFactory
+import json 
 
 document = dom.Document()
 
@@ -25,9 +26,8 @@ if __name__ == "__main__":
     composite_commands = []
     ref_line_commands = []
     plot_command = ""
-    current = "composite"
+    current = ""
     for word in sys.argv:
-        print(word)
         if word == "composite":
             i += 1
             composite_commands.append("")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     plot_parser.add_argument("--smoothing", type=float)
     plot_parser.add_argument("--bp-shift", type=int)
     plot_parser.add_argument("--opacity", type=float)
-    plot_parser.add_argument("--title")
+    plot_parser.add_argument("--title", nargs="+")
     plot_parser.add_argument("--xmin",type=int)
     plot_parser.add_argument("--xmax",type=int)
     plot_parser.add_argument("--xlabel", nargs="+")
@@ -61,11 +61,14 @@ if __name__ == "__main__":
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
     plot_parser.add_argument("--no-resize", action="store_true", default=False)
     plot_parser.add_argument("--no-shrink", action="store_true", default=False)
-    plot_parser.add_argument("--reference-line", nargs=3, action='append')
     plot_parser.add_argument("--out")
+    plot_parser.add_argument("--export-json")
+    plot_parser.add_argument("--import-json")
+    plot_parser.add_argument("--import-settings-json")
+
     # Create plot based on plot subcommand, default values in Plot class will be used if argument is not specified
     plot_args = plot_parser.parse_args(plot_command.split())
-    p = plot.Plot(title=plot_args.title, xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, 
+    p = plot.Plot(title=" ".join(plot_args.title), xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, 
                   smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend)
 
     # Create arrays for default composite names and colors
@@ -89,7 +92,6 @@ if __name__ == "__main__":
     i = 0
     for command in composite_commands:
         args = composite_parser.parse_args(command.split())
-        print(args)
         composite = Composite(scale=args.scale, color=args.color if args.color is not None else colors[i % len(colors)], secondary_color=args.secondary_color, 
                                          smoothing=args.smoothing, bp_shift=args.bp_shift, hide_sense= args.hide_sense, hide_anti= args.hide_anti, baseline=args.shift_occupancy,
                                          name=args.name if args.name is not None else names[i], opacity=args.opacity,)
@@ -102,17 +104,24 @@ if __name__ == "__main__":
                 composite.load_simple_composite(sc)
             else:
                 prefixes = parseComposite.get_prefixes_from_multiple_composites(c)
-                print(prefixes)
                 cd = parseComposite.parse_multiple_composite(c, prefixes[0])
                 composite.load_composite_dict(cd)        
         p.add_composite_group(composite)
         i += 1    
+ 
+    # Import settings and composites from plot, preserving options specified in this call
+    if plot_args.import_json:
+        p.import_data(plot_args.import_json, plot_args, True)
+    elif plot_args.import_settings_json:
+        p.import_data(plot_args.import_settings_json, plot_args, False)
+
     # If --no-shrink is specified, don't change y-axis but resize x-axis
     if plot_args.no_shrink:
         p.autoscale_axes(False)
     # If --no-resize is specified, don't change either axis
     elif not plot_args.no_resize:
         p.autoscale_axes(True)
+
     p.plot_composites()
 
     # Create parser for reference-line subcommand
@@ -128,7 +137,13 @@ if __name__ == "__main__":
         p.plot_reference_line(axis=args.axis, val=args.val, style=args.style, color=args.color, opacity=args.opacity)
     # Use svg factory to generate svg based on plot
     svg = svgFactory.generateSVG(p)
-    with open(plot_args.out if plot_args is not None else "out.svg", 'w') as f:
+    with open(plot_args.out if plot_args.out is not None else "out.svg", 'w') as f:
         # write to output
         svg.writexml(f, addindent='    ', newl='\n')
-
+    
+    # Output plot json if specified
+    if plot_args.export_json:
+        str = json.dumps(p.export(), indent=2)
+        with open(plot_args.export_json, 'w') as f:
+            # Write to output
+            f.write(str)

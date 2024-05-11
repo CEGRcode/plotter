@@ -15,16 +15,17 @@ class SimpleComposite:
 
 # Object to store composite data with options for plotting, similar to a settings row
 class Composite:
-    def __init__(self, scale=1, color=None, secondary_color=None, i=None, opacity=None, smoothing=None, bp_shift=None, hide_sense=False, hide_anti=False, baseline=0, name=None):
+    def __init__(self, scale=1, color=None, secondary_color=None, i=None, opacity=None, smoothing=None, bp_shift=None, hide_sense=False, hide_anti=False, baseline=0, name=None, sense=None, anti=None, xmin=None, xmax=None):
         # Sets default values
         self.scale = scale if scale is not None else 1
         self.color = color if color is not None else "#0000FF"
         self.secondary_color = secondary_color if secondary_color is not None else color
         self.baseline = baseline if baseline is not None else 0
-        self.xmin = 0
-        self.xmax = 0
-        self.sense = []
-        self.anti = []
+        self.xmin = xmin if xmin is not None else 0
+        self.xmax = xmax if xmax is not None else 0
+        self.sense = sense if sense is not None else []
+        self.anti = anti if anti is not None else []
+        # Don't assign defaults to opacity, smoothing, and bp_shift so plot can apply plot defaults
         self.opacity = opacity
         self.smoothing = smoothing
         self.bp_shift = bp_shift
@@ -75,12 +76,12 @@ class Composite:
                 self.anti = prefix + self.anti + suffix
             # Update sense and anti arrays
             j = composite.xmin - self.xmin
-            print(composite.sense)
             while j <= composite.xmax - composite.xmin:
                 idx = composite.xmin - self.xmin + j
                 self.sense[idx] += composite.sense[j]
                 self.anti[idx] += composite.anti[j]
                 j += 1
             self.individual_files[composite.id] = composite
+    
     def __str__(self):
         return str(self.individual_files)

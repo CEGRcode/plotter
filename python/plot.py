@@ -2,6 +2,8 @@ import xml.dom.minidom as dom
 import copy
 import slidingWindow
 import math
+import json
+import composite
 
 document = dom.Document()
 
@@ -205,7 +207,7 @@ class Plot:
             scaled_anti = [value if (value := d * composite.scale + composite.baseline) > 0 else 0 for j, d in enumerate(smoothed_anti) 
                     if int(new_xdomain[j] - bp_shift) >= self.xmin and int(new_xdomain[j] - bp_shift) <= self.xmax]
             # Create sense trace and polygon if not hidden
-            if not composite.hide_anti:
+            if not composite.hide_sense:
                 # Create top polygon
                 composite_fill_top = document.createElement("polygon")
                 composite_fill_top.setAttribute("points", " ".join(sense_points := [f"{self.xscale.get(d)},{self.yscale.get(scaled_sense[j])}" for j, d in enumerate(truncated_sense_domain)]) + f" {self.xscale.get(truncated_sense_domain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_sense_domain[0])},{self.yscale.get(0)}")
@@ -365,6 +367,64 @@ class Plot:
     # Returns svg group with all composites and reference lines
     def get_plot(self):
         return self.plot
+    
+    # Exports json of all composites and plot attributes
+    def export(self):
+        composite_arr = []
+        for composite in self.composites:
+            composite_arr.append({
+                'name': composite.name,
+                'xmin': composite.xmin,
+                'xmax': composite.xmax,
+                'sense': composite.sense,
+                'anti': composite.anti,
+                'color': composite.color,
+                'secondary-color': composite.secondary_color,
+                'scale': composite.scale,
+                'opacity': composite.opacity,
+                'smoothing': composite.smoothing,
+                'bp_shift': composite.bp_shift,
+                'hide_sense': composite.hide_sense,
+                'hide_anti': composite.hide_anti,
+                'files_loaded': composite.files_loaded
+            })
+        return {
+            'settings' :composite_arr,
+            'plot' : {'title': self.title, 'xlabel': self.xlabel, 'ylabel': self.ylabel, 'opacity': self.opacity,
+                'smoothing': self.smoothing, 'bp_shift': self.bp_shift, 'xmin': self.xmin, 'xmax': self.xmax, 'ymin': self.ymin,
+                'ymax': self.ymax, 'combined': self.combined, 'color_trace': self.color_trace, 'hide_legend': self.hide_legend}
+            }
+    
+    # Imports JSON with plot attributes and composites if desired.  Preserves plot options specified by most recent call
+    def import_data(self, file, args, import_composites):
+        with open(file) as f:            
+            data = json.load(f)
+            if import_composites:
+                for c in data['settings']:
+                    n = c.get('name')
+                    # Add _imported to composite name if duplicate of existing composite
+                    if any(n == self.composites[j].name for j in range(len(self.composites))):
+                        n = str(n) + "_imported"
+                    self.composites.append(composite.Composite(scale=c.get('scale'), color=c.get('color'), secondary_color=c.get('secondary-color'), opacity=c.get('opacity'),
+                                                            smoothing=c.get('smoothing'), bp_shift=c.get('bp_shift'), hide_sense=c.get('hide_sense'), hide_anti=c.get('hide_anti'),
+                                                            baseline=c.get('baseline'), name=n, sense=c.get('sense'), anti=c.get('anti'), xmin=c.get('xmin'), xmax=c.get('xmax')))
+            plot_data = data['plot']
+            # Add plot variables
+            self.title = plot_data.get('title', self.title) if args.title is None else self.title
+            self.xmin = plot_data.get('xmin', self.xmin) if args.xmin is None else self.xmin
+            self.xmax = plot_data.get('xmax', self.xmax) if args.xmax is None else self.xmax
+            self.ymin = plot_data.get('ymin', self.ymin) if args.ymin is None else self.ymin
+            self.ymax = plot_data.get('ymax', self.ymax) if args.ymax is None else self.ymax
+            self.xlabel = plot_data.get('xlabel', self.xlabel) if args.xlabel is None else self.xlabel
+            self.ylabel = plot_data.get('ylabel', self.ylabel) if args.ylabel is None else self.ylabel
+            self.opacity = plot_data.get('opacity', self.opacity) if args.opacity is None else self.opacity
+            self.smoothing = plot_data.get('smoothing', self.smoothing) if args.smoothing is None else self.smoothing
+            self.bp_shift = plot_data.get('bp_shift', self.bp_shift) if args.bp_shift is None else self.bp_shift
+            self.combined = plot_data.get('combined', self.combined) if args.combined is None else self.combined
+            self.color_trace = plot_data.get('color_trace', self.color_trace) if args.color_trace is None else self.color_trace
+            self.hide_legend = plot_data.get('hide_legend', self.hide_legend) if args.hide_legend is None else self.hide_legend
+            self.xscale = XScale(self)
+            self.yscale = YScale(self)
 
     def generateGradients(self, opacity, i, color, secondary_color=None):
         # Creates DOM elements for top and bottom gradients
@@ -406,8 +466,8 @@ class Plot:
         bottom_stop_two.setAttribute("stop-opacity", "0")
         composite_gradient_bottom.appendChild(bottom_stop_one)
         composite_gradient_bottom.appendChild(bottom_stop_two)            
-
         self.gradients_group.appendChild(composite_gradient_bottom)
+
 # Class that mimics d3 scaleLinear() for x-axis of plot
 class XScale:
     def __init__(self, plot):

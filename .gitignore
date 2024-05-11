@@ -1,6 +1,8 @@
 js/*
-*
+
 **/.DS_Store
 
 !.gitignore
 !python
+python/sample_composites/composite_average.out
+/python/sample_composites
