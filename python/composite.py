@@ -57,8 +57,9 @@ class Composite:
             j += 1
         self.individual_files[composite.id] = composite
     # Loads dictionary from parse_multiple_composites
-    def load_composite_dict(self,compositeDict: dict):
-        for composite in compositeDict:
+    def load_composite_dict(self,composite_dict: dict):
+        for key in composite_dict:
+            composite = composite_dict[key]
             # If no files, initialize sense and anti arrays; otherwise, pad sense and anti arrays to new xdomain
             self.xmin = min(composite.xmin, self.xmin)
             self.xmax = max(composite.xmax, self.xmax)
@@ -74,6 +75,7 @@ class Composite:
                 self.anti = prefix + self.anti + suffix
             # Update sense and anti arrays
             j = composite.xmin - self.xmin
+            print(composite.sense)
             while j <= composite.xmax - composite.xmin:
                 idx = composite.xmin - self.xmin + j
                 self.sense[idx] += composite.sense[j]

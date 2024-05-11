@@ -58,7 +58,7 @@ if __name__ == "__main__":
     plot_parser.add_argument("--ylabel", nargs="+")
     plot_parser.add_argument("--color-trace", action="store_true", default=False)
     plot_parser.add_argument("--combined", action="store_true", default=False)
-    plot_parser.add_argument("--hide-legend", action="store_false", default=True)
+    plot_parser.add_argument("--hide-legend", action="store_true", default=False)
     plot_parser.add_argument("--no-resize", action="store_true", default=False)
     plot_parser.add_argument("--no-shrink", action="store_true", default=False)
     plot_parser.add_argument("--reference-line", nargs=3, action='append')
@@ -102,8 +102,9 @@ if __name__ == "__main__":
                 composite.load_simple_composite(sc)
             else:
                 prefixes = parseComposite.get_prefixes_from_multiple_composites(c)
-                composites = parseComposite.parse_multiple_composite(c, prefixes)
-                composite.load_composite_dict(composites)        
+                print(prefixes)
+                cd = parseComposite.parse_multiple_composite(c, prefixes[0])
+                composite.load_composite_dict(cd)        
         p.add_composite_group(composite)
         i += 1    
     # If --no-shrink is specified, don't change y-axis but resize x-axis

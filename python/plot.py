@@ -8,7 +8,7 @@ document = dom.Document()
 # Class that generates composite and reference lines svg elements
 class Plot:
     def __init__(self, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlabel=None, ylabel=None, 
-                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=True):
+                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False):
         # Set variables to defaults if argument passed into constructor was None
         self.title = title if title is not None else "Composite plot"
         self.xmin = xmin if xmin is not None else -500
@@ -147,7 +147,7 @@ class Plot:
         self.plot.appendChild(self.gradients_group)
         self.plot.appendChild(self.composite_group)
     
-    # Creates a composite svg element from a composite_group object, like plotting a row form the settings table
+    # Creates a composite svg element from a composite object, like plotting a row form the settings table
     def plot_composite(self, composite):
         # Set parameters to global values if not specified
         opacity = composite.opacity if composite.opacity is not None else self.opacity
@@ -177,7 +177,7 @@ class Plot:
             composite_fill_top = document.createElement("polygon")
             composite_fill_top.setAttribute("points", " ".join(points := [f"{self.xscale.get(d)},{self.yscale.get(scaled_occupancy[j])}" for j, d in enumerate(truncated_xdomain)]) + f" {self.xscale.get(truncated_xdomain[-1])},{self.yscale.get(0)} {self.xscale.get(truncated_xdomain[0])},{self.yscale.get(0)}")
             composite_fill_top.setAttribute("fill", "url(#composite-gradient-top" + str(i) + ")")
-            self.composite.appendChild(composite_fill_top)
+            self.composite_group.appendChild(composite_fill_top)
             #Create outline
             wide_trace = document.createElement("path")
             wide_trace.setAttribute("stroke-width", "1")
@@ -334,18 +334,18 @@ class Plot:
             legend = document.createElement('g')
             legend.setAttribute("transform", "translate(" + str(self.width - self.margins.get("right") + 25) + " " + str(self.margins.get("top")) + ")")
             i = 0
-            for composite_group in self.composites:
+            for composite in self.composites:
                 # Creates legend entries for each composite
                 legend_element = document.createElement("g")
                 legend_element.setAttribute("transform", "translate(0," + str(24 * i) + ")")
                 legend_color_sense = document.createElement("polygon")
                 legend_color_sense.setAttribute("points", "0,0 15,0 15,15 0,15")
-                legend_color_sense.setAttribute("fill", composite_group.color)
+                legend_color_sense.setAttribute("fill", composite.color)
                 legend_element.appendChild(legend_color_sense)
                 legend_color_anti = document.createElement("polygon")
                 legend_color_anti.setAttribute("points", "0,0 15,0 15,15 0,15")
                 legend_element.appendChild(legend_color_anti)
-                legend_color_anti.setAttribute("fill", composite_group.secondary_color)
+                legend_color_anti.setAttribute("fill", composite.secondary_color)
                 legend_border = document.createElement("rect")
                 legend_border.setAttribute("width", "15")
                 legend_border.setAttribute("height", "15")
@@ -356,7 +356,7 @@ class Plot:
                 id.setAttribute("x", "20")
                 id.setAttribute("y", "10")
                 id.setAttribute("font-size", "10")
-                id.appendChild(document.createTextNode(str(composite_group.name)))
+                id.appendChild(document.createTextNode(str(composite.name)))
                 legend_element.appendChild(id)
                 legend.appendChild(legend_element)
                 i += 1
