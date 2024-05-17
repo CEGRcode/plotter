@@ -22,7 +22,7 @@ The `composite` and `reference-line` subcommands can be repeated for as many com
 plot [plot options]
 ```
 
-The `plot` subcommand takes no positional arguments, and the options specify properties for the entire plot, such as domain, range, and the axis labels. Options can also be used to specify default properties for all composites such as `opacity` and `smoothing`. This implementation of the plotter autoscales the axes to fit the largest composite by default, ignoring the `xmin`, `xmax`, `ymin`, and `ymax` options unless `--no-shirk` or `--no-resize` is specified.
+The `plot` subcommand takes no positional arguments, and the options specify properties for the entire plot, such as domain, range, and the axis labels. Options can also be used to specify default properties for all composites such as `opacity` and `smoothing`. This implementation of the plotter autoscales the axes to fit the largest composite by default, ignoring the `xmin`, `xmax`, `ymin`, and `ymax` options unless `--no-shrink` or `--no-resize` is specified.
 
 The available options for the `plot` subcommand are:
 

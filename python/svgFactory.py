@@ -133,83 +133,82 @@ def axis(orient, scale, plot):
     top = plot.margins.get("top")
     right = plot.width - (plot.margins.get('right'))
     left = plot.margins.get("left")
-    match orient:
-        # Draw left axis
-        case "left":
+    # Draw left axis
+    if (orient == "left"):
+        axis.setAttribute("x1", str(left))
+        axis.setAttribute("x2", str(left))
+        axis.setAttribute("y1", str(top))
+        axis.setAttribute("y2", str(bottom))
+        i = top
+        while i < bottom:
+            tick = document.createElement("line")
+            tick.setAttribute("y1", str(i))
+            tick.setAttribute("y2", str(i))
+            tick.setAttribute("x1", str(left))
+            tick.setAttribute("x2", str(left + tickSize))
+            axis_group.appendChild(tick)
+            i += tickSpacing
+    # Draw right axis
+    elif (orient == "right"):
+        axis.setAttribute("x1", str(right))
+        axis.setAttribute("x2", str(right))
+        axis.setAttribute("y1", str(top))
+        axis.setAttribute("y2", str(bottom))
+        i = top
+        while i < bottom:
+            tick = document.createElement("line")
+            tick.setAttribute("y1", str(i))
+            tick.setAttribute("y2", str(i))
+            tick.setAttribute("x1", str(right))
+            tick.setAttribute("x2", str(right + tickSize))
+            axis_group.appendChild(tick)
+            i += tickSpacing
+    # Draw bottom axis
+    elif(orient == "bottom"):
+        axis.setAttribute("x1", str(left))
+        axis.setAttribute("x2", str(right))
+        axis.setAttribute("y1", str(bottom))
+        axis.setAttribute("y2", str(bottom))
+        i = left
+        while i < right:
+            tick = document.createElement("line")
+            tick.setAttribute("y1", str(bottom))
+            tick.setAttribute("y2", str(bottom + tickSize))
+            tick.setAttribute("x1", str(i))
+            tick.setAttribute("x2", str(i))
+            axis_group.appendChild(tick)
+            i += tickSpacing
+    # Draw top axis
+    elif (orient == "top"):
+        axis.setAttribute("x1", str(left))
+        axis.setAttribute("x2", str(right))
+        axis.setAttribute("y1", str(top))
+        axis.setAttribute("y2", str(top))
+        i = left
+        while i < right:
+            tick = document.createElement("line")
+            tick.setAttribute("y1", str(top))
+            tick.setAttribute("y2", str(top + tickSize))
+            tick.setAttribute("x1", str(i))
+            tick.setAttribute("x2", str(i))
+            axis_group.appendChild(tick)
+            i += tickSpacing
+    # Draw middle axis if plot is not combined
+    elif (orient == "middle"):
+        if not plot.combined == True:
             axis.setAttribute("x1", str(left))
-            axis.setAttribute("x2", str(left))
-            axis.setAttribute("y1", str(top))
-            axis.setAttribute("y2", str(bottom))
-            i = top
-            while i < bottom:
-                tick = document.createElement("line")
-                tick.setAttribute("y1", str(i))
-                tick.setAttribute("y2", str(i))
-                tick.setAttribute("x1", str(left))
-                tick.setAttribute("x2", str(left + tickSize))
-                axis_group.appendChild(tick)
-                i += tickSpacing
-        # Draw right axis
-        case "right":
-            axis.setAttribute("x1", str(right))
             axis.setAttribute("x2", str(right))
-            axis.setAttribute("y1", str(top))
-            axis.setAttribute("y2", str(bottom))
-            i = top
-            while i < bottom:
-                tick = document.createElement("line")
-                tick.setAttribute("y1", str(i))
-                tick.setAttribute("y2", str(i))
-                tick.setAttribute("x1", str(right))
-                tick.setAttribute("x2", str(right + tickSize))
-                axis_group.appendChild(tick)
-                i += tickSpacing
-        # Draw bottom axis
-        case "bottom":
-            axis.setAttribute("x1", str(left))
-            axis.setAttribute("x2", str(right))
-            axis.setAttribute("y1", str(bottom))
-            axis.setAttribute("y2", str(bottom))
+            axis.setAttribute("y1", str(plot.yscale.get(0)))
+            axis.setAttribute("y2", str(plot.yscale.get(0)))
             i = left
             while i < right:
                 tick = document.createElement("line")
-                tick.setAttribute("y1", str(bottom))
-                tick.setAttribute("y2", str(bottom + tickSize))
+                tick.setAttribute("y1", str(plot.yscale.get(0) - tickSize))
+                tick.setAttribute("y2", str(plot.yscale.get(0) + tickSize))
                 tick.setAttribute("x1", str(i))
                 tick.setAttribute("x2", str(i))
                 axis_group.appendChild(tick)
                 i += tickSpacing
-        # Draw top axis
-        case "top":
-            axis.setAttribute("x1", str(left))
-            axis.setAttribute("x2", str(right))
-            axis.setAttribute("y1", str(top))
-            axis.setAttribute("y2", str(top))
-            i = left
-            while i < right:
-                tick = document.createElement("line")
-                tick.setAttribute("y1", str(top))
-                tick.setAttribute("y2", str(top + tickSize))
-                tick.setAttribute("x1", str(i))
-                tick.setAttribute("x2", str(i))
-                axis_group.appendChild(tick)
-                i += tickSpacing
-        # Draw middle axis if plot is not combined
-        case "middle":
-            if not plot.combined == True:
-                axis.setAttribute("x1", str(left))
-                axis.setAttribute("x2", str(right))
-                axis.setAttribute("y1", str(plot.yscale.get(0)))
-                axis.setAttribute("y2", str(plot.yscale.get(0)))
-                i = left
-                while i < right:
-                    tick = document.createElement("line")
-                    tick.setAttribute("y1", str(plot.yscale.get(0) - tickSize))
-                    tick.setAttribute("y2", str(plot.yscale.get(0) + tickSize))
-                    tick.setAttribute("x1", str(i))
-                    tick.setAttribute("x2", str(i))
-                    axis_group.appendChild(tick)
-                    i += tickSpacing
     axis_group.setAttribute("stroke", "black")
     axis_group.appendChild(axis)
     return axis_group

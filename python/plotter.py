@@ -68,8 +68,8 @@ if __name__ == "__main__":
 
     # Create plot based on plot subcommand, default values in Plot class will be used if argument is not specified
     plot_args = plot_parser.parse_args(plot_command.split())
-    p = plot.Plot(title=" ".join(plot_args.title), xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, 
-                  smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend)
+    p = plot.Plot(title=" ".join(plot_args.title) if plot_args.title is not None else None, xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, 
+                  ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend)
 
     # Create arrays for default composite names and colors
     names = range(1, len(composite_commands) + 1)
