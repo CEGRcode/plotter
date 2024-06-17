@@ -46,7 +46,7 @@ if __name__ == "__main__":
             plot_command += f" {word}"
     # Create parser for plot subcommand
     plot_parser = argparse.ArgumentParser()
-    plot_parser.add_argument("--smoothing", type=float)
+    plot_parser.add_argument("--smoothing", type=int)
     plot_parser.add_argument("--bp-shift", type=int)
     plot_parser.add_argument("--opacity", type=float)
     plot_parser.add_argument("--title", nargs="+")
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     composite_parser.add_argument("--secondary-color")
     composite_parser.add_argument("--scale", type=float)
     composite_parser.add_argument("--shift-occupancy", type=float)
-    composite_parser.add_argument("--smoothing", type=float)
+    composite_parser.add_argument("--smoothing", type=int)
     composite_parser.add_argument("--opacity", type=float)
     composite_parser.add_argument("--bp-shift", type=int)
     composite_parser.add_argument("--hide-sense", action="store_true", default=False)
