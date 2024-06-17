@@ -405,9 +405,20 @@ class Plot:
                     # Add _imported to composite name if duplicate of existing composite
                     if any(n == self.composites[j].name for j in range(len(self.composites))):
                         n = str(n) + "_imported"
-                    self.composites.append(composite.Composite(scale=c.get('scale'), color=c.get('color'), secondary_color=c.get('secondary-color'), opacity=c.get('opacity'),
-                                                            smoothing=c.get('smoothing'), bp_shift=c.get('bp_shift'), hide_sense=c.get('hide_sense'), hide_anti=c.get('hide_anti'),
-                                                            baseline=c.get('baseline'), name=n, sense=c.get('sense'), anti=c.get('anti'), xmin=c.get('xmin'), xmax=c.get('xmax')))
+                    self.composites.append(composite.Composite(scale=float(c.get('scale')) if c.get('scale') is not None else None, 
+                                                               color=c.get('color'), 
+                                                               secondary_color=c.get('secondary_color'), 
+                                                               opacity=c.get('opacity') if c.get('smoothing') != False else None,
+                                                               smoothing=c.get('smoothing') if c.get('smoothing') != False else None, 
+                                                               bp_shift=c.get('bp_shift') if c.get('bp_shift') != False else None, 
+                                                               hide_sense=hide if (hide := c.get('hide')) == True else c.get('hide_forward'),
+                                                               hide_anti=hide if hide == True else c.get('hide_reverse'),
+                                                               baseline=c.get('baseline'), 
+                                                               name=n, 
+                                                               sense=c.get('sense'), 
+                                                               anti=c.get('anti'), 
+                                                               xmin=c.get('xmin'), 
+                                                               xmax=c.get('xmax')))
             plot_data = data['plot']
             # Add plot variables
             self.title = plot_data.get('title', self.title) if args.title is None else self.title

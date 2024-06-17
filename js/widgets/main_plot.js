@@ -315,8 +315,6 @@ $(function() {
 
         plot_composite: function(xmin, xmax, sense, anti, scale, color, secondary_color, i, opacity, smoothing, bp_shift, hide, hide_sense=false, hide_anti=false, baseline=0) {
             // Set composite visibility
-            console.log("xmin:" + xmin)
-            console.log("xmax:" + xmax)
             let composite = this._elements.composites[i]
                 .classed("plotted", !hide)
                 .style("display", hide ? "none" : null),
@@ -347,7 +345,6 @@ $(function() {
                     scaled_occupancy = smoothed_occupancy.filter((_, j) => new_xdomain[j] >= this.xmin && new_xdomain[j] <= this.xmax)
                         .map(d => ((value = d * scale + baseline) > 0)? value: 0);
 
-                console.log(truncated_xdomain)
                 // Set fill color
                 composite.select(".composite-gradient-top")
                     .selectAll("stop")

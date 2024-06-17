@@ -96,7 +96,7 @@ if __name__ == "__main__":
                                          smoothing=args.smoothing, bp_shift=args.bp_shift, hide_sense= args.hide_sense, hide_anti= args.hide_anti, baseline=args.shift_occupancy,
                                          name=args.name if args.name is not None else names[i], opacity=args.opacity,)
         
-        composite_files = args.files.split("-")
+        composite_files = args.files.split(":")
         for c in composite_files:
             #Check if composite file contains multiple composites
             if sum(1 for line in open(c) if len(line.strip()) != 0) <= 3:

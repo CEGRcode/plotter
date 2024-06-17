@@ -19,7 +19,6 @@ $(function() {
                 $("#metadata-table").metadata_table("add_row", [id]);
                 $("#settings-table").settings_table("add_row", [id]);
             };
-            console.log(prefixes)
 
             $("#settings-table").settings_table("plot_all_composites", {xmin: xmin, xmax: xmax, ymax: ymax}, allow_shrink=true);
             $("#main-plot").main_plot("update_legend")

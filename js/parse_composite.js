@@ -129,7 +129,6 @@ let parse_multiple_composite = function(text, prefix) {
         if (col0 === "" || col0 === "NAME") {
             // If the x domain is defined, save the composite
             if (save_comp) {
-                console.log(id)
                 composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
             };
             save_comp = false;
@@ -143,7 +142,6 @@ let parse_multiple_composite = function(text, prefix) {
             }
         } else if (col0.startsWith(prefix)){
             id = col0.slice(prefix.length).split("_")[0];
-            console.log(id)
             save_comp = true;
             if (col0.toLowerCase().includes("sense")) {
                 sense = fields.slice(1).map(parseFloat)
@@ -162,6 +160,5 @@ let parse_multiple_composite = function(text, prefix) {
     if (save_comp) {
         composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
     };
-    console.log(composites)
     return composites
 }

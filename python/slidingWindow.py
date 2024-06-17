@@ -1,7 +1,6 @@
 # Copy of sliding_window from plotter
 def sliding_window(xdomain, occupancy, window):
     occupancy_val = sum(occupancy[:window]) / window 
-    print("length: " + str(xdomain))
 
     new_xdomain = [(xdomain[0] + xdomain[window - 1]) / 2]
     new_occupancy = [occupancy_val]

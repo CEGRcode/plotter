@@ -54,7 +54,7 @@ The available options for the `plot` subcommand are:
 composite [file] [composite options]
 ```
 
-The `composite` subcommand takes a positional argument that specifies the files to be loaded into the composite. If there are multiple files, they should be separated by a "-". For example, `composite sample1.out-sample2.out-sample3.out --opacity 0.5` loads samples 1-3 into the composite and sets the maximum opacity to 0.5.
+The `composite` subcommand takes a positional argument that specifies the files to be loaded into the composite. If there are multiple files, they should be separated by a ":". For example, `composite sample1.out-sample2.out-sample3.out --opacity 0.5` loads samples 1-3 into the composite and sets the maximum opacity to 0.5.
 
 The available options for the `composite` subcommand are:
 
