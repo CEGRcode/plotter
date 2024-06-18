@@ -171,8 +171,8 @@ $(function() {
             d3.select("#main-plot-div").on("mousemove", function(e) {
                 $("#main-plot").main_plot("move_tooltip", e)
             });
-            main_plot.on("mouseleave", function() {
-                // $("#main-plot").main_plot("hide_tooltip")
+            d3.select("#main-plot-div").on("mouseleave", function() {
+                $("#main-plot").main_plot("hide_tooltip")
             });
 
             this.enable_tooltip = true;
@@ -737,8 +737,10 @@ $(function() {
             if (color_trace) {
                 this._elements.composite_group.selectAll(".composite .color-line-top")
                     .style("display", null);
-                this._elements.composite_group.selectAll(".composite .color-line-bottom")
-                    .style("display", null);
+                if (!this.combined){
+                    this._elements.composite_group.selectAll(".composite .color-line-bottom")
+                        .style("display", null);
+                    }
                 this._elements.composite_group.selectAll(".composite .white-line")
                     .style("display", "none");
                 this._elements.composite_group.selectAll(".composite .black-line")
@@ -820,12 +822,13 @@ $(function() {
                         .style("left",  ev.clientX - (w - 80) / 1.4)
                 } else {
                     this._elements.tooltip.style("display", "none")
+                    d3.selectAll("#composite-plot-tooltip").remove();
                 }
             }
         },
 
         hide_tooltip: function() {
-            this._elements.tooltip.style("display", "none")
+            d3.selectAll("#composite-plot-tooltip").remove();
         },
 
         download_as_svg: function() {

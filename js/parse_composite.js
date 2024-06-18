@@ -160,6 +160,5 @@ let parse_multiple_composite = function(text, prefix) {
     if (save_comp) {
         composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
     };
-
     return composites
 }
