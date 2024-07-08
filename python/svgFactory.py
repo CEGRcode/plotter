@@ -10,10 +10,9 @@ import parseComposite
 import sys
 from enum import Enum
 
-document = dom.Document()
-
 def generateSVG(plot):
     # Create svg with similar attributes to plotter
+    document = dom.Document()
     svg = document.appendChild(document.createElement('svg'))
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg")
     svg.setAttribute("id", "main-plot")
@@ -107,11 +106,11 @@ def generateSVG(plot):
     plot.create_legend()
     svg.appendChild(plot.get_plot())
     # Create axes with tick marks
-    axis_left = axis("left", None, plot)
-    axis_right = axis("right", None, plot)
-    axis_bottom = axis("bottom", None, plot)
-    axis_top = axis("top", None, plot)
-    axis_middle = axis("middle", None, plot)
+    axis_left = axis("left", None, plot, document)
+    axis_right = axis("right", None, plot, document)
+    axis_bottom = axis("bottom", None, plot, document)
+    axis_top = axis("top", None, plot, document)
+    axis_middle = axis("middle", None, plot, document)
     # Append all elements to svg
     svg.appendChild(axis_left)
     svg.appendChild(axis_right)
@@ -122,7 +121,7 @@ def generateSVG(plot):
     return svg
 
 # Create axis elements for plot
-def axis(orient, scale, plot):
+def axis(orient, scale, plot, document):
     # Use appropriate tick parameters for axis
     tickSpacing = 23.5 if orient == "left" or orient == "right" else 25
     tickSize = 6 if orient == "left" or orient == "top" else -6
