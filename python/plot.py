@@ -10,7 +10,7 @@ document = dom.Document()
 # Class that generates composite and reference lines svg elements
 class Plot:
     def __init__(self, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlabel=None, ylabel=None, 
-                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False):
+                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False, aspect_ratio=None):
         # Set variables to defaults if argument passed into constructor was None
         self.title = title if title is not None else "Composite plot"
         self.xmin = xmin if xmin is not None else -500
@@ -29,6 +29,9 @@ class Plot:
         self.width = 460
         self.height = 300
         self.margins = {'top': 30, 'right': 170, 'bottom': 35, 'left': 40}
+        self.aspect_ratio = float(aspect_ratio.split(":")[0]) / float(aspect_ratio.split(":")[2])
+        self.width = 160 + 300 * aspect_ratio
+        self.height = 300 * (1 / aspect_ratio)
         # Create groups for adding composites and reference lines
         self.plot = document.createElement("g")
         self.composite_group = document.createElement("g")
@@ -262,16 +265,19 @@ class Plot:
         self.yscale = YScale(self)
 
     # Finds the max/min x and y values from composites on plot and scales axes accordingly
-    def autoscale_axes(self, allow_shrink):
+    def autoscale_axes(self, args):
         xmin = min([group.xmin for group in self.composites])
         xmax = max([group.xmax for group in self.composites])
-        if self.combined:
+        if self.combined: 
             ymin = 0
             ymax = round(max([(group.sense[i] + group.sense[i]) * group.scale for group in self.composites for i in range(min(len(group.sense), len(group.anti)))]), 2)
         else:
             ymin = min([-val * group.scale for group in self.composites for val in group.anti])
             ymax = max([val * group.scale for group in self.composites for val in group.sense])
-        self.scale_axes(xmin,xmax,ymin if allow_shrink else None,ymax if allow_shrink else None)
+        if args.no_resize:
+            self.scale_axes(args.xmin, args.xmax, args.ymin, args.ymax)
+        else:
+            self.scale_axes(args.xmin or xmin, args.xmax or xmax, args.ymin or ymin, args.ymax or ymax)
 
     # Adds composite group object to plot
     def add_composite_group(self, composite_group):
@@ -482,10 +488,10 @@ class Plot:
 # Class that mimics d3 scaleLinear() for x-axis of plot
 class XScale:
     def __init__(self, plot):
-        self.plot = plot
+        svg_width = plot.width - (plot.margins.get('right') + plot.margins.get('left'))
         self.domain = [plot.xmin, plot.xmax, plot.xmax - plot.xmin]
-        self.range = [plot.margins.get('left'), plot.width - plot.margins.get('right'), plot.width - (plot.margins.get('right') + plot.margins.get('left'))]
-        self.zero = (plot.width - (plot.margins.get('right') + plot.margins.get('left'))) * (abs(plot.xmin) / (abs(plot.xmin) + abs(plot.xmax))) + plot.margins.get('left')
+        self.range = [plot.margins.get('left'), plot.width - plot.margins.get('right'), svg_width]
+        self.zero = svg_width * (abs(plot.xmin) / (abs(plot.xmin) + abs(plot.xmax))) + plot.margins.get('left')
     # Returns position given bp
     def get(self, value):
         return (self.range[2] / self.domain[2]) * value + self.zero
@@ -495,9 +501,10 @@ class XScale:
 # Class that mimics d3 scaleLinear() for y-axis of plot
 class YScale:
     def __init__(self, plot):
+        svg_height = plot.height - (plot.margins.get('top') + plot.margins.get('bottom'))
         self.domain = [plot.ymin, plot.ymax, abs(plot.ymax) + abs(plot.ymin)]
-        self.range = [plot.margins.get('top'), plot.height - plot.margins.get('bottom'), plot.height - (plot.margins.get('top') + plot.margins.get('bottom'))]
-        self.zero = (plot.height - (plot.margins.get('top') + plot.margins.get('bottom'))) * (0.5) + plot.margins.get('top') if plot.combined is False else self.range[1]
+        self.range = [plot.margins.get('top'), plot.height - plot.margins.get('bottom'), svg_height]
+        self.zero = svg_height * (abs(plot.ymax) / (abs(plot.ymin) + abs(plot.ymax))) + plot.margins.get('top') if plot.combined is False else self.range[1]
     # Returns position on svg given occupancy
     def get(self, value):
         return  self.zero - (self.range[2] / self.domain[2]) * value

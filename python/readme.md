@@ -42,7 +42,7 @@ The available options for the `plot` subcommand are:
 | --combined       | Boolean | Draws a combined plot                     | False           |
 | --hide-legend    | Boolean | Hides the plot legend                     | False           |
 | --no-resize      | Boolean | Prevents plotter from autoscaling the x and y axes | False |
-| --no-shrink      | Boolean | Prevents plotter from autoscaling the y-axis | False        |
+| --aspect-ratio | String | Aspect ratio of the output plot | "1:1" |
 | --out      | String | Name and filepath of svg output | `out.svg`        |
 | --export-json      | String | JSON file to export composites and plot settings | `None`        |
 | --import-json      | String | JSON file to import composites and plot settings | `None`        |

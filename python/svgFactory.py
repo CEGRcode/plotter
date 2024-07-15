@@ -17,7 +17,10 @@ def generateSVG(plot):
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg")
     svg.setAttribute("id", "main-plot")
     svg.setAttribute("font-family", "Helvetica")
-    svg.setAttribute("viewBox", "0 0 460 300")
+    self.aspect_ratio = float(aspect_ratio.split(":")[0]) / float(aspect_ratio.split(":")[2])
+    self.width = 160 + 300 * aspect_ratio
+    self.height = 300 * (1 / aspect_ratio)
+    svg.setAttribute("viewBox", "0 0 460 600")
     svg.setAttribute("style", "height: 50vh; max-width: 100%; overflow: hide;")
     svg.setAttribute("baseProfile", "full")
     # Create title
