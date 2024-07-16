@@ -22,7 +22,7 @@ The `composite` and `reference-line` subcommands can be repeated for as many com
 plot [plot options]
 ```
 
-The `plot` subcommand takes no positional arguments, and the options specify properties for the entire plot, such as domain, range, and the axis labels. Options can also be used to specify default properties for all composites such as `opacity` and `smoothing`. This implementation of the plotter autoscales the axes to fit the largest composite by default, ignoring the `xmin`, `xmax`, `ymin`, and `ymax` options unless `--no-shrink` or `--no-resize` is specified.
+The `plot` subcommand takes no positional arguments, and the options specify properties for the entire plot, such as domain, range, and the axis labels. Options can also be used to specify default properties for all composites such as `opacity` and `smoothing`. This implementation of the plotter autoscales the axes to fit the largest composite by default, ignoring the `xmin`, `xmax`, `ymin`, and `ymax` options unless `--no-resize` is specified.
 
 The available options for the `plot` subcommand are:
 
@@ -42,7 +42,7 @@ The available options for the `plot` subcommand are:
 | --combined       | Boolean | Draws a combined plot                     | False           |
 | --hide-legend    | Boolean | Hides the plot legend                     | False           |
 | --no-resize      | Boolean | Prevents plotter from autoscaling the x and y axes | False |
-| --aspect-ratio | String | Aspect ratio of the output plot | "1:1" |
+| --resolution | String | Resolution of the output.  Can influence aspect ratio | "300x300" |
 | --out      | String | Name and filepath of svg output | `out.svg`        |
 | --export-json      | String | JSON file to export composites and plot settings | `None`        |
 | --import-json      | String | JSON file to import composites and plot settings | `None`        |

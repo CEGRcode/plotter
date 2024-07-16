@@ -17,10 +17,7 @@ def generateSVG(plot):
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg")
     svg.setAttribute("id", "main-plot")
     svg.setAttribute("font-family", "Helvetica")
-    self.aspect_ratio = float(aspect_ratio.split(":")[0]) / float(aspect_ratio.split(":")[2])
-    self.width = 160 + 300 * aspect_ratio
-    self.height = 300 * (1 / aspect_ratio)
-    svg.setAttribute("viewBox", "0 0 460 600")
+    svg.setAttribute("viewBox", f"0 0 {plot.width} {plot.height}")
     svg.setAttribute("style", "height: 50vh; max-width: 100%; overflow: hide;")
     svg.setAttribute("baseProfile", "full")
     # Create title
@@ -60,7 +57,8 @@ def generateSVG(plot):
     ylabel.setAttribute("y", str((plot.height + plot.margins.get('top') - plot.margins.get('bottom')) / 2))
     ylabel.setAttribute("label", "ylabel")
     ylabel.setAttribute("id", "main-plot-ylabel")
-    ylabel.setAttribute("transform", "rotate(-90 12 147.5)")
+    # Maintains the default 147.5px when plot is 300x300
+    ylabel.setAttribute("transform", f"rotate(-90 12 {plot.height / 2 - plot.height / 120})")
     ylabel.setAttribute("style", "text-anchor: middle; cursor: pointer;")
     round_exp = 1 - math.floor(math.log10(plot.ymax - plot.ymin))
     round_factor = 10 ** round_exp

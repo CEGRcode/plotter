@@ -10,7 +10,7 @@ document = dom.Document()
 # Class that generates composite and reference lines svg elements
 class Plot:
     def __init__(self, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlabel=None, ylabel=None, 
-                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False, aspect_ratio=None):
+                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False, resolution=None):
         # Set variables to defaults if argument passed into constructor was None
         self.title = title if title is not None else "Composite plot"
         self.xmin = xmin if xmin is not None else -500
@@ -29,9 +29,9 @@ class Plot:
         self.width = 460
         self.height = 300
         self.margins = {'top': 30, 'right': 170, 'bottom': 35, 'left': 40}
-        self.aspect_ratio = float(aspect_ratio.split(":")[0]) / float(aspect_ratio.split(":")[2])
-        self.width = 160 + 300 * aspect_ratio
-        self.height = 300 * (1 / aspect_ratio)
+        resolution = (int(resolution.split("x")[0]), int(resolution.split("x")[1])) if resolution is not None else (300, 300)
+        self.width = 160 + resolution[0]
+        self.height = resolution[1]
         # Create groups for adding composites and reference lines
         self.plot = document.createElement("g")
         self.composite_group = document.createElement("g")

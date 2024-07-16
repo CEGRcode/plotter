@@ -61,7 +61,7 @@ if __name__ == "__main__":
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
     plot_parser.add_argument("--no-resize", action="store_true", default=False)
     plot_parser.add_argument("--no-shrink", action="store_true", default=False)
-    plot_parser.add_argument("--aspect-ratio")
+    plot_parser.add_argument("--resolution")
     plot_parser.add_argument("--out")
     plot_parser.add_argument("--export-json")
     plot_parser.add_argument("--import-json")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     plot_args = plot_parser.parse_args(plot_command.split())
     p = plot.Plot(title=" ".join(plot_args.title) if plot_args.title is not None else None, xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, 
                   ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend,
-                  aspect_ratio=plot_args.aspect_ratio)
+                  resolution=plot_args.resolution)
 
     # Create arrays for default composite names and colors
     names = range(1, len(composite_commands) + 1)
