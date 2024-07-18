@@ -133,66 +133,193 @@ def axis(orient, scale, plot, document):
     top = plot.margins.get("top")
     right = plot.width - (plot.margins.get('right'))
     left = plot.margins.get("left")
+    
+    # If the sum of the first digits of the min and max are less than 5 (eg. -1 to 3, -200 to 200, -.1 to .15) add minor ticks to the axis
+    numDigits = math.floor(math.log10(max(plot.ymin, plot.ymax)))
+    print(abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)))
+    halfTickY = abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)) < 5
+    numDigits = math.floor(math.log10(max(abs(plot.xmax), abs(plot.xmin))))
+    halfTickX = abs(plot.xmin / 10 ** (numDigits)) + abs(plot.xmax / 10 ** (numDigits)) < 5
     # Draw left axis
     if (orient == "left"):
+        # Draw axis line
         axis.setAttribute("x1", str(left))
         axis.setAttribute("x2", str(left))
         axis.setAttribute("y1", str(top))
         axis.setAttribute("y2", str(bottom))
-        i = top
-        while i < bottom:
+        numDigits = math.floor(math.log10(max(abs(plot.ymin), abs(plot.ymax))))
+        # Returns tick on left axis at given occupancy 
+        def leftTick(val):
             tick = document.createElement("line")
-            tick.setAttribute("y1", str(i))
-            tick.setAttribute("y2", str(i))
+            tick.setAttribute("y1", str(plot.yscale.get(val)))
+            tick.setAttribute("y2", str(plot.yscale.get(val)))
             tick.setAttribute("x1", str(left))
             tick.setAttribute("x2", str(left + tickSize))
-            axis_group.appendChild(tick)
-            i += tickSpacing
+            return tick
+        i = 0
+        halfTick = False
+        # Add left ticks less than zero
+        while i > plot.ymin:
+            t = leftTick(i)
+            if halfTickY:
+                i -= 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("x2", str(left + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i -= 10 ** numDigits
+            axis_group.appendChild(t)
+        i = 0
+        halfTick = False
+        # Add left ticks greater than zero
+        while i < plot.ymax:
+            t = leftTick(i)
+            if halfTickY:
+                i += 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("x2", str(left + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i += 10 ** numDigits
+            axis_group.appendChild(t)
     # Draw right axis
     elif (orient == "right"):
         axis.setAttribute("x1", str(right))
         axis.setAttribute("x2", str(right))
         axis.setAttribute("y1", str(top))
         axis.setAttribute("y2", str(bottom))
-        i = top
-        while i < bottom:
+        numDigits = math.floor(math.log10(max(abs(plot.ymin), abs(plot.ymax))))
+        # Returns tick on right axis at given occupancy 
+        def rightTick(val):
             tick = document.createElement("line")
-            tick.setAttribute("y1", str(i))
-            tick.setAttribute("y2", str(i))
+            tick.setAttribute("y1", str(plot.yscale.get(val)))
+            tick.setAttribute("y2", str(plot.yscale.get(val)))
             tick.setAttribute("x1", str(right))
             tick.setAttribute("x2", str(right + tickSize))
-            axis_group.appendChild(tick)
-            i += tickSpacing
+            return tick
+        i = 0
+        halfTick = False
+        while i > plot.ymin:
+            t = rightTick(i)
+            # Add half ticks
+            if halfTickY:
+                i -= 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("x2", str(right + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i -= 10 ** numDigits
+            axis_group.appendChild(t)
+        i = 0
+        halfTick = False
+        while i < plot.ymax:
+            t = rightTick(i)
+            if halfTickY:
+                i += 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("x2", str(right + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i += 10 ** numDigits
+            axis_group.appendChild(t)
+
     # Draw bottom axis
     elif(orient == "bottom"):
         axis.setAttribute("x1", str(left))
         axis.setAttribute("x2", str(right))
         axis.setAttribute("y1", str(bottom))
         axis.setAttribute("y2", str(bottom))
-        i = left
-        while i < right:
+        numDigits = math.floor(math.log10(max(abs(plot.xmin), abs(plot.xmax))))
+        # Returns tick on bottom axis at given coord
+        def bottomTick(coord):
             tick = document.createElement("line")
+            tick.setAttribute("x1", str(plot.xscale.get(coord)))
+            tick.setAttribute("x2", str(plot.xscale.get(coord)))
             tick.setAttribute("y1", str(bottom))
             tick.setAttribute("y2", str(bottom + tickSize))
-            tick.setAttribute("x1", str(i))
-            tick.setAttribute("x2", str(i))
-            axis_group.appendChild(tick)
-            i += tickSpacing
+            return tick
+        i = 0
+        halfTick = False
+        while i > plot.xmin:
+            t = bottomTick(i)
+            # Add half ticks
+            if halfTickX:
+                i -= 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y2", str(bottom + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i -= 10 ** numDigits
+            axis_group.appendChild(t)
+        i = 0
+        halfTick = False
+        while i < plot.xmax:
+            t = bottomTick(i)
+            if halfTickX:
+                i += 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y2", str(bottom + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i += 10 ** numDigits
+            axis_group.appendChild(t)
+
     # Draw top axis
     elif (orient == "top"):
         axis.setAttribute("x1", str(left))
         axis.setAttribute("x2", str(right))
         axis.setAttribute("y1", str(top))
         axis.setAttribute("y2", str(top))
-        i = left
-        while i < right:
+        numDigits = math.floor(math.log10(max(abs(plot.xmin), abs(plot.xmax))))
+        # Returns tick on top axis at given coord
+        def topTick(coord):
             tick = document.createElement("line")
+            tick.setAttribute("x1", str(plot.xscale.get(coord)))
+            tick.setAttribute("x2", str(plot.xscale.get(coord)))
             tick.setAttribute("y1", str(top))
             tick.setAttribute("y2", str(top + tickSize))
-            tick.setAttribute("x1", str(i))
-            tick.setAttribute("x2", str(i))
-            axis_group.appendChild(tick)
-            i += tickSpacing
+            return tick
+        i = 0
+        halfTick = False
+        while i > plot.xmin:
+            t = topTick(i)
+            # Add half ticks
+            if halfTickX:
+                i -= 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y2", str(top + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i -= 10 ** numDigits
+            axis_group.appendChild(t)
+        i = 0
+        halfTick = False
+        while i < plot.xmax:
+            t = topTick(i)
+            if halfTickX:
+                i += 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y2", str(top + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i += 10 ** numDigits
+            axis_group.appendChild(t)
     # Draw middle axis if plot is not combined
     elif (orient == "middle"):
         if not plot.combined == True:
@@ -200,15 +327,46 @@ def axis(orient, scale, plot, document):
             axis.setAttribute("x2", str(right))
             axis.setAttribute("y1", str(plot.yscale.get(0)))
             axis.setAttribute("y2", str(plot.yscale.get(0)))
-            i = left
-            while i < right:
-                tick = document.createElement("line")
-                tick.setAttribute("y1", str(plot.yscale.get(0) - tickSize))
-                tick.setAttribute("y2", str(plot.yscale.get(0) + tickSize))
-                tick.setAttribute("x1", str(i))
-                tick.setAttribute("x2", str(i))
-                axis_group.appendChild(tick)
-                i += tickSpacing
+        numDigits = math.floor(math.log10(max(abs(plot.xmin), abs(plot.xmax))))
+        # Returns tick on middle axis at given coord
+        def midTick(coord):
+            tick = document.createElement("line")
+            tick.setAttribute("x1", str(plot.xscale.get(coord)))
+            tick.setAttribute("x2", str(plot.xscale.get(coord)))
+            tick.setAttribute("y1", str(plot.yscale.get(0) - tickSize))
+            tick.setAttribute("y2", str(plot.yscale.get(0) + tickSize))
+            return tick
+        i = 0
+        halfTick = False
+        while i > plot.xmin:
+            t = midTick(i)
+            # Add half ticks
+            if halfTickX:
+                i -= 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y1", str(plot.yscale.get(0) - tickSize / 2))
+                    t.setAttribute("y2", str(plot.yscale.get(0) + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i -= 10 ** numDigits
+            axis_group.appendChild(t)
+        i = 0
+        halfTick = False
+        while i < plot.xmax:
+            t = midTick(i)
+            if halfTickX:
+                i += 10 ** numDigits / 2
+                if halfTick:
+                    t.setAttribute("y1", str(plot.yscale.get(0) - tickSize / 2))
+                    t.setAttribute("y2", str(plot.yscale.get(0) + tickSize / 2))
+                    halfTick = False
+                else:
+                    halfTick = True
+            else:
+                i += 10 ** numDigits
+            axis_group.appendChild(t)
     axis_group.setAttribute("stroke", "black")
     axis_group.appendChild(axis)
     return axis_group
