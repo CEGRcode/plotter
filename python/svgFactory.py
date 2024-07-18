@@ -134,12 +134,16 @@ def axis(orient, scale, plot, document):
     right = plot.width - (plot.margins.get('right'))
     left = plot.margins.get("left")
     
-    # If the sum of the first digits of the min and max are less than 5 (eg. -1 to 3, -200 to 200, -.1 to .15) add minor ticks to the axis
+    # Determine how ticks should be drawn for y-axis
     numDigits = math.floor(math.log10(max(plot.ymin, plot.ymax)))
-    print(abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)))
-    halfTickY = abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)) < 5
+    # If the sum of the first digits of the min and max are less than 5 (eg. -1 to 3, -200 to 200, -.1 to .15) add minor ticks to the axis
+    minorYTicks = abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)) < 5
+    # If the sum of the first digits of the min and max are greater than 10 (eg. -7 to 8, -500 to 700, -.6 to .55) add half as many ticks to avoid overcrowding
+    skipYTicks = abs(plot.ymin / 10 ** (numDigits)) + abs(plot.ymax / 10 ** (numDigits)) > 10
+    # Determine how ticks should be drawn for x-axis
     numDigits = math.floor(math.log10(max(abs(plot.xmax), abs(plot.xmin))))
-    halfTickX = abs(plot.xmin / 10 ** (numDigits)) + abs(plot.xmax / 10 ** (numDigits)) < 5
+    minorXTicks = abs(plot.xmin / 10 ** (numDigits)) + abs(plot.xmax / 10 ** (numDigits)) < 5
+    skipXTicks = abs(plot.xmin / 10 ** (numDigits)) + abs(plot.xmax / 10 ** (numDigits)) > 10
     # Draw left axis
     if (orient == "left"):
         # Draw axis line
@@ -161,13 +165,17 @@ def axis(orient, scale, plot, document):
         # Add left ticks less than zero
         while i > plot.ymin:
             t = leftTick(i)
-            if halfTickY:
+            # Add minor ticks between whole numbers
+            if minorYTicks:
                 i -= 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("x2", str(left + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            # Skip every other tick to avoid overcrowding
+            elif skipYTicks:
+                i -= 10 ** numDigits * 2
             else:
                 i -= 10 ** numDigits
             axis_group.appendChild(t)
@@ -176,13 +184,15 @@ def axis(orient, scale, plot, document):
         # Add left ticks greater than zero
         while i < plot.ymax:
             t = leftTick(i)
-            if halfTickY:
+            if minorYTicks:
                 i += 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("x2", str(left + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipYTicks:
+                i += 10 ** numDigits * 2
             else:
                 i += 10 ** numDigits
             axis_group.appendChild(t)
@@ -205,14 +215,16 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i > plot.ymin:
             t = rightTick(i)
-            # Add half ticks
-            if halfTickY:
+            # Add half ticks or skip if necessary
+            if minorYTicks:
                 i -= 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("x2", str(right + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipYTicks:
+                i -= 10 ** numDigits * 2
             else:
                 i -= 10 ** numDigits
             axis_group.appendChild(t)
@@ -220,13 +232,15 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i < plot.ymax:
             t = rightTick(i)
-            if halfTickY:
+            if minorYTicks:
                 i += 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("x2", str(right + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipYTicks:
+                i += 10 ** numDigits * 2
             else:
                 i += 10 ** numDigits
             axis_group.appendChild(t)
@@ -250,14 +264,16 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i > plot.xmin:
             t = bottomTick(i)
-            # Add half ticks
-            if halfTickX:
+            # Add half ticks or skip if necessary
+            if minorXTicks:
                 i -= 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y2", str(bottom + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i -= 10 ** numDigits * 2
             else:
                 i -= 10 ** numDigits
             axis_group.appendChild(t)
@@ -265,17 +281,18 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i < plot.xmax:
             t = bottomTick(i)
-            if halfTickX:
+            if minorXTicks:
                 i += 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y2", str(bottom + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i += 10 ** numDigits * 2
             else:
                 i += 10 ** numDigits
             axis_group.appendChild(t)
-
     # Draw top axis
     elif (orient == "top"):
         axis.setAttribute("x1", str(left))
@@ -295,14 +312,15 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i > plot.xmin:
             t = topTick(i)
-            # Add half ticks
-            if halfTickX:
+            if minorXTicks:
                 i -= 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y2", str(top + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i -= 10 ** numDigits * 2
             else:
                 i -= 10 ** numDigits
             axis_group.appendChild(t)
@@ -310,13 +328,15 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i < plot.xmax:
             t = topTick(i)
-            if halfTickX:
+            if minorXTicks:
                 i += 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y2", str(top + tickSize / 2))
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i += 10 ** numDigits * 2
             else:
                 i += 10 ** numDigits
             axis_group.appendChild(t)
@@ -340,8 +360,7 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i > plot.xmin:
             t = midTick(i)
-            # Add half ticks
-            if halfTickX:
+            if minorXTicks:
                 i -= 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y1", str(plot.yscale.get(0) - tickSize / 2))
@@ -349,6 +368,8 @@ def axis(orient, scale, plot, document):
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i -= 10 ** numDigits * 2
             else:
                 i -= 10 ** numDigits
             axis_group.appendChild(t)
@@ -356,7 +377,7 @@ def axis(orient, scale, plot, document):
         halfTick = False
         while i < plot.xmax:
             t = midTick(i)
-            if halfTickX:
+            if minorXTicks:
                 i += 10 ** numDigits / 2
                 if halfTick:
                     t.setAttribute("y1", str(plot.yscale.get(0) - tickSize / 2))
@@ -364,6 +385,8 @@ def axis(orient, scale, plot, document):
                     halfTick = False
                 else:
                     halfTick = True
+            elif skipXTicks:
+                i += 10 ** numDigits * 2
             else:
                 i += 10 ** numDigits
             axis_group.appendChild(t)
