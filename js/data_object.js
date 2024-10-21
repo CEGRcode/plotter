@@ -36,12 +36,8 @@ const dataObject = class {
         this.globalSettings.lockAxes = lockAxes
     }
 
-    changeMinOpacity(minOpacity) {
+    changeOpacity(minOpacity, maxOpacity) {
         this.globalSettings.minOpacity = minOpacity;
-        plotObj.updatePlot()
-    }
-
-    changeMaxOpacity(maxOpacity) {
         this.globalSettings.maxOpacity = maxOpacity;
         plotObj.updatePlot()
     }
