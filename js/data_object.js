@@ -1,6 +1,7 @@
 const dataObject = class {
-    constructor(globalSettings, compositeData, referenceLines, nucleosomeSlider) {
+    constructor(globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider) {
         this.globalSettings = globalSettings;
+        this.defaultColors = defaultColors;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
         this.nucleosomeSlider = nucleosomeSlider
@@ -101,6 +102,7 @@ const dataObject = class {
         });
         if (data.globalSettings && data.compositeData) {
             this.globalSettings = data.globalSettings;
+            this.defaultColors = data.defaultColors || [];
             this.compositeData = data.compositeData;
             this.referenceLines = data.referenceLines || [];
             this.nucleosomeSlider = data.nucleosomeSlider || {};
@@ -118,6 +120,7 @@ const dataObject = class {
         a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(
             {
                 globalSettings: this.globalSettings,
+                defaultColors: this.defaultColors,
                 compositeData: this.compositeData,
                 referenceLines: this.referenceLines,
                 nucleosomeSlider: this.nucleosomeSlider
@@ -151,5 +154,17 @@ let dataObj = new dataObject(
             ylabel: "Occupancy (AU)"
         }
     },
+    [
+        "#BFBFBF",
+        "#000000",
+        "#FF0000",
+        "#FF9100",
+        "#D7D700",
+        "#07E200",
+        "#00B0F0",
+        "#0007FF",
+        "#A700FF",
+        "#FF00D0"
+    ],
     [], [], {}
 )
