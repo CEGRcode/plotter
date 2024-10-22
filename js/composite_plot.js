@@ -265,14 +265,14 @@ const plotObject = class {
 
     updateComposite(compositeElem, compositeData) {
         // Fetch composite settings
-        const minOpacity = compositeData.minOpacity === false ? dataObj.globalSettings.minOpacity : compositeData.minOpacity,
-            maxOpacity = compositeData.maxOpacity === false ? dataObj.globalSettings.maxOpacity : compositeData.maxOpacity,
+        const minOpacity = compositeData.minOpacity === null ? dataObj.globalSettings.minOpacity : compositeData.minOpacity,
+            maxOpacity = compositeData.maxOpacity === null ? dataObj.globalSettings.maxOpacity : compositeData.maxOpacity,
             opacity = [minOpacity, maxOpacity],
             primaryColor = compositeData.primaryColor,
             secondaryColor = dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? compositeData.secondaryColor : primaryColor,
-            smoothing = compositeData.smoothing === false ? dataObj.globalSettings.smoothing : compositeData.smoothing,
+            smoothing = compositeData.smoothing === null ? dataObj.globalSettings.smoothing : compositeData.smoothing,
             smoothShift = (smoothing - 1) / 2,
-            bpShift = compositeData.bpShift === false ? dataObj.globalSettings.bpShift : compositeData.bpShift,
+            bpShift = compositeData.bpShift === null ? dataObj.globalSettings.bpShift : compositeData.bpShift,
             scalingFactor = compositeData.scalingFactor;
         if (dataObj.globalSettings.combined) {
             // Adjust composite data according to settings

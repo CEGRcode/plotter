@@ -79,6 +79,30 @@ const dataObject = class {
         this.globalSettings.labels[field] = value;
         plotObj.updatePlot()
     }
+
+    addCompositeData(i) {
+        this.compositeData.push(compositeObject(i, this.defaultColors[i % this.defaultColors.length]));
+        plotObj.updatePlot()
+    }
+
+    moveCompositeData(fromIndex, toIndex) {
+        this.compositeData.splice(toIndex, 0, this.compositeData.splice(fromIndex, 1)[0]);
+        plotObj.updatePlot()
+    }
+
+    removeCompositeData(index) {
+        this.compositeData.splice(index, 1);
+        plotObj.updatePlot()
+    }
+
+    changeBulkSettings(globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider) {
+        this.globalSettings = globalSettings;
+        this.defaultColors = defaultColors;
+        this.compositeData = compositeData;
+        this.referenceLines = referenceLines;
+        this.nucleosomeSlider = nucleosomeSlider;
+        plotObj.updatePlot()
+    }
     
     async importDataFromJSON(file) {
         const data = await new Promise(function(resolve, reject) {
