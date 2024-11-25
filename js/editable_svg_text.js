@@ -25,6 +25,7 @@ const editPlotLabel = function(labelGroup, label, field) {
         .on("keypress", function(e) {
             enterPlotLabelInput(e, label, field)
         })
+        .node().focus()
 };
 
 const enterPlotLabelInput = function(ev, label, field) {

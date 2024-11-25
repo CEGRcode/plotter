@@ -1,27 +1,28 @@
 const compositeRow = class {
-    constructor({row, idx, primary_color, name=null, separate_colors=false, secondary_color=null, scale=1,
-        min_opacity=null, max_opacity=null, smoothing=null, bp_shift=null, shift_occupancy=0, hide_sense=false,
-        hide_anti=false, swap=false, ids=[]}) {
+    constructor({row, idx, primaryColor, name=null, separateColors=false, secondaryColor=null, scale=1,
+        minOpacity=null, maxOpacity=null, smoothing=null, bpShift=null, shiftOccupancy=0, hideSense=false,
+        hideAnti=false, swap=false, ids=[]}) {
         this.row = row;
         this.idx = idx;
         this.name = name || "Composite " + idx;
-        this.primary_color = primary_color;
-        this.secondary_color = secondary_color || primary_color;
+        this.primaryColor = primaryColor;
+        this.secondaryColor = secondaryColor || primaryColor;
         this.scale = scale;
-        this.min_opacity = min_opacity;
-        this.max_opacity = max_opacity;
+        this.minOpacity = minOpacity;
+        this.maxOpacity = maxOpacity;
         this.smoothing = smoothing;
-        this.bp_shift = bp_shift;
-        this.shift_occupancy = shift_occupancy;
-        this.hide_sense = hide_sense;
-        this.hide_anti = hide_anti;
+        this.bpShift = bpShift;
+        this.shiftOccupancy = shiftOccupancy;
+        this.hideSense = hideSense;
+        this.hideAnti = hideAnti;
         this.swap = swap;
         this.ids = ids;
-        this.files_loaded = this.ids.length;
-
+        this.filesLoaded = this.ids.length;
+        
+        const self = this;
         this.row
             .attr("draggable", true)
-            .on("dragstart", function() {e.dataTransfer.setData("text/plain", this.idx)});
+            .on("dragstart", function() {e.dataTransfer.setData("text/plain", self.idx)});
 
         // Add the drag column
         this.row.append("td").append("div")
@@ -55,12 +56,12 @@ const compositeRow = class {
         color_col.append("input")
             .attr("type", "color")
             .classed("color-1", true)
-            .attr("value", this.primary_color);
-        if (separate_colors) {
+            .attr("value", this.primaryColor);
+        if (separateColors) {
             color_col.append("input")
                 .attr("type", "color")
                 .classed("color-2", true)
-                .attr("value", this.secondary_color)
+                .attr("value", this.secondaryColor)
         };
         
         // Add the scale column
@@ -86,11 +87,11 @@ const compositeRow = class {
         opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.min_opacity || "");
+            .attr("value", this.minOpacity || "");
         opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.max_opacity || "");
+            .attr("value", this.maxOpacity || "");
         
         // Add the smoothing column
         const smoothing_col = this.row.append("td");
@@ -101,10 +102,10 @@ const compositeRow = class {
             .classed("setting-text", true);
         
         // Add the bp shift column
-        const bp_shift_col = this.row.append("td");
-        bp_shift_col.append("label")
+        const bpShift_col = this.row.append("td");
+        bpShift_col.append("label")
             .text("BP Shift:");
-        bp_shift_col.append("input")
+        bpShift_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true);
 
@@ -177,6 +178,10 @@ const compositeRow = class {
                         .attr("fill", "none");
         upload_col.append("label")
             .style("padding-left", "10px")
-            .text(this.files_loaded === 1 ? this.files_loaded + " file loaded" : this.files_loaded + " files loaded");
+            .text(this.filesLoaded === 1 ? this.filesLoaded + " file loaded" : this.filesLoaded + " files loaded");
+    }
+
+    loadFiles(files) {
+
     }
 }

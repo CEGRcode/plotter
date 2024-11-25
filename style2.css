@@ -30,6 +30,11 @@
     width: 100%;
 }
 
+input[type=color] {
+    width: 40px;
+    height: 40px
+}
+
 #composite-table .slider-div > * {
     margin-top: 5px;
     margin-left: 5px;
