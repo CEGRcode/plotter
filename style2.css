@@ -1,0 +1,40 @@
+#main-plot {
+    height: 50vh;
+    max-width: 100%;
+    overflow: hide;
+}
+
+#composite-table {
+    width: 100%;
+}
+
+#composite-table table {
+    width: 100%;
+}
+
+#composite-table tbody {
+    width: 100%;
+}
+
+#composite-table tr {
+    height: 50px;
+    width: 100%;
+    border: 1px solid black;
+}
+
+#add-row {
+    cursor: pointer;
+}
+
+#add-row div {
+    width: 100%;
+}
+
+#composite-table .slider-div > * {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.setting-text {
+    width: 40px;
+}

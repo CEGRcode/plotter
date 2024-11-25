@@ -1,5 +1,5 @@
 const dataObject = class {
-    constructor(globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider) {
+    constructor({globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider}) {
         this.globalSettings = globalSettings;
         this.defaultColors = defaultColors;
         this.compositeData = compositeData;
@@ -151,8 +151,8 @@ const dataObject = class {
     }
 }
 
-let dataObj = new dataObject(
-    {
+let dataObj = new dataObject({
+    globalSettings: {
         xmin: -500,
         xmax: 500,
         ymin: -1,
@@ -174,7 +174,7 @@ let dataObj = new dataObject(
             ylabel: "Occupancy (AU)"
         }
     },
-    [
+    defaultColors: [
         "#BFBFBF",
         "#000000",
         "#FF0000",
@@ -186,5 +186,7 @@ let dataObj = new dataObject(
         "#A700FF",
         "#FF00D0"
     ],
-    [], [], {}
-)
+    compositeData: [],
+    referenceLines: [],
+    nucleosomeSlider: {}
+})
