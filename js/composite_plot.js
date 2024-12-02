@@ -95,13 +95,13 @@ const plotObject = class {
             .attr("font-size", "14px")
             .text(dataObj.globalSettings.xmax);
         this._elements.yminLabel = this._elements.mainPlot.append("text")
-            .attr("x", 30)
+            .attr("x", this.margins.left - 10)
             .attr("y", this.height - this.margins.bottom)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
             .text(ymin.toPrecision(2).length > 5 ? parseFloat(ymin.toPrecision(2)).toExponential() : ymin.toPrecision(2));
         this._elements.ymaxLabel = this._elements.mainPlot.append("text")
-            .attr("x", 30)
+            .attr("x", this.margins.left - 10)
             .attr("y", this.margins.top + 10)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
@@ -126,9 +126,9 @@ const plotObject = class {
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
         this._elements.ylabel = ylabelGroup.append("text")
-            .attr("x", 12)
+            .attr("x", this.margins.left - 18)
             .attr("y", (this.margins.top + this.height - this.margins.bottom) / 2)
-            .attr("transform", "rotate(-90 15 " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
+            .attr("transform", "rotate(-90 " + (this.margins.left - 18) + " " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
             .style("text-anchor", "middle")
             .attr("font-size", "14px")
             .text(dataObj.globalSettings.labels.ylabel)
@@ -196,7 +196,7 @@ const plotObject = class {
                 this._elements.composites.splice(i, 1)
             // If there are more data than plots, create new plots
             } else if (i >= plotN && i < dataN) {
-                this._elements.composites.push(this.createComposite(this.counter++))
+                this._elements.composites.push(this.createComposite(this.counter++));
                 this.updateComposite(this._elements.composites[i], dataObj.compositeData[i])
             } else {
                 this.updateComposite(this._elements.composites[i], dataObj.compositeData[i])
@@ -235,7 +235,7 @@ const plotObject = class {
             .attr("stroke-width", 1)
             .attr("d", "");
         compositeGroup.append("path")
-            .classed("black-line", true)
+            .classed("composite-line", true)
             .classed("top", true)
             .attr("fill", "none")
             .attr("stroke", "#000000")
@@ -249,7 +249,7 @@ const plotObject = class {
             .attr("stroke-width", 1)
             .attr("d", "");
         compositeGroup.append("path")
-            .classed("black-line", true)
+            .classed("composite-line", true)
             .classed("bottom", true)
             .attr("fill", "none")
             .attr("stroke", "#000000")
@@ -263,16 +263,16 @@ const plotObject = class {
         // Fetch composite settings
         const minOpacity = compositeData.minOpacity === null ? dataObj.globalSettings.minOpacity : compositeData.minOpacity,
             maxOpacity = compositeData.maxOpacity === null ? dataObj.globalSettings.maxOpacity : compositeData.maxOpacity,
-            opacity = [minOpacity, maxOpacity],
+            opacity = [maxOpacity, minOpacity],
             primaryColor = compositeData.primaryColor,
-            secondaryColor = dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? compositeData.secondaryColor : primaryColor,
+            secondaryColor = dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? (compositeData.secondaryColor || primaryColor) : primaryColor,
             smoothing = compositeData.smoothing === null ? dataObj.globalSettings.smoothing : compositeData.smoothing,
             smoothShift = (smoothing - 1) / 2,
             bpShift = compositeData.bpShift === null ? dataObj.globalSettings.bpShift : compositeData.bpShift,
-            scalingFactor = compositeData.scalingFactor;
+            scale = compositeData.scale;
         if (dataObj.globalSettings.combined) {
             // Adjust composite data according to settings
-            const shiftedSense = compositeData.sense.slice(0, -2 * bpShift),
+            const shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift),
                 shiftedAnti = compositeData.anti.slice(2 * bpShift),
                 combinedOccupancy = shiftedSense.map((d, i) => d + shiftedAnti[i]),
                 smoothedOccupancy = this.slidingWindow(combinedOccupancy, smoothing),
@@ -280,8 +280,11 @@ const plotObject = class {
                 compositeXmax = compositeData.xmax - bpShift - smoothShift,
                 truncatedXmin = Math.max(dataObj.globalSettings.xmin, compositeXmin),
                 truncatedXmax = Math.min(dataObj.globalSettings.xmax, compositeXmax),
-                truncatedOccupancy = smoothedOccupancy.slice(truncatedXmin - compositeXmin, truncatedXmax - compositeXmax)
-                    .map(d => this.yscale(d * scalingFactor + compositeData.shiftOccupancy));
+                truncatedOccupancy = smoothedOccupancy.slice(truncatedXmin - compositeXmin,
+                        smoothedOccupancy.length - truncatedXmax - compositeXmax)
+                    .map((d, i) => ({x: truncatedXmin + i, y: d * scale + compositeData.shiftOccupancy}));
+            truncatedOccupancy.unshift({x: truncatedXmin, y: 0});
+            truncatedOccupancy.push({x: truncatedXmax, y: 0});
             // Set fill color and opacity
             compositeElem.select("defs .composite-gradient.top").selectAll("stop")
                 .data([0, 1])
@@ -291,20 +294,21 @@ const plotObject = class {
                     .attr("stop-opacity", d => opacity[d]);
             // Set composite paths
             const topLine = d3.line()
-                .x((d, i) => this.xscale(i + truncatedXmin))
-                .y(d => this.yscale(d));
+                .x(d => this.xscale(d.x))
+                .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
                 .style("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
                 .datum(truncatedOccupancy)
                 .attr("d", topLine);
-            compositeElem.select(".black-line.top")
-                .style("display", dataObj.globalSettings.colorTrace || (compositeData.hideSense && compositeData.hideAnti) ? "none" : null)
-                .datum(truncatedOccupancy)
+            compositeElem.select(".composite-line.top")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
+                .style("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
+                .datum(truncatedOccupancy.slice(1, -1))
                 .attr("d", topLine);
             compositeElem.select(".composite-path.bottom")
                 .style("display", "none");
-            compositeElem.select(".black-line.bottom")
+            compositeElem.select(".composite-line.bottom")
                 .style("display", "none")
         } else {
             // Adjust composite data according to settings
@@ -315,9 +319,13 @@ const plotObject = class {
                 truncatedXminAnti = Math.max(dataObj.globalSettings.xmin, compositeData.xmin + smoothShift - bpShift),
                 truncatedXmaxAnti = Math.min(dataObj.globalSettings.xmax, compositeData.xmax - smoothShift - bpShift),
                 truncatedSense = smoothedSense.slice(truncatedXminSense - compositeData.xmin, truncatedXmaxSense - compositeData.xmax)
-                    .map(d => this.yscale(d * scalingFactor + compositeData.shiftOccupancy)),
+                    .map((d, i) => ({x: truncatedXminSense + i, y: d * scale + compositeData.shiftOccupancy})),
                 truncatedAnti = smoothedAnti.slice(truncatedXminAnti - compositeData.xmin, truncatedXmaxAnti - compositeData.xmax)
-                    .map(d => this.yscale(d * scalingFactor + compositeData.shiftOccupancy));
+                    .map((d, i) => ({x: truncatedXminAnti + i, y: d * scale + compositeData.shiftOccupancy}));
+            truncatedSense.unshift({x: truncatedXminSense, y: 0});
+            truncatedSense.push({x: truncatedXmaxSense, y: 0});
+            truncatedAnti.unshift({x: truncatedXminAnti, y: 0});
+            truncatedAnti.push({x: truncatedXmaxAnti, y: 0});
             // Set fill color and opacity
             compositeElem.select("defs .composite-gradient.top").selectAll("stop")
                 .data([0, 1])
@@ -333,28 +341,30 @@ const plotObject = class {
                     .attr("stop-opacity", d => opacity[d]);
             // Set composite paths
             const topLine = d3.line()
-                .x((d, i) => this.xscale(i + (compositeData.swap ? truncatedXminAnti : truncatedXminSense)))
-                .y(d => this.yscale(d));
+                .x(d => this.xscale(d.x))
+                .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
                 .style("display", compositeData.hideSense ? "none" : null)
                 .datum(compositeData.swap ? truncatedAnti : truncatedSense)
                 .attr("d", topLine);
-            compositeElem.select(".black-line.top")
-                .style("display", dataObj.globalSettings.colorTrace || compositeData.hideSense ? "none" : null)
-                .datum(compositeData.swap ? truncatedAnti : truncatedSense)
+            compositeElem.select(".composite-line.top")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
+                .style("display", compositeData.hideSense ? "none" : null)
+                .datum(compositeData.swap ? truncatedAnti.slice(1, -1) : truncatedSense.slice(1, -1))
                 .attr("d", topLine);
             const bottomLine = d3.line()
-                .x((d, i) => this.xscale(i + (compositeData.swap ? truncatedXminSense : truncatedXminAnti)))
-                .y(d => this.yscale(-d));
+                .x(d => this.xscale(d.x))
+                .y(d => this.yscale(-d.y));
             compositeElem.select(".composite-path.bottom")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? secondaryColor : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
                 .style("display", compositeData.hideAnti ? "none" : null)
                 .datum(compositeData.swap ? truncatedSense : truncatedAnti)
                 .attr("d", bottomLine);
-            compositeElem.select(".black-line.bottom")
-                .style("display", dataObj.globalSettings.colorTrace || compositeData.hideAnti ? "none" : null)
-                .datum(compositeData.swap ? truncatedSense : truncatedAnti)
+            compositeElem.select(".composite-line.bottom")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? secondaryColor : "#000000")
+                .style("display", compositeData.hideAnti ? "none" : null)
+                .datum(compositeData.swap ? truncatedSense.slice(1, -1) : truncatedAnti.slice(1, -1))
                 .attr("d", bottomLine)
         }
     }
@@ -370,4 +380,4 @@ const plotObject = class {
     }
 };
 
-let plotObj = new plotObject("main-plot", 460, 300, {top: 30, right: 170, bottom: 35, left: 40})
+let plotObj = new plotObject("main-plot", 460, 300, {top: 30, right: 150, bottom: 35, left: 60})

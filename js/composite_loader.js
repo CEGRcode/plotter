@@ -1,16 +1,16 @@
 const compositeLoader = class {
     constructor() {
-        this.files = {}
+        this.fileData = {}
     }
 
-    async loadFiles(file_list) {
+    loadFiles(file_list) {
         const self = this,
             n = file_list.length,
-            promise_arr = Array(n);
+            promise_arr = [];
         for (let i = 0; i < n; i++) {
-            await new Promise(function(resolve, reject) {
+            promise_arr.push(new Promise(function(resolve, reject) {
                 const file = file_list[i];
-                if (file.name in this.files) {
+                if (file.name in self.fileData) {
                     if (!confirm(file.name + " already loaded. Overwrite?")) {
                         reject(file.name + " already loaded.")
                     }
@@ -18,19 +18,24 @@ const compositeLoader = class {
                 const reader = new FileReader();
 
                 reader.onload = function() {
-                    const {xmin, xmax, sense, anti} = parse_composite(reader.result),
-                        promise = () => new Promise(function(resolve_) {resolve_()});
-                    promise_arr[i] = i === 0 ? promise() : promise_arr[i - 1].then(promise);
+                    const {xmin, xmax, sense, anti} = self.parseComposite(reader.result);
 
-                    // Update composites object
-                    self.files[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+                    // Update files object
+                    self.fileData[file.name] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
 
                     resolve()
                 };
-            })
-        }
-        
-        this.files[file.id] = file
+
+                reader.onerror = function() {
+                    alert("Error loading file!!");
+                    reject("Error loading file")
+                };
+
+                reader.readAsText(file)
+            }))
+        };
+
+        return promise_arr
     }
 
     parseComposite(text) {
@@ -98,4 +103,6 @@ const compositeLoader = class {
     
         return {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
     };
-}
+};
+
+let compositeLoaderObj = new compositeLoader();

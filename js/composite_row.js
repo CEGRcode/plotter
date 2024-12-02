@@ -1,28 +1,13 @@
 const compositeRow = class {
-    constructor({row, idx, primaryColor, name=null, separateColors=false, secondaryColor=null, scale=1,
-        minOpacity=null, maxOpacity=null, smoothing=null, bpShift=null, shiftOccupancy=0, hideSense=false,
-        hideAnti=false, swap=false, ids=[]}) {
+    constructor(row, idx, compositeDataObj) {
         this.row = row;
         this.idx = idx;
-        this.name = name || "Composite " + idx;
-        this.primaryColor = primaryColor;
-        this.secondaryColor = secondaryColor || primaryColor;
-        this.scale = scale;
-        this.minOpacity = minOpacity;
-        this.maxOpacity = maxOpacity;
-        this.smoothing = smoothing;
-        this.bpShift = bpShift;
-        this.shiftOccupancy = shiftOccupancy;
-        this.hideSense = hideSense;
-        this.hideAnti = hideAnti;
-        this.swap = swap;
-        this.ids = ids;
-        this.filesLoaded = this.ids.length;
+        this.compositeDataObj = compositeDataObj;
         
         const self = this;
         this.row
             .attr("draggable", true)
-            .on("dragstart", function() {e.dataTransfer.setData("text/plain", self.idx)});
+            .on("dragstart", function(ev) {ev.dataTransfer.setData("text/plain", self.idx)});
 
         // Add the drag column
         this.row.append("td").append("div")
@@ -48,20 +33,19 @@ const compositeRow = class {
         // Add the name column
         this.row.append("td").append("div")
             .attr("contenteditable", true)
-            .text(this.name)
-            .style("min-width", "5px");
+            .text(this.compositeDataObj.name);
 
         // Add the color column
         const color_col = this.row.append("td");
         color_col.append("input")
             .attr("type", "color")
             .classed("color-1", true)
-            .attr("value", this.primaryColor);
-        if (separateColors) {
+            .attr("value", this.compositeDataObj.primaryColor);
+        if (dataObj.separateColors) {
             color_col.append("input")
                 .attr("type", "color")
                 .classed("color-2", true)
-                .attr("value", this.secondaryColor)
+                .attr("value", this.compositeDataObj.secondaryColor || this.compositeDataObj.primaryColor)
         };
         
         // Add the scale column
@@ -72,11 +56,11 @@ const compositeRow = class {
         scale_div.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.scale);
+            .attr("value", this.compositeDataObj.scale);
         scale_div.append("input")
             .attr("type", "range")
             .classed("scale-slider", true)
-            .attr("value", Math.log10(this.scale) * 50 + 50)
+            .attr("value", Math.log10(this.compositeDataObj.scale) * 50 + 50)
             .attr("min", 0)
             .attr("max", 100);
         
@@ -87,11 +71,11 @@ const compositeRow = class {
         opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.minOpacity || "");
+            .attr("value", this.compositeDataObj.minOpacity || "");
         opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.maxOpacity || "");
+            .attr("value", this.compositeDataObj.maxOpacity || "");
         
         // Add the smoothing column
         const smoothing_col = this.row.append("td");
@@ -99,7 +83,8 @@ const compositeRow = class {
                 .text("Smoothing:");
         smoothing_col.append("input")
             .attr("type", "text")
-            .classed("setting-text", true);
+            .classed("setting-text", true)
+            .attr("value", this.compositeDataObj.smoothing || "");
         
         // Add the bp shift column
         const bpShift_col = this.row.append("td");
@@ -107,7 +92,8 @@ const compositeRow = class {
             .text("BP Shift:");
         bpShift_col.append("input")
             .attr("type", "text")
-            .classed("setting-text", true);
+            .classed("setting-text", true)
+            .attr("value", this.compositeDataObj.bpShift || "");
 
         // Add hide icon
         const hide_col = this.row.append("td"),
@@ -155,7 +141,12 @@ const compositeRow = class {
             file_input = upload_col.append("input")
                 .attr("type", "file")
                 .property("multiple", true)
-                .style("display", "none");
+                .style("display", "none")
+                .on("change", async function(ev) {
+                    await self.compositeDataObj.loadFiles(ev.target.files);
+                    await dataObj.autoscaleAxisLimits();
+                    plotObj.updatePlot()
+                });
         upload_col.append("button")
             .attr("title", "Upload file(s)")
             .style("width", "35px")
@@ -178,10 +169,7 @@ const compositeRow = class {
                         .attr("fill", "none");
         upload_col.append("label")
             .style("padding-left", "10px")
-            .text(this.filesLoaded === 1 ? this.filesLoaded + " file loaded" : this.filesLoaded + " files loaded");
-    }
-
-    loadFiles(files) {
-
+            .text(this.compositeDataObj.filesLoaded === 1 ? this.compositeDataObj.filesLoaded + " file loaded" :
+                this.compositeDataObj.filesLoaded + " files loaded");
     }
 }

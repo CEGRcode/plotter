@@ -1,35 +1,29 @@
 const dataObject = class {
-    constructor({globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider}) {
+    constructor({globalSettings, compositeData, referenceLines, nucleosomeSlider}) {
         this.globalSettings = globalSettings;
-        this.defaultColors = defaultColors;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
         this.nucleosomeSlider = nucleosomeSlider
     }
 
     changeXmin(xmin) {
-        this.globalSettings.xmin = xmin;
-        plotObj.updatePlot()
+        this.globalSettings.xmin = xmin
     }
 
     changeXmax(xmax) {
-        this.globalSettings.xmax = xmax;
-        plotObj.updatePlot()
+        this.globalSettings.xmax = xmax
     }
 
     changeYmin(ymin) {
-        this.globalSettings.ymin = ymin;
-        plotObj.updatePlot()
+        this.globalSettings.ymin = ymin
     }
 
     changeYmax(ymax) {
-        this.globalSettings.ymax = ymax;
-        plotObj.updatePlot()
+        this.globalSettings.ymax = ymax
     }
 
     changeSymmetricY(symmetricY) {
-        this.globalSettings.symmetricY = symmetricY;
-        plotObj.updatePlot()
+        this.globalSettings.symmetricY = symmetricY
     }
 
     changeLockAxes(lockAxes) {
@@ -37,34 +31,28 @@ const dataObject = class {
     }
 
     changeOpacity(minOpacity, maxOpacity) {
-        this.globalSettings.minOpacity = minOpacity;
-        this.globalSettings.maxOpacity = maxOpacity;
-        plotObj.updatePlot()
+        this.globalSettings.minOpacity = minOpacity
+        this.globalSettings.maxOpacity = maxOpacity
     }
 
     changeSmoothing(smoothing) {
-        this.globalSettings.smoothing = smoothing;
-        plotObj.updatePlot()
+        this.globalSettings.smoothing = smoothing
     }
 
     changeBpShift(bpShift) {
-        this.globalSettings.bpShift = bpShift;
-        plotObj.updatePlot()
+        this.globalSettings.bpShift = bpShift
     }
 
     changeCombined(combined) {
-        this.globalSettings.combined = combined;
-        plotObj.updatePlot()
+        this.globalSettings.combined = combined
     }
 
     changeSeparateColors(separateColors) {
-        this.globalSettings.separateColors = separateColors;
-        plotObj.updatePlot()
+        this.globalSettings.separateColors = separateColors
     }
 
     changeColorTrace(colorTrace) {
-        this.globalSettings.colorTrace = colorTrace;
-        plotObj.updatePlot()
+        this.globalSettings.colorTrace = colorTrace
     }
 
     changeEnableTooltip(enableTooltip) {
@@ -76,32 +64,53 @@ const dataObject = class {
     }
 
     changeLabel(field, value) {
-        this.globalSettings.labels[field] = value;
-        plotObj.updatePlot()
+        this.globalSettings.labels[field] = value
     }
 
-    addCompositeData(i) {
-        this.compositeData.push(compositeObject(i, this.defaultColors[i % this.defaultColors.length]));
-        plotObj.updatePlot()
+    addCompositeData({idx, name=null, xmin=Infinity, xmax=-Infinity, sense=null, anti=null, primaryColor=null,
+        secondaryColor=null, scale=1, minOpacity=null, maxOpacity=null, smoothing=null, bpShift=null, shiftOccupancy=0,
+        hideSense=false, hideAnti=false, swap=false, ids=null}) {
+        const compositeDataObj = new compositeObject({idx, name: name, xmin: xmin, xmax: xmax, sense: sense, anti: anti,
+            primaryColor: primaryColor, secondaryColor: secondaryColor, scale: scale, minOpacity: minOpacity,
+            maxOpacity: maxOpacity, smoothing: smoothing, bpShift: bpShift, shiftOccupancy: shiftOccupancy,
+            hideSense: hideSense, hideAnti: hideAnti, swap: swap, ids: ids});
+        this.compositeData.push(compositeDataObj);
+
+        return compositeDataObj
     }
 
     moveCompositeData(fromIndex, toIndex) {
-        this.compositeData.splice(toIndex, 0, this.compositeData.splice(fromIndex, 1)[0]);
-        plotObj.updatePlot()
+        this.compositeData.splice(toIndex, 0, this.compositeData.splice(fromIndex, 1)[0])
     }
 
     removeCompositeData(index) {
-        this.compositeData.splice(index, 1);
-        plotObj.updatePlot()
+        this.compositeData.splice(index, 1)
     }
 
-    changeBulkSettings(globalSettings, defaultColors, compositeData, referenceLines, nucleosomeSlider) {
+    changeBulkSettings(globalSettings, compositeData, referenceLines, nucleosomeSlider) {
         this.globalSettings = globalSettings;
-        this.defaultColors = defaultColors;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
-        this.nucleosomeSlider = nucleosomeSlider;
-        plotObj.updatePlot()
+        this.nucleosomeSlider = nucleosomeSlider
+    }
+
+    autoscaleAxisLimits() {
+        const self = this;
+        return new Promise(function(resolve) {
+            const xmin = self.compositeData.reduce((a, c) => Math.min(a, c.xmin), Infinity),
+            xmax = self.compositeData.reduce((a, c) => Math.max(a, c.xmax), -Infinity),
+            ymin = self.globalSettings.combined ? 0 :
+                -self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.anti)), -Infinity),
+            ymax = self.globalSettings.combined ? self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense.map((d, i) => d + c.anti[i]))), -Infinity) :
+                self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense)), -Infinity);
+
+            self.changeXmin(xmin);
+            self.changeXmax(xmax);
+            self.changeYmin(ymin);
+            self.changeYmax(ymax);
+
+            resolve()
+        })
     }
     
     async importDataFromJSON(file) {
@@ -122,7 +131,6 @@ const dataObject = class {
         });
         if (data.globalSettings && data.compositeData) {
             this.globalSettings = data.globalSettings;
-            this.defaultColors = data.defaultColors || [];
             this.compositeData = data.compositeData;
             this.referenceLines = data.referenceLines || [];
             this.nucleosomeSlider = data.nucleosomeSlider || {};
@@ -140,7 +148,6 @@ const dataObject = class {
         a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(
             {
                 globalSettings: this.globalSettings,
-                defaultColors: this.defaultColors,
                 compositeData: this.compositeData,
                 referenceLines: this.referenceLines,
                 nucleosomeSlider: this.nucleosomeSlider
@@ -174,18 +181,6 @@ let dataObj = new dataObject({
             ylabel: "Occupancy (AU)"
         }
     },
-    defaultColors: [
-        "#BFBFBF",
-        "#000000",
-        "#FF0000",
-        "#FF9100",
-        "#D7D700",
-        "#07E200",
-        "#00B0F0",
-        "#0007FF",
-        "#A700FF",
-        "#FF00D0"
-    ],
     compositeData: [],
     referenceLines: [],
     nucleosomeSlider: {}
