@@ -7,7 +7,7 @@ const compositeTable = class {
         this.rows = [];
         this.nRows = 0;
         const self = this;
-        this.add_row = this.table.append("tr")
+        this.addRow_ = this.table.append("tr")
             .attr("id", "add-row")
             .append("td")
                 .attr("colspan", 9)
@@ -23,6 +23,46 @@ const compositeTable = class {
         // Add the row
         this.rows.push(new compositeRow(this.table.insert("tr", "#add-row"), this.nRows, compositeDataObj));
         this.nRows++
+    }
+
+    insertRowBefore(dragIdx, dropIdx) {
+        if (dragIdx === dropIdx) {
+            return
+        };
+
+        // Move row elements
+        const dragRow = this.rows[dragIdx],
+            dropRow = this.rows[dropIdx];
+        $(dragRow.row.node()).insertBefore(dropRow.row.node());
+
+        // Update row array
+        this.rows.splice(dragIdx, 1);
+        this.rows.splice(dropIdx - (dropIdx > dragIdx), 0, dragRow);
+
+        // Update row indices
+        for (const i in this.rows) {
+            this.rows[i].updateIndex(i)
+        }
+    }
+
+    insertRowAfter(dragIdx, dropIdx) {
+        if (dragIdx === dropIdx) {
+            return
+        };
+
+        // Move row elements
+        const dragRow = this.rows[dragIdx],
+            dropRow = this.rows[dropIdx];
+        $(dragRow.row.node()).insertAfter(dropRow.row.node());
+
+        // Update row array
+        this.rows.splice(dragIdx, 1);
+        this.rows.splice(dropIdx + 1 - (dropIdx > dragIdx), 0, dragRow);
+
+        // Update row indices
+        for (const i in this.rows) {
+            this.rows[i].updateIndex(parseInt(i))
+        }
     }
 };
 

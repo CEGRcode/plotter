@@ -24,7 +24,8 @@ const plotObject = class {
             title: null,
             xlabel: null,
             ylabel: null,
-            composites: []
+            compositesGroup: null,
+            compositesArr: []
         };
         this.counter = 0;
 
@@ -34,6 +35,9 @@ const plotObject = class {
     createPlot() {
         // Set up svg element
         this._elements.mainPlot.attr("viewBox", "0 0 " + this.width + " " + this.height);
+
+        // 
+        this._elements.compositesGroup = this._elements.mainPlot.append("g");
 
         // Create static axes
         this._elements.axisTop = this._elements.mainPlot.append("g")
@@ -144,25 +148,25 @@ const plotObject = class {
         this._elements.ylabel.text(dataObj.globalSettings.labels.ylabel);
 
         // Update composite plots
-        const plotN = this._elements.composites.length,
+        const plotN = this._elements.compositesArr.length,
             dataN = dataObj.compositeData.length;
         for (let i = 0; i < Math.max(plotN, dataN); i++) {
             // If there are more plots than data, remove the extra plots
             if (i >= dataN && i < plotN) {
-                this._elements.composites[i].remove();
-                this._elements.composites.splice(i, 1)
+                this._elements.compositesArr[i].remove();
+                this._elements.compositesArr.splice(i, 1)
             // If there are more data than plots, create new plots
             } else if (i >= plotN && i < dataN) {
-                this._elements.composites.push(this.createComposite(this.counter++));
-                this.updateComposite(this._elements.composites[i], dataObj.compositeData[i])
+                this._elements.compositesArr.push(this.createComposite(this.counter++));
+                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[i])
             } else {
-                this.updateComposite(this._elements.composites[i], dataObj.compositeData[i])
+                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[i])
             }
         }
     }
 
     createComposite(idx) {
-        const compositeGroup = this._elements.mainPlot.append("g");
+        const compositeGroup = this._elements.compositesGroup.append("g");
     
         // Add gradients
         const defs = compositeGroup.append("defs");
@@ -217,6 +221,13 @@ const plotObject = class {
     }
 
     updateComposite(compositeElem, compositeData) {
+        // Check if there are any files loaded
+        if (compositeData.filesLoaded === 0) {
+            compositeElem.style("display", "none");
+            return
+        }
+        compositeElem.style("display", null);
+
         // Fetch composite settings
         const minOpacity = compositeData.minOpacity === null ? dataObj.globalSettings.minOpacity : compositeData.minOpacity,
             maxOpacity = compositeData.maxOpacity === null ? dataObj.globalSettings.maxOpacity : compositeData.maxOpacity,
@@ -238,7 +249,7 @@ const plotObject = class {
                 truncatedXmin = Math.max(dataObj.globalSettings.xmin, compositeXmin),
                 truncatedXmax = Math.min(dataObj.globalSettings.xmax, compositeXmax),
                 truncatedOccupancy = smoothedOccupancy.slice(truncatedXmin - compositeXmin,
-                        smoothedOccupancy.length - truncatedXmax - compositeXmax)
+                        smoothedOccupancy.length - truncatedXmax + compositeXmax)
                     .map((d, i) => ({x: truncatedXmin + i, y: d * scale + compositeData.shiftOccupancy}));
             truncatedOccupancy.unshift({x: truncatedXmin, y: 0});
             truncatedOccupancy.push({x: truncatedXmax, y: 0});
@@ -275,14 +286,16 @@ const plotObject = class {
                 truncatedXmaxSense = Math.min(dataObj.globalSettings.xmax, compositeData.xmax - smoothShift + bpShift),
                 truncatedXminAnti = Math.max(dataObj.globalSettings.xmin, compositeData.xmin + smoothShift - bpShift),
                 truncatedXmaxAnti = Math.min(dataObj.globalSettings.xmax, compositeData.xmax - smoothShift - bpShift),
-                truncatedSense = smoothedSense.slice(truncatedXminSense - compositeData.xmin, truncatedXmaxSense - compositeData.xmax)
+                truncatedSense = smoothedSense.slice(truncatedXminSense - compositeData.xmin - smoothShift - bpShift,
+                        smoothedSense.length - truncatedXmaxSense + compositeData.xmax + smoothShift - bpShift)
                     .map((d, i) => ({x: truncatedXminSense + i, y: d * scale + compositeData.shiftOccupancy})),
-                truncatedAnti = smoothedAnti.slice(truncatedXminAnti - compositeData.xmin, truncatedXmaxAnti - compositeData.xmax)
+                truncatedAnti = smoothedAnti.slice(truncatedXminAnti - compositeData.xmin - smoothShift + bpShift,
+                        smoothedAnti.length - truncatedXmaxAnti + compositeData.xmax + smoothShift + bpShift)
                     .map((d, i) => ({x: truncatedXminAnti + i, y: d * scale + compositeData.shiftOccupancy}));
-            truncatedSense.unshift({x: truncatedXminSense, y: 0});
-            truncatedSense.push({x: truncatedXmaxSense, y: 0});
-            truncatedAnti.unshift({x: truncatedXminAnti, y: 0});
-            truncatedAnti.push({x: truncatedXmaxAnti, y: 0});
+            truncatedSense.unshift(({x: truncatedXminSense, y: 0}));
+            truncatedSense.push(({x: truncatedXmaxSense, y: 0}));
+            truncatedAnti.unshift(({x: truncatedXminAnti, y: 0}));
+            truncatedAnti.push(({x: truncatedXmaxAnti, y: 0}));
             // Set fill color and opacity
             compositeElem.select("defs .composite-gradient.top").selectAll("stop")
                 .data([0, 1])
@@ -329,7 +342,7 @@ const plotObject = class {
     slidingWindow(vec, window) {
         let val = vec.slice(0, window).reduce((a, c) => a + c, 0) / window,
             newVec = [val];
-        for (let i = 0; i < vec.length - window - 1; i++) {
+        for (let i = 0; i < vec.length - window; i++) {
             val += (vec[i + window] - vec[i]) / window;
             newVec.push(val);
         };
@@ -339,31 +352,20 @@ const plotObject = class {
     getYlimits() {
         if (dataObj.globalSettings.combined) {
             return {
-                ymax: this.roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin),
+                ymax: roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin),
                 ymin: 0
             }
         } else if (dataObj.globalSettings.symmetricY) {
             return {
-                ymax: this.roundUpWithPrecision(Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin)),
-                ymin: this.roundUpWithPrecision(Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin))
+                ymax: roundUpWithPrecision(Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin)),
+                ymin: roundUpWithPrecision(Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin))
             }
         } else {
             return {
-                ymax: this.roundUpWithPrecision(dataObj.globalSettings.ymax),
-                ymin: this.roundUpWithPrecision(dataObj.globalSettings.ymin)
+                ymax: roundUpWithPrecision(dataObj.globalSettings.ymax),
+                ymin: roundUpWithPrecision(dataObj.globalSettings.ymin)
             }
         }
-    }
-
-    roundUpWithPrecision(value, precision=2) {
-        // Round the absolute value of a number up to the nearest value with a given precision
-        const absValue = Math.abs(value),
-            sign = Math.sign(value);
-        if (absValue === 0) {
-            return 0
-        };
-        const factor = Math.pow(10, Math.floor(Math.log10(absValue)) - precision + 1);
-        return Math.ceil(absValue / factor) * factor * sign
     }
 };
 

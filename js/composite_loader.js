@@ -1,7 +1,5 @@
 const compositeLoader = class {
-    constructor() {
-        this.fileData = {}
-    }
+    constructor() {}
 
     loadFiles(file_list) {
         const self = this,
@@ -10,7 +8,7 @@ const compositeLoader = class {
         for (let i = 0; i < n; i++) {
             promise_arr.push(new Promise(function(resolve, reject) {
                 const file = file_list[i];
-                if (file.name in self.fileData) {
+                if (file.name in dataObj.fileData) {
                     if (!confirm(file.name + " already loaded. Overwrite?")) {
                         reject(file.name + " already loaded.")
                     }
@@ -21,7 +19,7 @@ const compositeLoader = class {
                     const {xmin, xmax, sense, anti} = self.parseComposite(reader.result);
 
                     // Update files object
-                    self.fileData[file.name] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+                    dataObj.fileData[file.name] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
 
                     resolve()
                 };
@@ -105,4 +103,4 @@ const compositeLoader = class {
     };
 };
 
-let compositeLoaderObj = new compositeLoader();
+const compositeLoaderObj = new compositeLoader();

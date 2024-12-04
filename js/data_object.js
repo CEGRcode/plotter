@@ -1,9 +1,10 @@
 const dataObject = class {
-    constructor({globalSettings, compositeData, referenceLines, nucleosomeSlider}) {
+    constructor({globalSettings, fileData, compositeData, referenceLines, nucleosomeSlider}) {
         this.globalSettings = globalSettings;
+        this.fileData = fileData;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
-        this.nucleosomeSlider = nucleosomeSlider
+        this.nucleosomeSlider = nucleosomeSlider;
     }
 
     changeXmin(xmin) {
@@ -30,8 +31,11 @@ const dataObject = class {
         this.globalSettings.lockAxes = lockAxes
     }
 
-    changeOpacity(minOpacity, maxOpacity) {
+    changeMinOpacity(minOpacity) {
         this.globalSettings.minOpacity = minOpacity
+    }
+
+    changeMaxOpacity(maxOpacity) {
         this.globalSettings.maxOpacity = maxOpacity
     }
 
@@ -74,21 +78,18 @@ const dataObject = class {
             primaryColor: primaryColor, secondaryColor: secondaryColor, scale: scale, minOpacity: minOpacity,
             maxOpacity: maxOpacity, smoothing: smoothing, bpShift: bpShift, shiftOccupancy: shiftOccupancy,
             hideSense: hideSense, hideAnti: hideAnti, swap: swap, ids: ids});
-        this.compositeData.push(compositeDataObj);
+        this.compositeData.unshift(compositeDataObj);
 
         return compositeDataObj
     }
 
-    moveCompositeData(fromIndex, toIndex) {
-        this.compositeData.splice(toIndex, 0, this.compositeData.splice(fromIndex, 1)[0])
+    updateCompositeData(compositeData) {
+        this.compositeData = compositeData
     }
 
-    removeCompositeData(index) {
-        this.compositeData.splice(index, 1)
-    }
-
-    changeBulkSettings(globalSettings, compositeData, referenceLines, nucleosomeSlider) {
+    changeBulkSettings(globalSettings, fileData, compositeData, referenceLines, nucleosomeSlider) {
         this.globalSettings = globalSettings;
+        this.fileData = fileData;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
         this.nucleosomeSlider = nucleosomeSlider
@@ -131,6 +132,7 @@ const dataObject = class {
         });
         if (data.globalSettings && data.compositeData) {
             this.globalSettings = data.globalSettings;
+            this.fileData = data.fileData;
             this.compositeData = data.compositeData;
             this.referenceLines = data.referenceLines || [];
             this.nucleosomeSlider = data.nucleosomeSlider || {};
@@ -148,6 +150,7 @@ const dataObject = class {
         a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(
             {
                 globalSettings: this.globalSettings,
+                fileData: this.fileData,
                 compositeData: this.compositeData,
                 referenceLines: this.referenceLines,
                 nucleosomeSlider: this.nucleosomeSlider
@@ -181,6 +184,7 @@ let dataObj = new dataObject({
             ylabel: "Occupancy (AU)"
         }
     },
+    fileData: {},
     compositeData: [],
     referenceLines: [],
     nucleosomeSlider: {}

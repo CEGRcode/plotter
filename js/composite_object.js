@@ -38,8 +38,11 @@ const compositeObject = class {
         this.scale = scale
     }
 
-    changeOpacity(minOpacity, maxOpacity) {
-        this.minOpacity = minOpacity;
+    changeMinOpacity(minOpacity) {
+        this.minOpacity = minOpacity
+    }
+
+    changeMaxOpacity(maxOpacity) {
         this.maxOpacity = maxOpacity
     }
 
@@ -55,8 +58,11 @@ const compositeObject = class {
         this.shiftOccupancy = shiftOccupancy
     }
 
-    changeHide(hideSense, hideAnti) {
-        this.hideSense = hideSense;
+    changeHideSense(hideSense) {
+        this.hideSense = hideSense
+    }
+
+    changeHideAnti(hideAnti) {
         this.hideAnti = hideAnti
     }
 
@@ -113,17 +119,17 @@ const compositeObject = class {
 
     updateData() {
         // Get the minimum and maximum x values of the selected files and initialize the sense and anti arrays
-        const xmin = Math.min(...this.ids.map(id => compositeLoaderObj.fileData[id].xmin)),
-            xmax = Math.max(...this.ids.map(id => compositeLoaderObj.fileData[id].xmax)),
+        const xmin = Math.min(...this.ids.map(id => dataObj.fileData[id].xmin)),
+            xmax = Math.max(...this.ids.map(id => dataObj.fileData[id].xmax)),
             sense = Array(xmax - xmin + 1).fill(0),
             anti = Array(xmax - xmin + 1).fill(0);
         
         // Add the sense and anti values of the selected files to the sense and anti arrays
         for (let x = xmin; x <= xmax; x++) {
             for (let id of this.ids) {
-                const file_xmin = compositeLoaderObj.fileData[id].xmin;
-                sense[x - xmin] += compositeLoaderObj.fileData[id].sense[x - file_xmin] || 0;
-                anti[x - xmin] += compositeLoaderObj.fileData[id].anti[x - file_xmin] || 0
+                const file_xmin = dataObj.fileData[id].xmin;
+                sense[x - xmin] += dataObj.fileData[id].sense[x - file_xmin] || 0;
+                anti[x - xmin] += dataObj.fileData[id].anti[x - file_xmin] || 0
             }
         };
 
@@ -131,6 +137,7 @@ const compositeObject = class {
         this.changeXmin(xmin);
         this.changeXmax(xmax);
         this.changeSense(sense);
-        this.changeAnti(anti)
+        this.changeAnti(anti);
+        this.filesLoaded = this.ids.length
     }
 }
