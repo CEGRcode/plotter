@@ -99,13 +99,13 @@ const plotObject = class {
             .attr("y", this.height - this.margins.bottom)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
-            .text(ymin.toPrecision(2).length > 5 ? parseFloat(ymin.toPrecision(2)).toExponential() : ymin.toPrecision(2));
+            .text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? ymin.toPrecision(2) : parseFloat(ymin.toPrecision(2)));
         this._elements.ymaxLabel = this._elements.mainPlot.append("text")
             .attr("x", this.margins.left - 10)
             .attr("y", this.margins.top + 10)
             .style("text-anchor", "end")
             .attr("font-size", "14px")
-            .text(ymax.toPrecision(2).length > 4 ? parseFloat(ymax.toPrecision(2)).toExponential() : ymax.toPrecision(2));
+            .text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? ymax.toPrecision(2) : parseFloat(ymax.toPrecision(2)));
         // Create axis labels
         const titleGroup = this._elements.mainPlot.append("g"),
             self = this;
@@ -179,8 +179,8 @@ const plotObject = class {
         // Update axis bound labels
         this._elements.xminLabel.text(dataObj.globalSettings.xmin);
         this._elements.xmaxLabel.text(dataObj.globalSettings.xmax);
-        this._elements.yminLabel.text(ymin.toPrecision(2).length > 5 ? parseFloat(ymin.toPrecision(2)).toExponential() : ymin.toPrecision(2));
-        this._elements.ymaxLabel.text(ymax.toPrecision(2).length > 4 ? parseFloat(ymax.toPrecision(2)).toExponential() : ymax.toPrecision(2));
+        this._elements.yminLabel.text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? ymin.toPrecision(2) : parseFloat(ymin.toPrecision(2)));
+        this._elements.ymaxLabel.text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? ymax.toPrecision(2) : parseFloat(ymax.toPrecision(2)));
         // Update axis labels
         this._elements.title.text(dataObj.globalSettings.labels.title);
         this._elements.xlabel.text(dataObj.globalSettings.labels.xlabel);
