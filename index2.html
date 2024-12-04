@@ -15,6 +15,32 @@
     <main>
         <div class="container-fluid">
             <div class="row">
+                <div class="col-4">
+                    <input type="button" id="json-button" value="Import JSON session">
+                    <input type="file" id="json-loader" style="display:none;">
+                    <input type="button" id="json-download" value="Export session as JSON">
+                </div>
+                <div class="col-5">
+                    <div class="row">
+                        <div id="axes-input" class="col-8"></div>
+                        <script src="js/widgets/axes_input.js"></script>
+                        <div class="col-4 text-right">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="button" id="autoscale-axes-button" value="Autoscale axes">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="checkbox" id="lock-axes-checkbox">
+                                    <label for="lock-axes-checkbox" id="lock-axes-label">Lock axes</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-8">
                     <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica"></svg>
                 </div>
