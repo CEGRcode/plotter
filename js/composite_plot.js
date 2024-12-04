@@ -6,8 +6,8 @@ const plotObject = class {
         this.width = width;
         this.height = height;
         this.margins = margins;
-        this.xscale = null;
-        this.yscale = null;
+        this.xscale = d3.scaleLinear().range([this.margins.left, this.width - this.margins.right]);
+        this.yscale = d3.scaleLinear().range([this.height - this.margins.bottom, this.margins.top]);
         this._elements = {
             mainPlot: d3.select("#" + elementID),
             axisTop: null,
@@ -35,48 +35,26 @@ const plotObject = class {
         // Set up svg element
         this._elements.mainPlot.attr("viewBox", "0 0 " + this.width + " " + this.height);
 
-        // Check if y-axis is symmetric
-        let ymax, ymin;
-        if (dataObj.globalSettings.symmetricY) {
-            ymax = Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin);
-            ymin = Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin)
-        } else {
-            ymax = dataObj.globalSettings.ymax;
-            ymin = dataObj.globalSettings.ymin
-        };
-        // Create scales for raw values to svg coordinates
-        this.xscale = d3.scaleLinear()
-            .domain([dataObj.globalSettings.xmin, dataObj.globalSettings.xmax])
-            .range([this.margins.left, this.width - this.margins.right]);
-        this.yscale = d3.scaleLinear()
-            .domain([ymin, ymax])
-            .range([this.height - this.margins.bottom, this.margins.top]);
         // Create static axes
         this._elements.axisTop = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + (this.height - this.margins.bottom) + ")")
-            .call(d3.axisTop(this.xscale).tickFormat(""))
+            .attr("transform", "translate(0 " + (this.height - this.margins.bottom) + ")");
         this._elements.axisBottom = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + this.margins.top + ")")
-            .call(d3.axisBottom(this.xscale).tickFormat(""))
+            .attr("transform", "translate(0 " + this.margins.top + ")");
         this._elements.axisRight = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(" + this.margins.left + " 0)")
-            .call(d3.axisRight(this.yscale).tickFormat(""));
+            .attr("transform", "translate(" + this.margins.left + " 0)");
         this._elements.axisLeft = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(" + (this.width - this.margins.right) + " 0)")
-            .call(d3.axisLeft(this.yscale).tickFormat(""));
+            .attr("transform", "translate(" + (this.width - this.margins.right) + " 0)");
         // Create dynamic axes
         this._elements.midaxisBottom = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + this.yscale(0) + ")")
-            .call(d3.axisBottom(this.xscale).tickFormat(""));
+            .attr("transform", "translate(0 " + ((this.height - this.margins.bottom + this.margins.top) / 2) + ")");
         this._elements.midaxisTop = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + this.yscale(0) + ")")
-            .call(d3.axisTop(this.xscale).tickFormat(""));
+            .attr("transform", "translate(0 " + ((this.height - this.margins.bottom + this.margins.top) / 2) + ")");
         // Create vertical line at reference point
         this._elements.refline = this._elements.mainPlot.append("line")
-            .attr("x1", this.xscale(0))
-            .attr("x2", this.xscale(0))
-            .attr("y1", this.yscale(ymin))
-            .attr("y2", this.yscale(ymax))
+            .attr("x1", (this.width - this.margins.right + this.margins.left) / 2)
+            .attr("x2", (this.width - this.margins.right + this.margins.left) / 2)
+            .attr("y1", this.height - this.margins.bottom)
+            .attr("y2", this.margins.top)
             .attr("stroke", "gray")
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "5,5")
@@ -86,26 +64,22 @@ const plotObject = class {
             .attr("x", this.margins.left)
             .attr("y", this.height - this.margins.bottom + 15)
             .style("text-anchor", "middle")
-            .attr("font-size", "14px")
-            .text(dataObj.globalSettings.xmin);
+            .attr("font-size", "14px");
         this._elements.xmaxLabel = this._elements.mainPlot.append("text")
             .attr("x", this.width - this.margins.right)
             .attr("y", this.height - this.margins.bottom + 15)
             .style("text-anchor", "middle")
-            .attr("font-size", "14px")
-            .text(dataObj.globalSettings.xmax);
+            .attr("font-size", "14px");
         this._elements.yminLabel = this._elements.mainPlot.append("text")
             .attr("x", this.margins.left - 10)
             .attr("y", this.height - this.margins.bottom)
             .style("text-anchor", "end")
-            .attr("font-size", "14px")
-            .text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? ymin.toPrecision(2) : parseFloat(ymin.toPrecision(2)));
+            .attr("font-size", "14px");
         this._elements.ymaxLabel = this._elements.mainPlot.append("text")
             .attr("x", this.margins.left - 10)
             .attr("y", this.margins.top + 10)
             .style("text-anchor", "end")
-            .attr("font-size", "14px")
-            .text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? ymax.toPrecision(2) : parseFloat(ymax.toPrecision(2)));
+            .attr("font-size", "14px");
         // Create axis labels
         const titleGroup = this._elements.mainPlot.append("g"),
             self = this;
@@ -114,7 +88,6 @@ const plotObject = class {
             .attr("y", 20)
             .style("text-anchor", "middle")
             .attr("font-size", "16px")
-            .text(dataObj.globalSettings.labels.title)
             .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
         const xlabelGroup = this._elements.mainPlot.append("g");
         this._elements.xlabel = xlabelGroup.append("text")
@@ -122,7 +95,6 @@ const plotObject = class {
             .attr("y", this.height - 5)
             .style("text-anchor", "middle")
             .attr("font-size", "14px")
-            .text(dataObj.globalSettings.labels.xlabel)
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
         this._elements.ylabel = ylabelGroup.append("text")
@@ -131,23 +103,14 @@ const plotObject = class {
             .attr("transform", "rotate(-90 " + (this.margins.left - 18) + " " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
             .style("text-anchor", "middle")
             .attr("font-size", "14px")
-            .text(dataObj.globalSettings.labels.ylabel)
-            .on("click", function() {editPlotLabel(ylabelGroup, self._elements.ylabel, "ylabel")})
+            .on("click", function() {editPlotLabel(ylabelGroup, self._elements.ylabel, "ylabel")});
+
+        this.updatePlot()
     }
 
     updatePlot() {
-        // Check if combined or y-axis is symmetric
-        let ymax, ymin;
-        if (dataObj.globalSettings.combined) {
-            ymax = dataObj.globalSettings.ymax - dataObj.globalSettings.ymin;
-            ymin = 0
-        } else if (dataObj.globalSettings.symmetricY) {
-            ymax = Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin);
-            ymin = Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin)
-        } else {
-            ymax = dataObj.globalSettings.ymax;
-            ymin = dataObj.globalSettings.ymin
-        };
+        // Get y limits
+        const {ymax, ymin} = this.getYlimits();
         // Update scales for raw values to svg coordinates
         this.xscale.domain([dataObj.globalSettings.xmin, dataObj.globalSettings.xmax]);
         this.yscale.domain([ymin, ymax]);
@@ -179,8 +142,8 @@ const plotObject = class {
         // Update axis bound labels
         this._elements.xminLabel.text(dataObj.globalSettings.xmin);
         this._elements.xmaxLabel.text(dataObj.globalSettings.xmax);
-        this._elements.yminLabel.text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? ymin.toPrecision(2) : parseFloat(ymin.toPrecision(2)));
-        this._elements.ymaxLabel.text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? ymax.toPrecision(2) : parseFloat(ymax.toPrecision(2)));
+        this._elements.yminLabel.text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? parseFloat(ymin.toPrecision(2)).toExponential() : parseFloat(ymin.toPrecision(2)));
+        this._elements.ymaxLabel.text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? parseFloat(ymax.toPrecision(2)).toExponential() : parseFloat(ymax.toPrecision(2)));
         // Update axis labels
         this._elements.title.text(dataObj.globalSettings.labels.title);
         this._elements.xlabel.text(dataObj.globalSettings.labels.xlabel);
@@ -377,6 +340,36 @@ const plotObject = class {
             newVec.push(val);
         };
         return newVec
+    }
+
+    getYlimits() {
+        if (dataObj.globalSettings.combined) {
+            return {
+                ymax: this.roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin),
+                ymin: 0
+            }
+        } else if (dataObj.globalSettings.symmetricY) {
+            return {
+                ymax: this.roundUpWithPrecision(Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin)),
+                ymin: this.roundUpWithPrecision(Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin))
+            }
+        } else {
+            return {
+                ymax: this.roundUpWithPrecision(dataObj.globalSettings.ymax),
+                ymin: this.roundUpWithPrecision(dataObj.globalSettings.ymin)
+            }
+        }
+    }
+
+    roundUpWithPrecision(value, precision=2) {
+        // Round the absolute value of a number up to the nearest value with a given precision
+        const absValue = Math.abs(value),
+            sign = Math.sign(value);
+        if (absValue === 0) {
+            return 0
+        };
+        const factor = Math.pow(10, Math.floor(Math.log10(absValue)) - precision + 1);
+        return Math.ceil(absValue / factor) * factor * sign
     }
 };
 
