@@ -51,10 +51,6 @@ const plotObject = class {
             .attr("transform", "translate(0 " + ((this.height - this.margins.bottom + this.margins.top) / 2) + ")");
         // Create vertical line at reference point
         this._elements.refline = this._elements.mainPlot.append("line")
-            .attr("x1", (this.width - this.margins.right + this.margins.left) / 2)
-            .attr("x2", (this.width - this.margins.right + this.margins.left) / 2)
-            .attr("y1", this.height - this.margins.bottom)
-            .attr("y2", this.margins.top)
             .attr("stroke", "gray")
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "5,5")
