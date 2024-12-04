@@ -31,6 +31,10 @@ label {
     cursor: pointer !important;
 }
 
+.add-row-text {
+    padding-left: 10px;
+}
+
 #add-row div {
     width: 100%;
 }

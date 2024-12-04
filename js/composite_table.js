@@ -12,6 +12,7 @@ const compositeTable = class {
             .append("td")
                 .attr("colspan", 9)
                 .append("div")
+                    .classed("add-row-text", true)
                     .text("Add new composite")
                     .on("click", function() {
                         const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
