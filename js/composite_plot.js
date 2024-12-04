@@ -45,10 +45,8 @@ const plotObject = class {
         this._elements.axisLeft = this._elements.mainPlot.append("g")
             .attr("transform", "translate(" + (this.width - this.margins.right) + " 0)");
         // Create dynamic axes
-        this._elements.midaxisBottom = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + ((this.height - this.margins.bottom + this.margins.top) / 2) + ")");
-        this._elements.midaxisTop = this._elements.mainPlot.append("g")
-            .attr("transform", "translate(0 " + ((this.height - this.margins.bottom + this.margins.top) / 2) + ")");
+        this._elements.midaxisBottom = this._elements.mainPlot.append("g");
+        this._elements.midaxisTop = this._elements.mainPlot.append("g");
         // Create vertical line at reference point
         this._elements.refline = this._elements.mainPlot.append("line")
             .attr("stroke", "gray")
