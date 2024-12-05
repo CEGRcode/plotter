@@ -82,9 +82,10 @@ const compositeRow = class {
         
         // Add the scale column
         const scale_div = this.row.append("td").append("div")
-            .classed("slider-div", true);
+                .classed("slider-div", true);
             scale_div.append("label")
-            .text("Scale:");
+                .classed("setting-label", true)
+                .text("Scale:");
         scale_div.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -117,6 +118,7 @@ const compositeRow = class {
         // Add the opacity column
         const opacity_col = this.row.append("td");
         opacity_col.append("label")
+            .classed("setting-label", true)
             .text("Opacity:");
         opacity_col.append("input")
             .attr("type", "text")
@@ -148,6 +150,7 @@ const compositeRow = class {
         // Add the smoothing column
         const smoothing_col = this.row.append("td");
         smoothing_col.append("label")
+                .classed("setting-label", true)
                 .text("Smoothing:");
         smoothing_col.append("input")
             .attr("type", "text")
@@ -165,6 +168,7 @@ const compositeRow = class {
         // Add the bp shift column
         const bpShift_col = this.row.append("td");
         bpShift_col.append("label")
+            .classed("setting-label", true)
             .text("BP Shift:");
         bpShift_col.append("input")
             .attr("type", "text")
@@ -242,11 +246,8 @@ const compositeRow = class {
                 .attr("type", "file")
                 .property("multiple", true)
                 .style("display", "none")
-                .on("change", async function(ev) {
-                    await self.compositeDataObj.loadFiles(ev.target.files);
-                    await dataObj.autoscaleAxisLimits();
-                    plotObj.updatePlot();
-                    self.updateFilesLoaded()
+                .on("input", async function(ev) {
+                    self.loadFiles(ev.target.files)
                 });
         upload_col.append("button")
             .classed("upload-button", true)
@@ -318,22 +319,28 @@ const compositeRow = class {
         this.row.classed("file-drag-highlight", false)
     }
 
-    async directDropEvent(ev) {
+    directDropEvent(ev) {
         ev.preventDefault();
         if (ev.dataTransfer.items[0].kind === "file") {
             const files = [];
             for (let i = 0; i < ev.dataTransfer.items.length; i++) {
                 files.push(ev.dataTransfer.items[i].getAsFile())
             };
-            await this.compositeDataObj.loadFiles(files);
-            await dataObj.autoscaleAxisLimits();
-            plotObj.updatePlot();
-            this.updateFilesLoaded()
+            this.loadFiles(files)
         } else {
             this.insertRow(parseInt(ev.dataTransfer.getData("text/plain")), ev.clientY);
-            dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj).reverse());
+            dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
             plotObj.updatePlot()
         }
+    }
+
+    async loadFiles(files) {
+        await this.compositeDataObj.loadFiles(files)
+        await dataObj.autoscaleAxisLimits();
+        xAxisInputObj.update();
+        yAxisInputObj.update();
+        plotObj.updatePlot();
+        this.updateFilesLoaded()
     }
 
     insertRow(dragIdx, dropY) {

@@ -1,15 +1,26 @@
+.axis-limit-input {
+    width: 50px;
+    margin-left: 3px;
+}
+
+#symmetric-y-checkbox {
+    margin-left: 10px;
+}
+
+.checkbox-label {
+    margin-left: 5px;
+}
+
 #main-plot {
     height: 50vh;
+    padding-top: 10px;
     max-width: 100%;
     overflow: hide;
 }
 
-label {
-    margin-right: 5px;
-}
-
 #composite-table {
     width: 100%;
+    margin-top: 10px;
 }
 
 #composite-table table {
@@ -45,6 +56,10 @@ label {
 
 .file-drag-highlight {
     background-color: #CCCCCC;
+}
+
+.setting-label {
+    margin-right: 5px;
 }
 
 .drag-col {

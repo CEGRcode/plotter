@@ -4,7 +4,7 @@ const dataObject = class {
         this.fileData = fileData;
         this.compositeData = compositeData;
         this.referenceLines = referenceLines;
-        this.nucleosomeSlider = nucleosomeSlider;
+        this.nucleosomeSlider = nucleosomeSlider
     }
 
     changeXmin(xmin) {
@@ -78,7 +78,7 @@ const dataObject = class {
             primaryColor: primaryColor, secondaryColor: secondaryColor, scale: scale, minOpacity: minOpacity,
             maxOpacity: maxOpacity, smoothing: smoothing, bpShift: bpShift, shiftOccupancy: shiftOccupancy,
             hideSense: hideSense, hideAnti: hideAnti, swap: swap, ids: ids});
-        this.compositeData.unshift(compositeDataObj);
+        this.compositeData.push(compositeDataObj);
 
         return compositeDataObj
     }
@@ -96,6 +96,10 @@ const dataObject = class {
     }
 
     autoscaleAxisLimits() {
+        if (this.globalSettings.lockAxes) {
+            return
+        };
+
         const self = this;
         return new Promise(function(resolve) {
             const xmin = self.compositeData.reduce((a, c) => Math.min(a, c.xmin), Infinity),
@@ -115,32 +119,39 @@ const dataObject = class {
     }
     
     async importDataFromJSON(file) {
-        const data = await new Promise(function(resolve, reject) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                try {
-                    resolve(JSON.parse(reader.result))
-                } catch (e) {
-                    alert("Invalid JSON file");
+        const self = this;
+        return new Promise(async function(resolve_, reject_) {
+            const data = await new Promise(function(resolve, reject) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    try {
+                        resolve(JSON.parse(reader.result))
+                    } catch (e) {
+                        alert("Invalid JSON file");
+                        reject()
+                    }
+                };
+                reader.onerror = function() {
                     reject()
-                }
-            };
-            reader.onerror = function() {
-                reject()
-            };
-            reader.readAsText(file)
-        });
-        if (data.globalSettings && data.compositeData) {
-            this.globalSettings = data.globalSettings;
-            this.fileData = data.fileData;
-            this.compositeData = data.compositeData;
-            this.referenceLines = data.referenceLines || [];
-            this.nucleosomeSlider = data.nucleosomeSlider || {};
-            plotObj.updatePlot()
-        } else {
-            alert("JSON file does not contain the required data")
-            throw new Error("Invalid JSON file")
-        }
+                };
+                reader.readAsText(file)
+            });
+            if (data.globalSettings && data.compositeData) {
+                self.globalSettings = data.globalSettings;
+                self.fileData = data.fileData;
+                self.compositeData = [];
+                for (const compositeDataProps of data.compositeData) {
+                    self.compositeData.push(new compositeObject(compositeDataProps))
+                };
+
+                self.referenceLines = data.referenceLines || [];
+                self.nucleosomeSlider = data.nucleosomeSlider || {};
+                resolve_()
+            } else {
+                alert("JSON file does not contain the required data");
+                reject_()
+            }
+        })
     }
 
     exportDataAsJSON() {
@@ -167,7 +178,7 @@ let dataObj = new dataObject({
         xmax: 500,
         ymin: -1,
         ymax: 1,
-        symmetricY: false,
+        symmetricY: true,
         lockAxes: false,
         minOpacity: 0,
         maxOpacity: 1,

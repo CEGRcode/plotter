@@ -20,10 +20,20 @@
                     <input type="file" id="json-loader" style="display:none;">
                     <input type="button" id="json-download" value="Export session as JSON">
                 </div>
-                <div class="col-5">
+                <div class="col-8">
                     <div class="row">
-                        <div id="axes-input" class="col-8"></div>
-                        <script src="js/widgets/axes_input.js"></script>
+                        <div id="axes-input" class="col-8">
+                            <div class="row">
+                                <div class="col">
+                                    <div id="x-axis-input"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div id="y-axis-input"></div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-4 text-right">
                             <div class="row">
                                 <div class="col">
@@ -31,10 +41,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col">
-                                    <input type="checkbox" id="lock-axes-checkbox">
-                                    <label for="lock-axes-checkbox" id="lock-axes-label">Lock axes</label>
-                                </div>
+                                <div id="lock-axes" class="col"></div>
                             </div>
                         </div>
                     </div>
@@ -56,9 +63,15 @@
         </div>
     </main>
     <script src="js/data_object.js"></script>
-    <script src="js/default_colors.js"></script>
-    <script src="js/round_with_precision.js"></script>
     <script src="js/composite_object.js"></script>
+    <script src="js/export_json.js"></script>
+    <script src="js/import_json.js"></script>
+    <script src="js/round_with_precision.js"></script>
+    <script src="js/x_axis_input.js"></script>
+    <script src="js/y_axis_input.js"></script>
+    <script src="js/autoscale_axes.js"></script>
+    <script src="js/lock_axes.js"></script>
+    <script src="js/default_colors.js"></script>
     <script src="js/composite_loader.js"></script>
     <script src="js/editable_svg_text.js"></script>
     <script src="js/composite_plot.js"></script>

@@ -22,7 +22,11 @@ const compositeTable = class {
 
     addRow(compositeDataObj) {
         // Add the row
-        this.rows.push(new compositeRow(this.table.insert("tr", "#add-row"), this.nRows, compositeDataObj));
+        this.rows.push(new compositeRow(
+            this.table.insert("tr", "#add-row").classed("composite-row", true),
+            this.nRows,
+            compositeDataObj
+        ));
         this.nRows++
     }
 
@@ -64,6 +68,19 @@ const compositeTable = class {
         for (const i in this.rows) {
             this.rows[i].updateIndex(parseInt(i))
         }
+    }
+
+    loadFromDataObject() {
+        this.clear();
+        for (const compositeDataObj of dataObj.compositeData) {
+            this.addRow(compositeDataObj)
+        }
+    }
+
+    clear() {
+        this.rows = [];
+        this.nRows = 0;
+        this.table.selectAll(".composite-row").remove()
     }
 };
 

@@ -158,9 +158,9 @@ const plotObject = class {
             // If there are more data than plots, create new plots
             } else if (i >= plotN && i < dataN) {
                 this._elements.compositesArr.push(this.createComposite(this.counter++));
-                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[i])
+                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[dataN - 1 - i])
             } else {
-                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[i])
+                this.updateComposite(this._elements.compositesArr[i], dataObj.compositeData[dataN - 1 - i])
             }
         }
     }
