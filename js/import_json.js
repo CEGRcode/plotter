@@ -8,5 +8,7 @@ d3.select("#json-loader").on("change", async function() {
     xAxisInputObj.update();
     yAxisInputObj.update();
     lockAxesObj.update();
-    plotObj.updatePlot()
+    plotObj.updatePlot();
+    combineStrandsObj.update();
+    legendObj.updateLegend()
 })

@@ -50,7 +50,8 @@ const compositeRow = class {
             .text(this.compositeDataObj.name)
             .on("input", function(ev) {
                 self.compositeDataObj.changeName(ev.target.textContent);
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                legendObj.updateLegend()
             })
             .on("mousedown", function() {self.disableDrag()})
             .on("mouseup", function() {self.enableDrag()})
@@ -67,7 +68,8 @@ const compositeRow = class {
                 if (self.compositeDataObj.secondaryColor === null) {
                     color_col.select(".color-2").attr("value", ev.target.value)
                 };
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                legendObj.updateLegend()
             });
         if (dataObj.separateColors) {
             color_col.append("input")
@@ -76,7 +78,8 @@ const compositeRow = class {
                 .attr("value", this.compositeDataObj.secondaryColor || this.compositeDataObj.primaryColor)
                 .on("change", function(ev) {
                     self.compositeDataObj.changeSecondaryColor(ev.target.value);
-                    plotObj.updatePlot()
+                    plotObj.updatePlot();
+                    legendObj.updateLegend()
                 })
         };
         
@@ -192,6 +195,7 @@ const compositeRow = class {
                     self.compositeDataObj.changeHideSense(true);
                     self.compositeDataObj.changeHideAnti(true);
                     plotObj.updatePlot();
+                    legendObj.updateLegend();
 
                     self.closeEyeIcon()
                 })
@@ -221,6 +225,7 @@ const compositeRow = class {
                 self.compositeDataObj.changeHideSense(false);
                 self.compositeDataObj.changeHideAnti(false);
                 plotObj.updatePlot();
+                legendObj.updateLegend();
 
                 self.openEyeIcon()
             })
@@ -340,6 +345,7 @@ const compositeRow = class {
         xAxisInputObj.update();
         yAxisInputObj.update();
         plotObj.updatePlot();
+        legendObj.updateLegend();
         this.updateFilesLoaded()
     }
 

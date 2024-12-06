@@ -18,6 +18,16 @@
     overflow: hide;
 }
 
+#opacity-slider-1 {
+    margin-left: 10px;
+    position: absolute;
+}
+
+#opacity-slider-2 {
+    margin-left: 10px;
+    position: absolute;
+}
+
 #composite-table {
     width: 100%;
     margin-top: 10px;
