@@ -10,7 +10,7 @@ const compositeTable = class {
         this.addRow_ = this.table.append("tr")
             .attr("id", "add-row")
             .append("td")
-                .attr("colspan", 9)
+                .attr("colspan", 10)
                 .append("div")
                     .classed("add-row-text", true)
                     .text("Add new composite")
@@ -68,6 +68,12 @@ const compositeTable = class {
         for (const i in this.rows) {
             this.rows[i].updateIndex(parseInt(i))
         }
+    }
+
+    removeRow(idx) {
+        this.rows[idx].remove();
+        this.rows.splice(idx, 1);
+        this.nRows--
     }
 
     loadFromDataObject() {

@@ -137,3 +137,9 @@ input[type=range] {
     position: relative;
     text-align: center;
 }
+
+.remove-icon {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
