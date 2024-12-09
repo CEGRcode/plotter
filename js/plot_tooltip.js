@@ -29,7 +29,7 @@ const plotTooltip = class {
             mouseX = (ev.clientX - plotX) * plotObj.width / width,
             mouseY = (ev.clientY - plotY) * plotObj.height / height,
             mouseXScaled = Math.round(plotObj.xscale.invert(mouseX)),
-            // Filter data to only include data that is visible and within the mouse position
+            // Filter data to only include data that is visible and has been loaded
             data = dataObj.compositeData.filter(d => (!d.hideSense || !d.hideAnti) && d.filesLoaded > 0);
         // If cursor is out of range or there is no data, hide the tooltip
         if (mouseX < plotObj.margins.left || mouseX > plotObj.width - plotObj.margins.right ||
