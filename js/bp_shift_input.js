@@ -1,4 +1,4 @@
-const smoothingInput = class {
+const bpShiftInput = class {
     constructor(elementID) {
         if (document.getElementById(elementID) === null) {
             throw "Element ID " + elementID + " not found"
@@ -7,28 +7,27 @@ const smoothingInput = class {
         const self = this;
         this.element = d3.select("#" + elementID);
         this.label = this.element.append("label")
-            .attr("id", "smoothing-input-label")
+            .attr("id", "bp-shift-input-label")
             .classed("setting-label", true)
-            .text("Smoothing:");
+            .text("BP shift:");
         this.textInput = this.element.append("input")
             .attr("type", "text")
-            .attr("id", "smoothing-text")
+            .attr("id", "bp-shift-text")
             .classed("setting-text", true)
             .on("change", function() {
-                dataObj.globalSettings.smoothing = Math.floor(parseInt(this.value) / 2) * 2 + 1;
-                self.update();
+                dataObj.globalSettings.bpShift = parseInt(this.value);
+                self.sliderInput.node().value = dataObj.globalSettings.bpShift;
                 plotObj.updatePlot()
             });
         this.sliderInput = this.element.append("input")
             .attr("type", "range")
-            .attr("id", "smoothing-slider")
+            .attr("id", "bp-shift-slider")
             .classed("global-slider", true)
-            .attr("min", 1)
-            .attr("max", 31)
-            .attr("step", 2)
+            .attr("min", -50)
+            .attr("max", 50)
             .on("input", function() {
-                dataObj.globalSettings.smoothing = parseInt(this.value);
-                self.textInput.node().value = dataObj.globalSettings.smoothing;
+                dataObj.globalSettings.bpShift = parseInt(this.value);
+                self.textInput.node().value = dataObj.globalSettings.bpShift;
                 plotObj.updatePlot()
             });
         
@@ -36,9 +35,9 @@ const smoothingInput = class {
     }
 
     update() {
-        this.textInput.node().value = dataObj.globalSettings.smoothing;
-        this.sliderInput.node().value = dataObj.globalSettings.smoothing
+        this.textInput.node().value = dataObj.globalSettings.bpShift;
+        this.sliderInput.node().value = dataObj.globalSettings.bpShift
     }
 };
 
-const smoothingInputObj = new smoothingInput("smoothing-input")
+const bpShiftInputObj = new bpShiftInput("bp-shift-input")
