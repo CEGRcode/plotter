@@ -16,4 +16,6 @@ d3.select("#json-loader").on("change", async function() {
     combineStrandsObj.update();
     separateColorsObj.update();
     colorTraceObj.update();
+    enablePlotTooltipObj.update();
+    showLegendObj.update()
 })

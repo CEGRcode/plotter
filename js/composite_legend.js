@@ -8,6 +8,8 @@ const legendObject = class {
     }
 
     updateLegend() {
+        this.legend.style("display", dataObj.globalSettings.showLegend ? null : "none");
+        
         const plotN = this.legendElements.length,
             dataN = dataObj.compositeData.length;
         let y = 0;
