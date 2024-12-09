@@ -18,14 +18,26 @@
     overflow: hide;
 }
 
-#opacity-slider-1 {
+.global-slider {
     margin-left: 10px;
+}
+
+.double-slider {
     position: absolute;
 }
 
-#opacity-slider-2 {
-    margin-left: 10px;
-    position: absolute;
+.double-slider::-webkit-slider-thumb {
+    pointer-events: all;
+    position: relative;
+    z-index: 1;
+    outline: 0;
+}
+
+.double-slider::-moz-range-thumb {
+    pointer-events: all;
+    position: relative;
+    z-index: 10;
+    -moz-appearance: none;
 }
 
 #composite-table {

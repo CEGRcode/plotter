@@ -22,7 +22,7 @@ const compositeRow = class {
             });
 
         // Add the drag column
-        this.row.append("td").append("div")
+        this.dragIcon = this.row.append("td").append("div")
             .classed("drag-col", true)
             .attr("title", "Drag to reorder")
             .append("svg")
@@ -44,10 +44,9 @@ const compositeRow = class {
                         .attr("stroke-width", 2);
         
         // Add the name column
-        this.row.append("td").append("div")
+        this.nameInput = this.row.append("td").append("div")
             .classed("name-div", true)
             .attr("contenteditable", true)
-            .text(this.compositeDataObj.name)
             .on("input", function(ev) {
                 self.compositeDataObj.changeName(ev.target.textContent);
                 plotObj.updatePlot();
@@ -59,10 +58,9 @@ const compositeRow = class {
 
         // Add the color column
         const color_col = this.row.append("td").classed("color-col", true);
-        color_col.append("input")
+        this.primaryColorInput = color_col.append("input")
             .attr("type", "color")
             .classed("color-1", true)
-            .attr("value", this.compositeDataObj.primaryColor)
             .on("change", function(ev) {
                 self.compositeDataObj.changePrimaryColor(ev.target.value);
                 if (self.compositeDataObj.secondaryColor === null) {
@@ -71,17 +69,14 @@ const compositeRow = class {
                 plotObj.updatePlot();
                 legendObj.updateLegend()
             });
-        if (dataObj.separateColors) {
-            color_col.append("input")
-                .attr("type", "color")
-                .classed("color-2", true)
-                .attr("value", this.compositeDataObj.secondaryColor || this.compositeDataObj.primaryColor)
-                .on("change", function(ev) {
-                    self.compositeDataObj.changeSecondaryColor(ev.target.value);
-                    plotObj.updatePlot();
-                    legendObj.updateLegend()
-                })
-        };
+        this.secondaryColorInput = color_col.append("input")
+            .attr("type", "color")
+            .classed("color-2", true)
+            .on("change", function(ev) {
+                self.compositeDataObj.changeSecondaryColor(ev.target.value);
+                plotObj.updatePlot();
+                legendObj.updateLegend()
+            });
         
         // Add the scale column
         const scale_div = this.row.append("td").append("div")
@@ -89,10 +84,9 @@ const compositeRow = class {
             scale_div.append("label")
                 .classed("setting-label", true)
                 .text("Scale:");
-        scale_div.append("input")
+        this.scaleTextInput = scale_div.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.compositeDataObj.scale)
             .on("change", function(ev) {
                 const scale = roundNearestWithPrecision(ev.target.value)
                 ev.target.value = scale.toPrecision(2);
@@ -103,10 +97,9 @@ const compositeRow = class {
             .on("mousedown", function() {self.disableDrag()})
             .on("mouseup", function() {self.enableDrag()})
             .on("mouseleave", function() {self.enableDrag()});
-        scale_div.append("input")
+        this.scaleSliderInput = scale_div.append("input")
             .attr("type", "range")
             .classed("scale-slider", true)
-            .attr("value", Math.log10(this.compositeDataObj.scale) * 50 + 50)
             .attr("min", 0)
             .attr("max", 100)
             .on("input", function(ev) {
@@ -117,16 +110,14 @@ const compositeRow = class {
             })
             .on("mousedown", function() {self.disableDrag()})
             .on("mouseup", function() {self.enableDrag()});
-        
         // Add the opacity column
         const opacity_col = this.row.append("td");
         opacity_col.append("label")
             .classed("setting-label", true)
             .text("Opacity:");
-        opacity_col.append("input")
+        this.minOpacityInput = opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.compositeDataObj.minOpacity || "")
             .on("change", function(ev) {
                 const minOpacity = !isNaN(parseFloat(ev.target.value)) ? parseFloat(ev.target.value) : null;
                 self.compositeDataObj.changeMinOpacity(minOpacity);
@@ -137,10 +128,9 @@ const compositeRow = class {
             .on("mouseleave", function() {self.enableDrag()});
         opacity_col.append("span")
             .text(" - ");
-        opacity_col.append("input")
+        this.maxOpacityInput = opacity_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.compositeDataObj.maxOpacity || "")
             .on("change", function(ev) {
                 const maxOpacity = !isNaN(parseFloat(ev.target.value)) ? parseFloat(ev.target.value) : null;
                 self.compositeDataObj.changeMaxOpacity(maxOpacity);
@@ -155,10 +145,9 @@ const compositeRow = class {
         smoothing_col.append("label")
                 .classed("setting-label", true)
                 .text("Smoothing:");
-        smoothing_col.append("input")
+        this.smoothingInput = smoothing_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.compositeDataObj.smoothing || "")
             .on("change", function(ev) {
                 const smoothing = parseInt(ev.target.value) > 0 ? parseInt(ev.target.value) : null;
                 self.compositeDataObj.changeSmoothing(smoothing);
@@ -173,10 +162,9 @@ const compositeRow = class {
         bpShift_col.append("label")
             .classed("setting-label", true)
             .text("BP Shift:");
-        bpShift_col.append("input")
+        this.shiftInput = bpShift_col.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
-            .attr("value", this.compositeDataObj.bpShift || "")
             .on("change", function(ev) {
                 const bpShift = !isNaN(parseInt(ev.target.value)) ? parseInt(ev.target.value) : null;
                 self.compositeDataObj.changeBpShift(bpShift);
@@ -187,38 +175,38 @@ const compositeRow = class {
             .on("mouseleave", function() {self.enableDrag()});
 
         // Add hide icon
-        const hide_col = this.row.append("td").classed("hide-col", true),
-            eye_open_icon = hide_col.append("div")
-                .classed("hide-container", true)
-                .attr("title", "Hide")
-                .on("click", function() {
-                    self.compositeDataObj.changeHideSense(true);
-                    self.compositeDataObj.changeHideAnti(true);
-                    plotObj.updatePlot();
-                    legendObj.updateLegend();
+        const hide_col = this.row.append("td").classed("hide-col", true);
+        this.eyeOpenIcon = hide_col.append("div")
+            .classed("hide-container", true)
+            .attr("title", "Hide")
+            .on("click", function() {
+                self.compositeDataObj.changeHideSense(true);
+                self.compositeDataObj.changeHideAnti(true);
+                plotObj.updatePlot();
+                legendObj.updateLegend();
 
-                    self.closeEyeIcon()
-                })
-                .append("svg")
-                    .classed("hide-icon", true)
-                    .classed("eye-open", true)
-                    .attr("baseProfile", "full")
-                    .attr("viewBox", "-100 -100 200 200")
-                    .attr("version", "1.1")
-                    .attr("xmlns", "http://www.w3.org/2000/svg")
-                    .append("g");
-        eye_open_icon.append("path")
+                self.closeEyeIcon()
+            })
+            .append("svg")
+                .classed("hide-icon", true)
+                .classed("eye-open", true)
+                .attr("baseProfile", "full")
+                .attr("viewBox", "-100 -100 200 200")
+                .attr("version", "1.1")
+                .attr("xmlns", "http://www.w3.org/2000/svg")
+                .append("g");
+        this.eyeOpenIcon.append("path")
             .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
             .attr("fill", "none")
             .attr("stroke", "black")
             .attr("stroke-width", 3);
-        eye_open_icon.append("circle")
+        this.eyeOpenIcon.append("circle")
             .attr("cx", 0)
             .attr("cy", 0)
             .attr("r", 30)
             .attr("fill", "black")
             .attr("stroke", "none");
-        const eye_closed_icon = hide_col.append("div")
+        this.eyeClosedIcon = hide_col.append("div")
             .classed("hide-container", true)
             .attr("title", "Show")
             .on("click", function() {
@@ -239,7 +227,7 @@ const compositeRow = class {
                 .attr("xmlns", "http://www.w3.org/2000/svg")
                 .style("display", "none")
                 .append("g");
-        eye_closed_icon.append("path")
+        this.eyeClosedIcon.append("path")
             .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
             .attr("fill", "none")
             .attr("stroke", "black")
@@ -271,24 +259,37 @@ const compositeRow = class {
                         .attr("stroke-width", 2)
                         .attr("stroke-linejoin", "round")
                         .attr("fill", "none");
-        upload_col.append("label")
+        this.uploadLabel = upload_col.append("label")
             .classed("upload-label", true)
-            .style("padding-left", "10px")
-            .text(this.compositeDataObj.filesLoaded === 1 ? this.compositeDataObj.filesLoaded + " file loaded" :
-                this.compositeDataObj.filesLoaded + " files loaded");
+            .style("padding-left", "10px");
         
-        this.updateFilesLoaded()
+        this.updateInputs()
     }
 
     updateIndex(idx) {
         this.idx = idx
     }
 
-    updateFilesLoaded() {
-        this.row.select(".upload-label").text(
+    updateInputs() {
+        this.nameInput.text(this.compositeDataObj.name);
+        this.primaryColorInput.node().value = this.compositeDataObj.primaryColor;
+        this.secondaryColorInput.style("display", dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? null : "none");
+        this.secondaryColorInput.node().value = this.compositeDataObj.secondaryColor || this.compositeDataObj.primaryColor;
+        this.scaleTextInput.node().value = this.compositeDataObj.scale;
+        this.scaleSliderInput.node().value = Math.log10(this.compositeDataObj.scale) * 50 + 50;
+        this.minOpacityInput.node().value = this.compositeDataObj.minOpacity || "";
+        this.maxOpacityInput.node().value = this.compositeDataObj.maxOpacity || "";
+        this.smoothingInput.node().value = this.compositeDataObj.smoothing || "";
+        this.shiftInput.node().value = this.compositeDataObj.bpShift || "";
+        if (this.compositeDataObj.hideSense && this.compositeDataObj.hideAnti) {
+            this.closeEyeIcon()
+        } else {
+            this.openEyeIcon()
+        };
+        this.uploadLabel.text(
             this.compositeDataObj.filesLoaded === 1 ? "1 file loaded" : this.compositeDataObj.filesLoaded + " files loaded"
         )
-    }
+    } 
 
     openEyeIcon() {
         this.row.select(".eye-open").style("display", null);
@@ -346,7 +347,7 @@ const compositeRow = class {
         yAxisInputObj.update();
         plotObj.updatePlot();
         legendObj.updateLegend();
-        this.updateFilesLoaded()
+        this.updateInputs()
     }
 
     insertRow(dragIdx, dropY) {
