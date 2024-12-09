@@ -14,5 +14,6 @@ d3.select("#json-loader").on("change", async function() {
     smoothingInputObj.update();
     bpShiftInputObj.update();
     combineStrandsObj.update();
-    separateColorsObj.update()
+    separateColorsObj.update();
+    colorTraceObj.update();
 })
