@@ -13,6 +13,7 @@ const combineStrands = class {
                 dataObj.globalSettings.combined = this.checked;
                 xAxisInputObj.update();
                 yAxisInputObj.update();
+                separateColorsObj.update();
                 plotObj.updatePlot()
             });
         this.label = this.element.append("label")

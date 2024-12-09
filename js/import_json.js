@@ -10,6 +10,9 @@ d3.select("#json-loader").on("change", async function() {
     lockAxesObj.update();
     plotObj.updatePlot();
     legendObj.updateLegend();
-    combineStrandsObj.update();
     opacityInputObj.update();
+    smoothingInputObj.update();
+    bpShiftInputObj.update();
+    combineStrandsObj.update();
+    separateColorsObj.update()
 })
