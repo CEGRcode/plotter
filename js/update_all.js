@@ -3,8 +3,6 @@ const updateAll = function() {
     xAxisInputObj.update();
     yAxisInputObj.update();
     lockAxesObj.update();
-    plotObj.updatePlot();
-    legendObj.updateLegend();
     opacityInputObj.update();
     smoothingInputObj.update();
     bpShiftInputObj.update();
@@ -12,5 +10,7 @@ const updateAll = function() {
     separateColorsObj.update();
     colorTraceObj.update();
     enablePlotTooltipObj.update();
-    showLegendObj.update()
+    showLegendObj.update();
+    plotObj.updatePlot();
+    legendObj.updateLegend()
 }

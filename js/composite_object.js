@@ -70,19 +70,8 @@ const compositeObject = class {
         this.swap = swap
     }
 
-    changeBulkSettings(name, primaryColor, secondaryColor, scale, minOpacity, maxOpacity, smoothing, bpShift, shiftOccupancy, hideSense, hideAnti, swap) {
-        this.name = name;
-        this.primaryColor = primaryColor;
-        this.secondaryColor = secondaryColor;
-        this.scale = scale;
-        this.minOpacity = minOpacity;
-        this.maxOpacity = maxOpacity;
-        this.smoothing = smoothing;
-        this.bpShift = bpShift;
-        this.shiftOccupancy = shiftOccupancy;
-        this.hideSense = hideSense;
-        this.hideAnti = hideAnti;
-        this.swap = swap
+    changeBulkSettings(settings) {
+        Object.assign(this, settings)
     }
 
     changeXmin(xmin) {

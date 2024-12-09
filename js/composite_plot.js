@@ -156,8 +156,8 @@ const plotObject = class {
         for (let i = 0; i < Math.max(plotN, dataN); i++) {
             // If there are more plots than data, remove the extra plots
             if (i >= dataN && i < plotN) {
-                this._elements.compositesArr[i].remove();
-                this._elements.compositesArr.splice(i, 1)
+                this._elements.compositesArr[this._elements.compositesArr.length - 1].remove();
+                this._elements.compositesArr.splice(this._elements.compositesArr.length - 1, 1)
             // If there are more data than plots, create new plots
             } else if (i >= plotN && i < dataN) {
                 this._elements.compositesArr.push(this.createComposite(this.counter++));

@@ -87,12 +87,8 @@ const dataObject = class {
         this.compositeData = compositeData
     }
 
-    changeBulkSettings(globalSettings, fileData, compositeData, referenceLines, nucleosomeSlider) {
-        this.globalSettings = globalSettings;
-        this.fileData = fileData;
-        this.compositeData = compositeData;
-        this.referenceLines = referenceLines;
-        this.nucleosomeSlider = nucleosomeSlider
+    updateGlobalSettings(globalSettings) {
+        Object.assign(this.globalSettings, globalSettings)
     }
 
     autoscaleAxisLimits() {

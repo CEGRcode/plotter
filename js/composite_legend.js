@@ -16,8 +16,8 @@ const legendObject = class {
         for (let i = 0; i < Math.max(plotN, dataN); i++) {
             // If there are more legend elements than data, remove the extra legend elements
             if (i >= dataN && i < plotN) {
-                this.legendElements[i].remove();
-                this.legendElements.splice(i, 1)
+                this.legendElements[this.legendElements.length - 1].remove();
+                this.legendElements.splice(this.legendElements.length - 1, 1)
             // If there are more data than legend elements, create new legend elements
             } else if (i >= plotN && i < dataN) {
                 this.legendElements.push(this.createLegendElement());
