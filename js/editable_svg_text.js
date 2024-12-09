@@ -25,7 +25,10 @@ const editPlotLabel = function(labelGroup, label, field) {
         .on("keypress", function(e) {
             enterPlotLabelInput(e, label, field)
         })
-        .node().focus()
+        .node().focus();
+    
+    // Disable the download as svg button
+    d3.select("#download-as-svg").property("disabled", true)
 };
 
 const enterPlotLabelInput = function(ev, label, field) {
@@ -33,7 +36,10 @@ const enterPlotLabelInput = function(ev, label, field) {
         d3.select(ev.target.parentNode).remove();
         label.style("display", null);
         if (ev.target.value.trim().length > 0) {
-            dataObj.changeLabel(field, ev.target.value)
-        }
+            dataObj.changeLabel(field, ev.target.value);
+            plotObj.updatePlot()
+        };
+        // Enable the download as svg button
+        d3.select("#download-as-svg").property("disabled", false)
     }
 }
