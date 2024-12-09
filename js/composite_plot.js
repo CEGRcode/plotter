@@ -82,6 +82,7 @@ const plotObject = class {
         const titleGroup = this._elements.mainPlot.append("g"),
             self = this;
         this._elements.title = titleGroup.append("text")
+            .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", 20)
             .style("text-anchor", "middle")
@@ -89,6 +90,7 @@ const plotObject = class {
             .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
         const xlabelGroup = this._elements.mainPlot.append("g");
         this._elements.xlabel = xlabelGroup.append("text")
+            .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", this.height - 5)
             .style("text-anchor", "middle")
@@ -96,6 +98,7 @@ const plotObject = class {
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
         this._elements.ylabel = ylabelGroup.append("text")
+            .classed("plot-label", true)
             .attr("x", this.margins.left - 18)
             .attr("y", (this.margins.top + this.height - this.margins.bottom) / 2)
             .attr("transform", "rotate(-90 " + (this.margins.left - 18) + " " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")

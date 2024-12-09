@@ -19,6 +19,11 @@
     float: right;
 }
 
+.plot-label:hover {
+    cursor: pointer;
+    fill: #6D98E6;
+}
+
 .global-slider {
     margin-left: 10px;
 }
