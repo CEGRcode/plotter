@@ -370,6 +370,15 @@ const plotObject = class {
             }
         }
     }
+
+    downloadAsSVG() {
+        const b64doc = btoa(this._elements.mainPlot.node().outerHTML),
+            a = document.createElement("a"),
+            e = new MouseEvent("click");
+        a.download = "composite_plot.svg";
+        a.href = "data:image/svg+xml;base64," + b64doc;
+        a.dispatchEvent(e)
+    }
 };
 
 let plotObj = new plotObject("main-plot", 500, 300, {top: 30, right: 190, bottom: 35, left: 60})
