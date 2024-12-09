@@ -19,7 +19,9 @@ const separateColors = class {
             .attr("for", "separate-color-checkbox")
             .attr("id", "separate-color-label")
             .classed("checkbox-label", true)
-            .text("Separate colors for strands")
+            .text("Separate colors for strands");
+        
+        this.update()
     }
 
     update() {

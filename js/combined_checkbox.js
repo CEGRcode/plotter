@@ -20,7 +20,9 @@ const combineStrands = class {
             .attr("for", "combine-strands-checkbox")
             .attr("id", "combine-strands-label")
             .classed("checkbox-label", true)
-            .text("Combine strands")
+            .text("Combine strands");
+
+        this.update()
     }
 
     update() {
