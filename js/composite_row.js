@@ -64,7 +64,7 @@ const compositeRow = class {
             .on("change", function(ev) {
                 self.compositeDataObj.changePrimaryColor(ev.target.value);
                 if (self.compositeDataObj.secondaryColor === null) {
-                    colorCol.select(".color-2").attr("value", ev.target.value)
+                    colorCol.select(".color-2").node().value = ev.target.value
                 };
                 plotObj.updatePlot();
                 legendObj.updateLegend()
@@ -90,7 +90,7 @@ const compositeRow = class {
             .on("change", function(ev) {
                 const scale = roundNearestWithPrecision(ev.target.value)
                 ev.target.value = scale.toPrecision(2);
-                scaleDiv.select(".scale-slider").attr("value", Math.log10(scale) * 50 + 50);
+                scaleDiv.select(".scale-slider").node().value = Math.log10(scale) * 50 + 50;
                 self.compositeDataObj.changeScale(scale);
                 plotObj.updatePlot()
             })
@@ -104,7 +104,7 @@ const compositeRow = class {
             .attr("max", 100)
             .on("input", function(ev) {
                 const scale = roundNearestWithPrecision(Math.pow(10, (ev.target.value - 50) / 50));
-                scaleDiv.select(".setting-text").attr("value", scale.toPrecision(2));
+                scaleDiv.select(".setting-text").node().value = scale.toPrecision(2);
                 self.compositeDataObj.changeScale(scale);
                 plotObj.updatePlot()
             })
@@ -359,7 +359,8 @@ const compositeRow = class {
         } else {
             this.insertRow(parseInt(ev.dataTransfer.getData("text/plain")), ev.clientY);
             dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
-            plotObj.updatePlot()
+            plotObj.updatePlot();
+            legendObj.updateLegend()
         }
     }
 
