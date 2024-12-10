@@ -1,151 +1,80 @@
-input[type=button] {
-    height: 30px
-}
-
-input[type=color] {
-    width: 40px;
-    height: 40px
-}
-
-input[type=range] {
-    width: 100px
-}
-
-.slider-text {
-    width: 40px;
-    margin-left: 10px
-}
-
-label {
-    padding-right: 10px
-}
-
-.setting-text {
-    width: 40px
-}
-
-div[contenteditable=true] {
-    border: 1px solid #BBBBBB;
-    box-shadow: 0px 0px 1px #BBBBBB;
-    cursor: text
-}
-
-th {
-    font-weight: bold
-}
-
-#metadata-table, #metadata-table th, #metadata-table td {
-    font-size:12px;
-    border: 1px solid black
-}
-
-#add-field {
+.axis-limit-input {
     width: 50px;
-    cursor: pointer;
-    position: relative
+    margin-left: 3px;
 }
 
-.form-popup {
-    position: absolute;
-    top: 0;
-    right: 15px;
-    width: 350px;
-    border: 3px solid #F1F1F1;
-    background-color: #FFFFFF;
-    z-index: 1;
+#symmetric-y-checkbox {
+    margin-left: 10px;
 }
 
-.dropdown {
-    position: absolute;
-    display: none;
-    left: -15px;
-    width: 80px;
-    background-color: #FFFFFF;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1
-}
-
-#add-field:hover .dropdown {
-    display: block
-}
-
-.dropdown-element:hover {
-    background-color: #DDDDDD
-}
-
-.dropdown-element.selected {
-    background-color: #44FF44
-}
-
-.dropdown-element.selected:hover {
-    background-color: #44DD44
-}
-
-#add-custom-field {
-    background-color: #FFF8DC
-}
-
-#add-custom-field:hover {
-    background-color: #EADDCA
-}
-
-td.mismatch {
-    background-color: #FFDDDD
-}
-
-td.remove-row {
-    width: 50px;
-    cursor: pointer
-}
-
-#add-row {
-    cursor:pointer
-}
-
-.remove-field-icon {
-    position: absolute;
-    height: 12px;
-    width: 12px;
-    top: 5px;
-    right: 5px;
-    cursor: pointer
-}
-
-.upload-icon {
-    height: 20px;
-    width: 20px
-}
-
-.hide-icon {
-    height: 40px;
-    width: 40px;
-    cursor: pointer
-}
-
-#settings-table .added-table {
-    width: 100vw;
-    cursor: grab;
-    border-collapse: separate;   
-    border: 1px solid black;
-}
-
-#settings-table .added-table td{
-    min-height: 55px;
-    border-top: 0px;
-}
-
-#settings-table .slider-div {
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-}
-
-#settings-table .slider-div > * {
-    margin-top: 5px;
+.checkbox-label {
     margin-left: 5px;
 }
 
-#settings-table .settings-row {
+#main-plot {
+    height: 50vh;
+    padding-top: 10px;
+    max-width: 100%;
+    overflow: hide;
+    float: right;
+}
+
+.plot-label:hover {
+    cursor: pointer;
+    fill: #6D98E6;
+}
+
+.global-slider {
+    margin-left: 10px;
+}
+
+.double-slider {
+    position: absolute;
+}
+
+.double-slider::-webkit-slider-thumb {
+    pointer-events: all;
+    position: relative;
+    z-index: 1;
+    outline: 0;
+}
+
+.double-slider::-moz-range-thumb {
+    pointer-events: all;
+    position: relative;
+    z-index: 10;
+    -moz-appearance: none;
+}
+
+#composite-table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#composite-table table {
+    width: 100%;
+}
+
+#composite-table tbody {
+    width: 100%;
+}
+
+#composite-table tr {
+    cursor: grab;
+    height: 50px;
+    width: 100%;
+    border: 1px solid black;
+}
+
+#add-row {
+    cursor: pointer !important;
+}
+
+.add-row-text {
+    padding-left: 10px;
+}
+
+#add-row div {
     width: 100%;
 }
 
@@ -153,88 +82,69 @@ td.remove-row {
     border: 3px solid #8888FF !important;
 }
 
-.drag-highlight {
-    background-color: #DDDDDD
+.file-drag-highlight {
+    background-color: #CCCCCC;
 }
 
-.svg-coord {
-    cursor: ew-resize;
+.setting-label {
+    margin-right: 5px;
 }
 
-.plotted-coord{
-    cursor: ew-resize;
+.drag-col {
+    padding-left: 10px;
 }
 
-#nucleosome-svg-plot {
-    cursor: ew-resize;
+.name-div {
+    min-width: 5px;
+    border: 1px solid #BBBBBB;
+    box-shadow: 0px 0px 1px #BBBBBB;
+    cursor: text;
 }
 
-#nucleosome-svg-plot :hover{
-    opacity: 60%;
+.color-col {
+    padding-left: 10px;
 }
 
-#plot-tabs{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    margin-bottom: 10px;
-    margin-top: 0px;
+input[type=color] {
+    width: 40px;
+    height: 40px;
 }
 
-.plot-tab {
-    height: auto;
-    white-space: pre-wrap;
-    font-size: small;
-    clip-path: polygon(10% 0%, 90% 0%, 100% 15%, 100% 100%, 0% 100%, 0% 15%);
+input[type=range] {
+    width: 100px;
 }
 
-.selected-tab{
-    filter: brightness(.9);
+.scale-slider {
+    margin-left: 10px;
+    margin-top: 10px;
 }
 
-.plot-pane{
-    height: 406px;
+.setting-text {
+    width: 40px;
 }
 
-.reference-lines-table{
-    width: 90%;
-    margin-left: 0px;
-    margin-right: auto;
+.hide-col {
+    width: 60px;
+    padding-right: 20px;
 }
 
-.reference-lines-table td{
-    border-bottom: 1px solid black;
-    border-collapse: collapse;
+.hide-container {
+    cursor: pointer;
 }
 
-.reference-table-div{
+.hide-icon {
     width: 100%;
-    max-height: 200px;
-    overflow-y: auto;
 }
 
-.x-reference{
-    cursor: ew-resize;
+.upload-button {
+    width: 35px;
+    height: 30px;
+    position: relative;
+    text-align: center;
 }
 
-.y-reference{
-    cursor: ns-resize;
-}
-
-.style-selector {
-    width: 109px;
-    height: 39px;
-    position: absolute;
-    /* margin-top: 30px; */
-    background-color: white;
-    border: 2px solid;
-    display: none;
-}
-
-#main-plot text::selection{
-    background: none;
-}
-
-#axes-input::selection, #axes-input *> :not(input)::selection {
-    background: none;
-
+.remove-icon {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
 }
