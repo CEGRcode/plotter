@@ -9,12 +9,15 @@ const presetDropdown = class {
                 if (ev.target.value === "0") {
                     return
                 };
-                
+
                 const preset = presetSettings[ev.target.value - 1];
                 dataObj.updateGlobalSettings(preset.globalSettings);
-                dataObj.compositeData = [];
                 for (const idx in preset.compositeData) {
-                    dataObj.compositeData.push(new compositeObject({idx: idx, ...preset.compositeData[idx]}))
+                    if (parseInt(idx) >= dataObj.compositeData.length) {
+                        dataObj.compositeData.push(new compositeObject({idx: idx, ...preset.compositeData[idx]}))
+                    } else {
+                        Object.assign(dataObj.compositeData[idx], preset.compositeData[idx])
+                    }
                 };
                 updateAll()
             });
