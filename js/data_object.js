@@ -136,8 +136,10 @@ const dataObject = class {
                 self.globalSettings = data.globalSettings;
                 self.fileData = data.fileData;
                 self.compositeData = [];
-                for (const compositeDataProps of data.compositeData) {
-                    self.compositeData.push(new compositeObject(compositeDataProps))
+                for (const idx in data.compositeData) {
+                    const compositeObj = new compositeObject({idx: idx, ...data.compositeData[idx]});
+                    compositeObj.updateData();
+                    self.compositeData.push(compositeObj)
                 };
 
                 self.referenceLines = data.referenceLines || [];
