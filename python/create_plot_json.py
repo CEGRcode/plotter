@@ -1,5 +1,7 @@
 import json
 import argparse
+from create_file_data_json import create_file_data_obj
+from create_composite_json import create_composite_obj
 
 def get_axis_limits(file_data_obj):
     xmin = float('inf')
@@ -56,8 +58,11 @@ def create_data_obj(composites, file_data_obj, xmin, xmax, ymin, ymax, symmetric
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a plot JSON file')
-    parser.add_argument('--composites', type=str, nargs='*', required=True, help='List of composite JSON files')
-    parser.add_argument('--file-data-json', type=str, required=True, help='File data JSON file')
+    parser.add_argument('--composite-jsons', type=str, nargs='*', default=False,
+                        help='List of composite JSON files')
+    parser.add_argument('--composite-files', type=str, nargs='*',
+                        help='Composite .out files; ignored if --composite-jsons and --file-data-json are provided')
+    parser.add_argument('--file-data-json', type=str, default=False, help='File data JSON file')
     parser.add_argument('--xmin', type=int, default=None, help='Minimum x-axis value')
     parser.add_argument('--xmax', type=int, default=None, help='Maximum x-axis value')
     parser.add_argument('--ymin', type=float, default=None, help='Minimum y-axis value')
@@ -79,8 +84,14 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=str, required=True, help='Output JSON file name')
     args = parser.parse_args()
 
-    with open(args.file_data_json, 'r') as f:
-        file_data_obj = json.load(f)
+    if args.composite_jsons and args.file_data_json:
+        with open(args.file_data_json, 'r') as f:
+            file_data_obj = json.load(f)
+        composite_data_obj = aggregate_composite_data(args.composite_jsons)
+    else:
+        file_data_obj = create_file_data_obj(set(args.composite_files))
+        composite_data_obj = [create_composite_obj([fn]) for fn in args.composite_files]
+
     xmin, xmax, ymin, ymax = get_axis_limits(file_data_obj)
     if args.xmin is not None:
         xmin = args.xmin
@@ -92,8 +103,7 @@ if __name__ == '__main__':
         ymax = args.ymax
     
     with open(args.output, 'w') as f:
-        json.dump(create_data_obj(aggregate_composite_data(args.composites), file_data_obj, xmin, xmax, ymin, ymax,
-                                  not args.asymmetric_y, args.lock_axes, args.min_opacity, args.max_opacity,
-                                  args.smoothing, args.bp_shift, args.combined, args.separate_colors, args.color_trace,
-                                  not args.disable_tooltip, not args.hide_legend, args.title, args.xlabel, args.ylabel),
-                                  f, indent=4)
+        json.dump(create_data_obj(composite_data_obj, file_data_obj, xmin, xmax, ymin, ymax, not args.asymmetric_y,
+                                  args.lock_axes, args.min_opacity, args.max_opacity, args.smoothing, args.bp_shift,
+                                  args.combined, args.separate_colors, args.color_trace, not args.disable_tooltip,
+                                  not args.hide_legend, args.title, args.xlabel, args.ylabel), f, indent=4)
