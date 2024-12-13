@@ -47,8 +47,9 @@ const plotTooltip = class {
         // Populate tooltip text with data
         this.tooltipText.selectAll("text")
             .data([[[dataObj.globalSettings.labels.xlabel + ": " + mouseXScaled, "#000000"]], ...data.map(function(d) {
+                const bpShift = d.bpShift === null ? dataObj.globalSettings.bpShift : d.bpShift;
                 if (dataObj.globalSettings.combined) {
-                    if (mouseXScaled < d.xmin + d.bpShift || mouseXScaled > d.xmax - d.bpShift) {
+                    if (mouseXScaled < d.xmin + bpShift || mouseXScaled > d.xmax - bpShift) {
                         return null
                     };
                     return [
@@ -57,33 +58,33 @@ const plotTooltip = class {
                             "#000000"
                         ],
                         [
-                            parseFloat((d.sense[mouseXScaled - d.xmin - d.bpShift] +
-                                d.anti[mouseXScaled - d.xmin + d.bpShift]).toPrecision(3)),
+                            parseFloat((d.sense[mouseXScaled - d.xmin - bpShift] +
+                                d.anti[mouseXScaled - d.xmin + bpShift]).toPrecision(3)),
                             d.primaryColor
                         ]
                     ]
                 }
-                if (mouseXScaled < d.xmin - d.bpShift || mouseXScaled > d.xmax + d.bpShift) {
+                if (mouseXScaled < d.xmin - bpShift || mouseXScaled > d.xmax + bpShift) {
                     return null
-                } else if (mouseXScaled > d.xmax - d.bpShift) {
+                } else if (mouseXScaled > d.xmax - bpShift) {
                     return [
                         [
                             d.name + ": ",
                             "#000000"
                         ],
                         [
-                            parseFloat((d.swap ? d.anti : d.sense)[mouseXScaled - d.xmin - d.bpShift].toPrecision(3)),
+                            parseFloat((d.swap ? d.anti : d.sense)[mouseXScaled - d.xmin - bpShift].toPrecision(3)),
                             d.primaryColor
                         ]
                     ]
-                } else if (mouseXScaled < d.xmin + d.bpShift) {
+                } else if (mouseXScaled < d.xmin + bpShift) {
                     return [
                         [
                             d.name + ": ",
                             "#000000"
                         ],
                         [
-                            parseFloat((d.swap ? d.sense : d.anti)[mouseXScaled - d.xmin + d.bpShift].toPrecision(3)),
+                            parseFloat((d.swap ? d.sense : d.anti)[mouseXScaled - d.xmin + bpShift].toPrecision(3)),
                             !dataObj.globalSettings.separateColors || d.secondaryColor === null ?
                                 d.primaryColor : d.secondaryColor
                         ]
@@ -95,7 +96,7 @@ const plotTooltip = class {
                             "#000000"
                         ],
                         [
-                            parseFloat(d.sense[mouseXScaled - d.xmin - d.bpShift].toPrecision(3)),
+                            parseFloat(d.sense[mouseXScaled - d.xmin - bpShift].toPrecision(3)),
                             d.primaryColor
                         ],
                         [
@@ -103,7 +104,7 @@ const plotTooltip = class {
                             "#000000"
                         ],
                         [
-                            parseFloat(d.anti[mouseXScaled - d.xmin + d.bpShift].toPrecision(3)),
+                            parseFloat(d.anti[mouseXScaled - d.xmin + bpShift].toPrecision(3)),
                             !dataObj.globalSettings.separateColors || d.secondaryColor === null ?
                                 d.primaryColor : d.secondaryColor
                         ]
