@@ -28,6 +28,25 @@
     fill: #6D98E6;
 }
 
+#settings-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 10px;
+}
+
+.selected-tab {
+    filter: brightness(.8);
+    cursor: default !important;
+}
+
+.hidden {
+    display: none;
+}
+
+#preset-dropdown {
+    margin-bottom: 5px;
+}
+
 .global-slider {
     margin-left: 10px;
 }
