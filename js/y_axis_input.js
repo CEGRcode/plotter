@@ -57,7 +57,8 @@ const yAxisInput = class {
     }
 
     update() {
-        this.symmetricYCheckbox.property("checked", dataObj.globalSettings.symmetricY);
+        this.symmetricYCheckbox.property("checked", dataObj.globalSettings.symmetricY && !dataObj.globalSettings.combined);
+        this.symmetricYCheckbox.property("disabled", dataObj.globalSettings.combined);
         
         if (dataObj.globalSettings.combined) {
             this.yMaxInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin);
