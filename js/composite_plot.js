@@ -243,7 +243,7 @@ const plotObject = class {
             scale = compositeData.scale;
         if (dataObj.globalSettings.combined) {
             // Adjust composite data according to settings
-            let shiftedSense, shiftedAnti
+            let shiftedSense, shiftedAnti;
             if (bpShift > 0) {
                 shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift)
                 shiftedAnti = compositeData.anti.slice(2 * bpShift)
