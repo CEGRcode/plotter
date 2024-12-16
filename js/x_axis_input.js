@@ -14,7 +14,8 @@ const xAxisInput = class {
             .classed("axis-limit-input", true)
             .on("change", function() {
                 dataObj.globalSettings.xmin = parseInt(this.value);
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
         this.xMaxInput = this.element.append("input")
             .attr("type", "text")
@@ -22,7 +23,8 @@ const xAxisInput = class {
             .classed("axis-limit-input", true)
             .on("change", function() {
                 dataObj.globalSettings.xmax = parseInt(this.value);
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
 
         this.update()

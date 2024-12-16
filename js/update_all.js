@@ -12,5 +12,6 @@ const updateAll = function() {
     enablePlotTooltipObj.update();
     showLegendObj.update();
     plotObj.updatePlot();
-    legendObj.updateLegend()
+    legendObj.updateLegend();
+    referenceLinesObj.updateReferenceLines();
 }

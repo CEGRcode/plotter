@@ -13,7 +13,8 @@ const combineStrands = class {
                 dataObj.globalSettings.combined = this.checked;
                 yAxisInputObj.update();
                 separateColorsObj.update();
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
         this.label = this.element.append("label")
             .attr("for", "combine-strands-checkbox")

@@ -7,5 +7,6 @@ d3.select("#autoscale-axes-button").on("click", async function() {
     await dataObj.autoscaleAxisLimits();
     xAxisInputObj.update();
     yAxisInputObj.update();
-    plotObj.updatePlot()
+    plotObj.updatePlot();
+    referenceLinesObj.updateReferenceLines()
 })

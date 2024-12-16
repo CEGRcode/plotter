@@ -371,6 +371,7 @@ const compositeRow = class {
         yAxisInputObj.update();
         plotObj.updatePlot();
         legendObj.updateLegend();
+        referenceLinesObj.updateReferenceLines();
         this.updateInputs()
     }
 

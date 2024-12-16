@@ -18,7 +18,8 @@ const yAxisInput = class {
                     dataObj.globalSettings.ymax = -dataObj.globalSettings.ymin;
                     yAxisInputObj.update()
                 };
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
         this.yMaxInput = this.element.append("input")
             .attr("type", "text")
@@ -36,7 +37,8 @@ const yAxisInput = class {
                     }
                 };
                 yAxisInputObj.update();
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
         
         this.symmetricYCheckbox = this.element.append("input")
@@ -45,7 +47,8 @@ const yAxisInput = class {
             .on("change", function() {
                 dataObj.globalSettings.symmetricY = this.checked;
                 yAxisInputObj.update();
-                plotObj.updatePlot()
+                plotObj.updatePlot();
+                referenceLinesObj.updateReferenceLines()
             });
         this.symmetricYLabel = this.element.append("label")
             .attr("for", "symmetric-y-checkbox")
