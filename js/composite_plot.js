@@ -252,7 +252,7 @@ const plotObject = class {
                 truncatedXmin = Math.max(dataObj.globalSettings.xmin, compositeXmin),
                 truncatedXmax = Math.min(dataObj.globalSettings.xmax, compositeXmax),
                 truncatedOccupancy = smoothedOccupancy.slice(truncatedXmin - compositeXmin,
-                        smoothedOccupancy.length - truncatedXmax + compositeXmax)
+                        smoothedOccupancy.length - compositeXmax + truncatedXmax)
                     .map((d, i) => ({x: truncatedXmin + i, y: d * scale + compositeData.shiftOccupancy}));
             truncatedOccupancy.unshift({x: truncatedXmin, y: 0});
             truncatedOccupancy.push({x: truncatedXmax, y: 0});
@@ -290,10 +290,10 @@ const plotObject = class {
                 truncatedXminAnti = Math.max(dataObj.globalSettings.xmin, compositeData.xmin + smoothShift - bpShift),
                 truncatedXmaxAnti = Math.min(dataObj.globalSettings.xmax, compositeData.xmax - smoothShift - bpShift),
                 truncatedSense = smoothedSense.slice(truncatedXminSense - compositeData.xmin - smoothShift - bpShift,
-                        smoothedSense.length - truncatedXmaxSense + compositeData.xmax + smoothShift - bpShift)
+                        smoothedSense.length - compositeData.xmax + truncatedXmaxSense + smoothShift - bpShift)
                     .map((d, i) => ({x: truncatedXminSense + i, y: d * scale + compositeData.shiftOccupancy})),
                 truncatedAnti = smoothedAnti.slice(truncatedXminAnti - compositeData.xmin - smoothShift + bpShift,
-                        smoothedAnti.length - truncatedXmaxAnti + compositeData.xmax + smoothShift + bpShift)
+                        smoothedAnti.length - compositeData.xmax + truncatedXmaxAnti + smoothShift + bpShift)
                     .map((d, i) => ({x: truncatedXminAnti + i, y: d * scale + compositeData.shiftOccupancy}));
             truncatedSense.unshift(({x: truncatedXminSense, y: 0}));
             truncatedSense.push(({x: truncatedXmaxSense, y: 0}));
