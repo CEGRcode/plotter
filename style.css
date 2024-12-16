@@ -69,6 +69,64 @@
     -moz-appearance: none;
 }
 
+.ref-line-section {
+    text-align: center;
+    width: 100%;
+}
+
+.ref-line-table {
+    width: 100%;
+    border-bottom: 2px solid black;
+}
+
+.ref-line-row {
+    border-top: 2px solid black;
+}
+
+.ref-line-pos-col {
+    width: 30%;
+}
+
+.ref-line-pos-input {
+    width: 50px;
+}
+
+.ref-line-color-col {
+    width: 30%;
+}
+
+.ref-line-style-col {
+    width: 30%;
+    position: relative;
+}
+
+.ref-line-style-svg {
+    cursor: pointer;
+}
+
+.ref-line-style-selector {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: white;
+    border: 2px solid;
+}
+
+.ref-line-remove-col {
+    width: 10%;
+}
+
+.remove-icon {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.add-row-icon {
+    cursor: pointer;
+    margin-top: 5px;
+}
+
 #composite-table {
     width: 100%;
     margin-top: 10px;
@@ -164,10 +222,4 @@ input[type=range] {
     height: 30px;
     position: relative;
     text-align: center;
-}
-
-.remove-icon {
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
 }

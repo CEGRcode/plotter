@@ -11,14 +11,14 @@ const settingsTabs = d3.select("#settings-tabs"),
             d3.select("#global-settings").classed("hidden", false)
         }),
     referenceAxesTab = settingsTabs.append("button")
-        .attr("id", "reference-axes-tab")
+        .attr("id", "reference-lines-input-tab")
         .classed("settings-tab", true)
-        .text("Reference axes")
+        .text("Reference lines")
         .on("click", function() {
             d3.selectAll(".settings-tab").classed("selected-tab", false);
             d3.select(this).classed("selected-tab", true);
             d3.selectAll(".settings-section").classed("hidden", true);
-            d3.select("#reference-axes").classed("hidden", false)
+            d3.select("#reference-lines-input").classed("hidden", false)
         }),
     nucleosomeSliderTab = settingsTabs.append("button")
         .attr("id", "nucleosome-slider-tab")

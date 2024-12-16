@@ -40,7 +40,7 @@ const referenceLines = class {
             .data(dataObj.referenceLines.horizontalLines)
             .join("text")
                 .attr("x", plotObj.width - plotObj.margins.right + 5)
-                .attr("y", d => plotObj.yscale(d.y) - 5)
+                .attr("y", d => plotObj.yscale(d.y) + 4)
                 .attr("font-size", "8px")
                 .attr("fill", d => d.color)
                 .text(d => d.y);
@@ -69,10 +69,13 @@ const referenceLines = class {
         this.verticalLineGroup.selectAll("text")
             .data(dataObj.referenceLines.verticalLines)
             .join("text")
-                .attr("x", d => plotObj.xscale(d.x) + 5)
-                .attr("y", plotObj.height - plotObj.margins.bottom + 5)
+                .attr("text-anchor", "middle")
+                .attr("x", d => plotObj.xscale(d.x))
+                .attr("y", plotObj.height - plotObj.margins.bottom + 10)
                 .attr("font-size", "8px")
                 .attr("fill", d => d.color)
                 .text(d => d.x)
     }
-}
+};
+
+const referenceLinesObj = new referenceLines()
