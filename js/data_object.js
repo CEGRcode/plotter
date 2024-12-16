@@ -142,8 +142,8 @@ const dataObject = class {
                     self.compositeData.push(compositeObj)
                 };
 
-                self.referenceLines = data.referenceLines || [];
-                self.nucleosomeSlider = data.nucleosomeSlider || {};
+                self.referenceLines = data.referenceLines;
+                self.nucleosomeSlider = data.nucleosomeSlider;
                 resolve_()
             } else {
                 alert("JSON file does not contain the required data");
@@ -195,6 +195,9 @@ let dataObj = new dataObject({
     },
     fileData: {},
     compositeData: [],
-    referenceLines: [],
+    referenceLines: {
+        horizontalLines: [],
+        verticalLines: []
+    },
     nucleosomeSlider: {}
 })
