@@ -243,12 +243,18 @@ const plotObject = class {
             scale = compositeData.scale;
         if (dataObj.globalSettings.combined) {
             // Adjust composite data according to settings
-            const shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift),
-                shiftedAnti = compositeData.anti.slice(2 * bpShift),
-                combinedOccupancy = shiftedSense.map((d, i) => d + shiftedAnti[i]),
+            let shiftedSense, shiftedAnti
+                if (bpShift > 0) {
+                    shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift)
+                    shiftedAnti = compositeData.anti.slice(2 * bpShift)
+                } else {
+                    shiftedSense = compositeData.sense.slice(-2 * bpShift)
+                    shiftedAnti = compositeData.anti.slice(0, compositeData.anti.length + 2 * bpShift)
+                };
+            const combinedOccupancy = shiftedSense.map((d, i) => d + shiftedAnti[i]),
                 smoothedOccupancy = this.slidingWindow(combinedOccupancy, smoothing),
-                compositeXmin = compositeData.xmin + bpShift + smoothShift,
-                compositeXmax = compositeData.xmax - bpShift - smoothShift,
+                compositeXmin = compositeData.xmin + Math.abs(bpShift) + smoothShift,
+                compositeXmax = compositeData.xmax - Math.abs(bpShift) - smoothShift,
                 truncatedXmin = Math.max(dataObj.globalSettings.xmin, compositeXmin),
                 truncatedXmax = Math.min(dataObj.globalSettings.xmax, compositeXmax),
                 truncatedOccupancy = smoothedOccupancy.slice(truncatedXmin - compositeXmin,
