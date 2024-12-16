@@ -100,10 +100,8 @@ const dataObject = class {
         return new Promise(function(resolve) {
             const xmin = self.compositeData.reduce((a, c) => Math.min(a, c.xmin), Infinity),
             xmax = self.compositeData.reduce((a, c) => Math.max(a, c.xmax), -Infinity),
-            ymin = self.globalSettings.combined ? 0 :
-                -self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.anti)), -Infinity),
-            ymax = self.globalSettings.combined ? self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense.map((d, i) => d + c.anti[i]))), -Infinity) :
-                self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense)), -Infinity);
+            ymin = -self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.anti) * c.scale), -Infinity),
+            ymax = self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense) * c.scale), -Infinity);
 
             self.changeXmin(xmin);
             self.changeXmax(xmax);

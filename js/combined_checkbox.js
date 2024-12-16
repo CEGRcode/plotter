@@ -11,7 +11,6 @@ const combineStrands = class {
             .attr("id", "combine-strands-checkbox")
             .on("click", function() {
                 dataObj.globalSettings.combined = this.checked;
-                xAxisInputObj.update();
                 yAxisInputObj.update();
                 separateColorsObj.update();
                 plotObj.updatePlot()
