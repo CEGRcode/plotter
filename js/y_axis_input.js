@@ -13,7 +13,7 @@ const yAxisInput = class {
             .attr("id", "y-axis-min")
             .classed("axis-limit-input", true)
             .on("change", function() {
-                dataObj.globalSettings.ymin = parseInt(this.value);
+                dataObj.globalSettings.ymin = parseFloat(this.value);
                 if (dataObj.globalSettings.symmetricY) {
                     dataObj.globalSettings.ymax = -dataObj.globalSettings.ymin;
                     yAxisInputObj.update()
@@ -26,11 +26,11 @@ const yAxisInput = class {
             .classed("axis-limit-input", true)
             .on("change", function() {
                 if (dataObj.globalSettings.combined) {
-                    const yTotal = parseInt(this.value);
+                    const yTotal = parseFloat(this.value);
                     dataObj.globalSettings.ymax = yTotal / 2;
                     dataObj.globalSettings.ymin = -yTotal / 2
                 } else {
-                    dataObj.globalSettings.ymax = parseInt(this.value);
+                    dataObj.globalSettings.ymax = parseFloat(this.value);
                     if (dataObj.globalSettings.symmetricY) {
                         dataObj.globalSettings.ymin = -dataObj.globalSettings.ymax
                     }
