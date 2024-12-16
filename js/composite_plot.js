@@ -244,13 +244,13 @@ const plotObject = class {
         if (dataObj.globalSettings.combined) {
             // Adjust composite data according to settings
             let shiftedSense, shiftedAnti
-                if (bpShift > 0) {
-                    shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift)
-                    shiftedAnti = compositeData.anti.slice(2 * bpShift)
-                } else {
-                    shiftedSense = compositeData.sense.slice(-2 * bpShift)
-                    shiftedAnti = compositeData.anti.slice(0, compositeData.anti.length + 2 * bpShift)
-                };
+            if (bpShift > 0) {
+                shiftedSense = compositeData.sense.slice(0, compositeData.sense.length - 2 * bpShift)
+                shiftedAnti = compositeData.anti.slice(2 * bpShift)
+            } else {
+                shiftedSense = compositeData.sense.slice(-2 * bpShift)
+                shiftedAnti = compositeData.anti.slice(0, compositeData.anti.length + 2 * bpShift)
+            };
             const combinedOccupancy = shiftedSense.map((d, i) => d + shiftedAnti[i]),
                 smoothedOccupancy = this.slidingWindow(combinedOccupancy, smoothing),
                 compositeXmin = compositeData.xmin + Math.abs(bpShift) + smoothShift,
