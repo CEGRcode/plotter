@@ -4,7 +4,7 @@ const plotTooltip = class {
         
         const self = this;
         // Add event listeners to show and hide the tooltip
-        this.mainPlot
+        $(this.mainPlot.node())
             .on("mousemove", function(ev) {self.update(ev)})
             .on("mouseleave", function() {self.hide()});
 
@@ -46,6 +46,7 @@ const plotTooltip = class {
 
         // Populate tooltip text with data
         this.tooltipText.selectAll("text")
+            .classed("plot-text", true)
             .data([[[dataObj.globalSettings.labels.xlabel + ": " + mouseXScaled, "#000000"]], ...data.map(function(d) {
                 const bpShift = d.bpShift === null ? dataObj.globalSettings.bpShift : d.bpShift;
                 if (dataObj.globalSettings.combined) {

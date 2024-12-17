@@ -18,7 +18,7 @@ const referenceLinesInput = class {
         const horizontalLinesAddRow = this.horizontalLinesSection.append("svg")
             .classed("add-row-icon", true)
             .on("click", function() {
-                const y = (dataObj.globalSettings.ymin + dataObj.globalSettings.ymax) / 2;
+                const y = (plotObj.yscale.domain()[0] + plotObj.yscale.domain()[1]) / 2;
                 dataObj.referenceLines.horizontalLines.push({
                     y: y,
                     color: self.defaultColor,
@@ -38,7 +38,7 @@ const referenceLinesInput = class {
         const verticalLinesAddRow = this.verticalLinesSection.append("svg")
             .classed("add-row-icon", true)
             .on("click", function() {
-                const x = (dataObj.globalSettings.xmin + dataObj.globalSettings.xmax) / 2;
+                const x = Math.floor((dataObj.globalSettings.xmin + dataObj.globalSettings.xmax) / 2);
                 dataObj.referenceLines.verticalLines.push({
                     x: x,
                     color: self.defaultColor,

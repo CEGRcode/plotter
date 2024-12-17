@@ -13,7 +13,7 @@ const referenceLines = class {
 
         const self = this;
         this.selectedLine = null;
-        this.mainPlot.on("mousemove", function(ev) {
+        $(this.mainPlot.node()).on("mousemove", function(ev) {
             if (self.selectedLine === null) {
                 return
             };
@@ -34,8 +34,7 @@ const referenceLines = class {
             };
             referenceLinesObj.updateReferenceLines();
             referenceLinesInputObj.update()
-        });
-        this.mainPlot.on("mouseup", function() {
+        }).on("mouseup", function() {
             self.selectedLine = null
         });
 

@@ -45,6 +45,7 @@ const legendObject = class {
             .attr("stroke-width", 1)
             .attr("fill", "none");
         legendElement.append("text")
+            .classed("plot-text", true)
             .classed("legend-text", true)
             .attr("x", 20)
             .attr("y", 10)
