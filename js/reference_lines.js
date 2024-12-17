@@ -29,7 +29,7 @@ const referenceLines = class {
                 .attr("x2", plotObj.width - plotObj.margins.right)
                 .attr("y1", d => plotObj.yscale(d.y))
                 .attr("y2", d => plotObj.yscale(d.y))
-                .attr("display", d => inPlotY(d.y) ? null : "none");
+                .style("display", d => inPlotY(d.y) ? null : "none");
         this.horizontalLineGroup.selectAll("line.draggable-reference-line")
             .data(dataObj.referenceLines.horizontalLines)
             .join("line")
@@ -65,7 +65,7 @@ const referenceLines = class {
                 .attr("x2", d => plotObj.xscale(d.x))
                 .attr("y1", plotObj.margins.top)
                 .attr("y2", plotObj.height - plotObj.margins.bottom)
-                .attr("display", d => inPlotX(d.x) ? null : "none");
+                .style("display", d => inPlotX(d.x) ? null : "none");
         this.verticalLineGroup.selectAll("line.draggable-reference-line")
             .data(dataObj.referenceLines.verticalLines)
             .join("line")
