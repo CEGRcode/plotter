@@ -174,6 +174,30 @@ const compositeRow = class {
             .on("mouseup", function() {self.enableDrag()})
             .on("mouseleave", function() {self.enableDrag()});
 
+        // Add swap icon
+        const swapCol = this.row.append("td").classed("swap-col", true);
+        this.swapIcon = swapCol.append("div")
+            .classed("swap-container", true)
+            .attr("title", "Swap strands")
+            .on("click", function() {
+                self.compositeDataObj.changeSwap(!self.compositeDataObj.swap);
+                plotObj.updatePlot();
+
+                self.swapIcon.classed("grayed", !self.compositeDataObj.swap)
+            })
+            .append("svg")
+                .classed("swap-icon", true)
+                .attr("baseProfile", "full")
+                .attr("viewBox", "0 0 100 100")
+                .attr("version", "1.1")
+                .attr("xmlns", "http://www.w3.org/2000/svg");
+        this.swapIcon.append("path")
+            .attr("d", "M77.323 37.277L62.15 52.447h9.934c-.377 8.756-7.598 15.769-16.445 15.769h-37.3v10.409h37.3c14.589 0 26.492-11.68 26.872-26.178H92.5l-15.177-15.17zM22")
+            .attr("fill", "#D2042D");
+        this.swapIcon.append("path")
+            .attr("d", "M17.489 47.553H7.5l15.177 15.17 15.173-15.17h-9.934c.377-8.756 7.598-15.769 16.445-15.769h37.3V21.375h-37.3c-14.588 0-26.492 11.68-26.872 26.178z")
+            .attr("fill", "#0047AB");
+
         // Add hide icon
         const hideCol = this.row.append("td").classed("hide-col", true);
         this.eyeOpenIcon = hideCol.append("div")
@@ -304,6 +328,7 @@ const compositeRow = class {
         this.maxOpacityInput.node().value = this.compositeDataObj.maxOpacity || "";
         this.smoothingInput.node().value = this.compositeDataObj.smoothing || "";
         this.shiftInput.node().value = this.compositeDataObj.bpShift || "";
+        this.swapIcon.classed("grayed", !this.compositeDataObj.swap);
         if (this.compositeDataObj.hideSense && this.compositeDataObj.hideAnti) {
             this.closeEyeIcon()
         } else {

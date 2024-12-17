@@ -222,6 +222,23 @@ input[type=range] {
     width: 40px;
 }
 
+.swap-col {
+    width: 60px;
+    padding-right: 20px;
+}
+
+.swap-container {
+    cursor: pointer;
+}
+
+.swap-icon {
+    width: 100%;
+}
+
+.grayed {
+    filter: grayscale(100%);
+}
+
 .hide-col {
     width: 60px;
     padding-right: 20px;

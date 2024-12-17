@@ -10,7 +10,7 @@ const compositeTable = class {
         this.addRow_ = this.table.append("tr")
             .attr("id", "add-row")
             .append("td")
-                .attr("colspan", 10)
+                .attr("colspan", 11)
                 .append("div")
                     .classed("add-row-text", true)
                     .text("Add new composite")
