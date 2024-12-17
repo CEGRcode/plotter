@@ -16,10 +16,8 @@ const compositeLoader = class {
                 const reader = new FileReader();
 
                 reader.onload = function() {
-                    const {xmin, xmax, sense, anti} = self.parseComposite(reader.result);
-
                     // Update files object
-                    dataObj.fileData[file.name] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+                    dataObj.fileData[file.name] = self.parseComposite(reader.result);
 
                     resolve()
                 };
@@ -34,6 +32,28 @@ const compositeLoader = class {
         };
 
         return promise_arr
+    }
+
+    loadMultiComposite(file) {
+        const self = this;
+
+        return new Promise(function(resolve, reject) {
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const {composites: multiCompositeData, ids} = self.parseMultiComposite(reader.result);
+                Object.assign(dataObj.fileData, multiCompositeData);
+
+                resolve(ids)
+            };
+
+            reader.onerror = function() {
+                alert("Error loading file!!");
+                reject("Error loading file")
+            };
+
+            reader.readAsText(file)
+        })
     }
 
     parseComposite(text) {
@@ -100,7 +120,64 @@ const compositeLoader = class {
         };
     
         return {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
-    };
+    }
+
+    parseMultiComposite(text) {
+        let lines = text.split("\n"),
+            composites = {},
+            ids = [],
+            xmin, xmax, id, sense, anti,
+            i = 0,
+            save_comp = false;
+    
+        while (i < lines.length) {
+            let line = lines[i];
+            // Skip empty lines
+            if (line.trim() === "") {
+                i++;
+                continue
+            };
+            // Get the first field
+            let fields = line.split("\t"),
+                col0 = fields[0];
+            if (col0 === "" || col0 === "NAME") {
+                // If the x domain is defined, save the composite
+                if (save_comp) {
+                    composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+                    ids.push(id)
+                };
+                save_comp = false;
+                // Get the new x domain
+                xmin = parseInt(fields[1]);
+                xmax = parseInt(fields[fields.length - 1]);
+                // If the x domain starts at 0 shift it to the left
+                if (xmin === 0) {
+                    xmin -= Math.floor(xmax / 2)
+                    xmin -= Math.floor(xmax / 2)
+                }
+            } else {
+                id = col0.split("_").slice(0, -1).join("_");
+                save_comp = true;
+                if (col0.toLowerCase().includes("sense")) {
+                    sense = fields.slice(1).map(parseFloat)
+                } else if (col0.toLowerCase().includes("anti")) {
+                    anti = fields.slice(1).map(parseFloat)
+                } else {
+                    sense = fields.slice(1).map(parseFloat).map(x => x / 2);
+                    anti = fields.slice(1).map(parseFloat).map(x => x / 2)
+                }
+            };
+    
+            i++
+        };
+    
+        // Save the last composite
+        if (save_comp) {
+            composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
+            ids.push(id)
+        };
+        return {composites, ids}
+    }
 };
 
 const compositeLoaderObj = new compositeLoader();
