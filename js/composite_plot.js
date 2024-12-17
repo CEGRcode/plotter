@@ -36,7 +36,7 @@ const plotObject = class {
         // Set up svg element
         this._elements.mainPlot.attr("viewBox", "0 0 " + this.width + " " + this.height);
 
-        // 
+        // Create composite group
         this._elements.compositesGroup = this._elements.mainPlot.append("g");
 
         // Create static axes
