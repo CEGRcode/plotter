@@ -28,6 +28,10 @@
     fill: #6D98E6;
 }
 
+.draggable-reference-line {
+    cursor: grab;
+}
+
 #settings-tabs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
