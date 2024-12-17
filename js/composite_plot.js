@@ -59,21 +59,25 @@ const plotObject = class {
             .attr("opacity", .5);
         // Create axis bound labels
         this._elements.xminLabel = this._elements.mainPlot.append("text")
+            .classed("plot-text", true)
             .attr("x", this.margins.left)
             .attr("y", this.height - this.margins.bottom + 15)
             .style("text-anchor", "middle")
             .attr("font-size", "14px");
         this._elements.xmaxLabel = this._elements.mainPlot.append("text")
+            .classed("plot-text", true)
             .attr("x", this.width - this.margins.right)
             .attr("y", this.height - this.margins.bottom + 15)
             .style("text-anchor", "middle")
             .attr("font-size", "14px");
         this._elements.yminLabel = this._elements.mainPlot.append("text")
+            .classed("plot-text", true)
             .attr("x", this.margins.left - 10)
             .attr("y", this.height - this.margins.bottom)
             .style("text-anchor", "end")
             .attr("font-size", "14px");
         this._elements.ymaxLabel = this._elements.mainPlot.append("text")
+            .classed("plot-text", true)
             .attr("x", this.margins.left - 10)
             .attr("y", this.margins.top + 10)
             .style("text-anchor", "end")
@@ -82,6 +86,7 @@ const plotObject = class {
         const titleGroup = this._elements.mainPlot.append("g"),
             self = this;
         this._elements.title = titleGroup.append("text")
+            .classed("plot-text", true)
             .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", 20)
@@ -90,6 +95,7 @@ const plotObject = class {
             .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
         const xlabelGroup = this._elements.mainPlot.append("g");
         this._elements.xlabel = xlabelGroup.append("text")
+            .classed("plot-text", true)
             .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", this.height - 5)
@@ -98,6 +104,7 @@ const plotObject = class {
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
         this._elements.ylabel = ylabelGroup.append("text")
+            .classed("plot-text", true)
             .classed("plot-label", true)
             .attr("x", this.margins.left - 18)
             .attr("y", (this.margins.top + this.height - this.margins.bottom) / 2)

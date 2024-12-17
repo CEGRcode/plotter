@@ -189,7 +189,7 @@ const referenceLinesInput = class {
                 newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",
                     lineStyles[dataObj.referenceLines.horizontalLines[i].linestyle])
             } else {
-                const row = this.horizontalLinesTable.node().rows[i];
+                const row = d3.select(this.horizontalLinesTable.node().rows[i]);
                 row.select(".ref-line-pos-input").node().value = dataObj.referenceLines.horizontalLines[i].y;
                 row.select(".ref-line-color-input").node().value = dataObj.referenceLines.horizontalLines[i].color;
                 row.select(".ref-line-style-svg line").attr("stroke-dasharray",
@@ -210,7 +210,7 @@ const referenceLinesInput = class {
                 newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",
                     lineStyles[dataObj.referenceLines.verticalLines[i].linestyle])
             } else {
-                const row = this.verticalLinesTable.node().rows[i];
+                const row = d3.select(this.verticalLinesTable.node().rows[i]);
                 row.select(".ref-line-pos-input").node().value = dataObj.referenceLines.verticalLines[i].x;
                 row.select(".ref-line-color-input").node().value = dataObj.referenceLines.verticalLines[i].color;
                 row.select(".ref-line-style-svg line").attr("stroke-dasharray",
