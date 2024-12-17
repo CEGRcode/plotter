@@ -53,7 +53,7 @@ const referenceLines = class {
 
         const inPlotX = function(x) {
             return x >= plotObj.xscale.domain()[0] && x <= plotObj.xscale.domain()[1]
-        }
+        };
         this.verticalLineGroup.selectAll("line.visible-reference-line")
             .data(dataObj.referenceLines.verticalLines)
             .join("line")
