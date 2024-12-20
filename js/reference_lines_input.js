@@ -183,7 +183,7 @@ const referenceLinesInput = class {
             // If there are more data elements than rows in the table, add a new row
             else if (i >= tableNH && i < dataNH) {
                 const newRow = this.horizontalLinesTable.append("tr").classed("ref-line-row", true);
-                this.addRow(newRow, dataObj.referenceLines.horizontalLines[i].y,
+                this.addRow(newRow, "y", dataObj.referenceLines.horizontalLines[i].y,
                     dataObj.referenceLines.horizontalLines);
                 newRow.select(".ref-line-color-input").node().value = dataObj.referenceLines.horizontalLines[i].color;
                 newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",
@@ -204,7 +204,7 @@ const referenceLinesInput = class {
                 this.verticalLinesTable.select(".ref-line-row:last-child").remove()
             } else if (i >= tableNV && i < dataNV) {
                 const newRow = this.verticalLinesTable.append("tr").classed("ref-line-row", true);
-                this.addRow(newRow, dataObj.referenceLines.verticalLines[i].x,
+                this.addRow(newRow, "x", dataObj.referenceLines.verticalLines[i].x,
                     dataObj.referenceLines.verticalLines);
                 newRow.select(".ref-line-color-input").node().value = dataObj.referenceLines.verticalLines[i].color;
                 newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",

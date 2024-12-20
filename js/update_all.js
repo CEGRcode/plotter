@@ -14,4 +14,5 @@ const updateAll = function() {
     plotObj.updatePlot();
     legendObj.updateLegend();
     referenceLinesObj.updateReferenceLines();
+    referenceLinesInputObj.update()
 }
