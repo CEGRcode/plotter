@@ -41,7 +41,7 @@ const plotTooltip = class {
         
         // Move tooltip to mouse position
         this.tooltip
-            .style("display", null)
+            .attr("display", null)
             .attr("transform", "translate(" + plotObj.xscale(mouseXScaled) + " " + mouseY + ")");
 
         // Populate tooltip text with data
@@ -134,7 +134,7 @@ const plotTooltip = class {
     }
 
     hide() {
-        this.tooltip.style("display", "none")
+        this.tooltip.attr("display", "none")
     }
 };
 

@@ -8,7 +8,7 @@ const legendObject = class {
     }
 
     updateLegend() {
-        this.legend.style("display", dataObj.globalSettings.showLegend ? null : "none");
+        this.legend.attr("display", dataObj.globalSettings.showLegend ? null : "none");
         
         const plotN = this.legendElements.length,
             dataN = dataObj.compositeData.length;
@@ -58,13 +58,13 @@ const legendObject = class {
         const hide = compositeData.hideSense && compositeData.hideAnti || compositeData.filesLoaded === 0;
         legendElement
             .attr("transform", "translate(0 " + (24 * y) + ")")
-            .style("display", hide ? "none" : null);
+            .attr("display", hide ? "none" : null);
         legendElement.select(".legend-color-sense")
             .attr("fill", compositeData.primaryColor)
-            .style("display", compositeData.hideSense ? "none" : null);
+            .attr("display", compositeData.hideSense ? "none" : null);
         legendElement.select(".legend-color-anti")
             .attr("fill", dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? (compositeData.secondaryColor || compositeData.primaryColor) : compositeData.primaryColor)
-            .style("display", compositeData.hideAnti ? "none" : null);
+            .attr("display", compositeData.hideAnti ? "none" : null);
         legendElement.select(".legend-text")
             .text(compositeData.name);
         

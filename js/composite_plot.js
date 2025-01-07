@@ -62,25 +62,25 @@ const plotObject = class {
             .classed("plot-text", true)
             .attr("x", this.margins.left)
             .attr("y", this.height - this.margins.bottom + 15)
-            .style("text-anchor", "middle")
+            .attr("text-anchor", "middle")
             .attr("font-size", "14px");
         this._elements.xmaxLabel = this._elements.mainPlot.append("text")
             .classed("plot-text", true)
             .attr("x", this.width - this.margins.right)
             .attr("y", this.height - this.margins.bottom + 15)
-            .style("text-anchor", "middle")
+            .attr("text-anchor", "middle")
             .attr("font-size", "14px");
         this._elements.yminLabel = this._elements.mainPlot.append("text")
             .classed("plot-text", true)
             .attr("x", this.margins.left - 10)
             .attr("y", this.height - this.margins.bottom)
-            .style("text-anchor", "end")
+            .attr("text-anchor", "end")
             .attr("font-size", "14px");
         this._elements.ymaxLabel = this._elements.mainPlot.append("text")
             .classed("plot-text", true)
             .attr("x", this.margins.left - 10)
             .attr("y", this.margins.top + 10)
-            .style("text-anchor", "end")
+            .attr("text-anchor", "end")
             .attr("font-size", "14px");
         // Create axis labels
         const titleGroup = this._elements.mainPlot.append("g"),
@@ -90,7 +90,7 @@ const plotObject = class {
             .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", 20)
-            .style("text-anchor", "middle")
+            .attr("text-anchor", "middle")
             .attr("font-size", "16px")
             .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
         const xlabelGroup = this._elements.mainPlot.append("g");
@@ -99,7 +99,7 @@ const plotObject = class {
             .classed("plot-label", true)
             .attr("x", (this.margins.left + this.width - this.margins.right) / 2)
             .attr("y", this.height - 5)
-            .style("text-anchor", "middle")
+            .attr("text-anchor", "middle")
             .attr("font-size", "14px")
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
@@ -109,7 +109,7 @@ const plotObject = class {
             .attr("x", this.margins.left - 18)
             .attr("y", (this.margins.top + this.height - this.margins.bottom) / 2)
             .attr("transform", "rotate(-90 " + (this.margins.left - 18) + " " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
-            .style("text-anchor", "middle")
+            .attr("text-anchor", "middle")
             .attr("font-size", "14px")
             .on("click", function() {editPlotLabel(ylabelGroup, self._elements.ylabel, "ylabel")});
 
@@ -129,15 +129,15 @@ const plotObject = class {
         this._elements.axisLeft.call(d3.axisLeft(this.yscale).tickFormat(""));
         // Update dynamic axes
         if (dataObj.globalSettings.combined) {
-            this._elements.midaxisBottom.style("display", "none");
-            this._elements.midaxisTop.style("display", "none")
+            this._elements.midaxisBottom.attr("display", "none");
+            this._elements.midaxisTop.attr("display", "none")
         } else {
             this._elements.midaxisBottom
-                .style("display", null)
+                .attr("display", null)
                 .attr("transform", "translate(0 " + this.yscale(0) + ")")
                 .call(d3.axisBottom(this.xscale).tickFormat(""));
             this._elements.midaxisTop
-                .style("display", null)
+                .attr("display", null)
                 .attr("transform", "translate(0 " + this.yscale(0) + ")")
                 .call(d3.axisTop(this.xscale).tickFormat(""))
         }
@@ -233,10 +233,10 @@ const plotObject = class {
     updateComposite(compositeElem, compositeData) {
         // Check if there are any files loaded
         if (compositeData.filesLoaded === 0) {
-            compositeElem.style("display", "none");
+            compositeElem.attr("display", "none");
             return
         }
-        compositeElem.style("display", null);
+        compositeElem.attr("display", null);
 
         // Fetch composite settings
         const minOpacity = compositeData.minOpacity === null ? dataObj.globalSettings.minOpacity : compositeData.minOpacity,
@@ -282,18 +282,18 @@ const plotObject = class {
                 .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
-                .style("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
+                .attr("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
                 .datum(truncatedOccupancy)
                 .attr("d", topLine);
             compositeElem.select(".composite-line.top")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
-                .style("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
+                .attr("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
                 .datum(truncatedOccupancy.slice(1, -1))
                 .attr("d", topLine);
             compositeElem.select(".composite-path.bottom")
-                .style("display", "none");
+                .attr("display", "none");
             compositeElem.select(".composite-line.bottom")
-                .style("display", "none")
+                .attr("display", "none")
         } else {
             // Adjust composite data according to settings
             const smoothedSense = this.slidingWindow(compositeData.sense, smoothing),
@@ -331,12 +331,12 @@ const plotObject = class {
                 .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
-                .style("display", compositeData.hideSense ? "none" : null)
+                .attr("display", compositeData.hideSense ? "none" : null)
                 .datum(compositeData.swap ? truncatedAnti : truncatedSense)
                 .attr("d", topLine);
             compositeElem.select(".composite-line.top")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
-                .style("display", compositeData.hideSense ? "none" : null)
+                .attr("display", compositeData.hideSense ? "none" : null)
                 .datum(compositeData.swap ? truncatedAnti.slice(1, -1) : truncatedSense.slice(1, -1))
                 .attr("d", topLine);
             const bottomLine = d3.line()
@@ -344,12 +344,12 @@ const plotObject = class {
                 .y(d => this.yscale(-d.y));
             compositeElem.select(".composite-path.bottom")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
-                .style("display", compositeData.hideAnti ? "none" : null)
+                .attr("display", compositeData.hideAnti ? "none" : null)
                 .datum(compositeData.swap ? truncatedSense : truncatedAnti)
                 .attr("d", bottomLine);
             compositeElem.select(".composite-line.bottom")
                 .attr("stroke", dataObj.globalSettings.colorTrace ? secondaryColor : "#000000")
-                .style("display", compositeData.hideAnti ? "none" : null)
+                .attr("display", compositeData.hideAnti ? "none" : null)
                 .datum(compositeData.swap ? truncatedSense.slice(1, -1) : truncatedAnti.slice(1, -1))
                 .attr("d", bottomLine)
         }
