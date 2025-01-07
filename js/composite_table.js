@@ -62,7 +62,7 @@ const compositeTable = class {
 
         // Update row array
         this.rows.splice(dragIdx, 1);
-        this.rows.splice(dropIdx + 1 - (dropIdx > dragIdx), 0, dragRow);
+        this.rows.splice(dropIdx - (dropIdx > dragIdx) + 1, 0, dragRow);
 
         // Update row indices
         for (const i in this.rows) {
