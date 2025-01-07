@@ -220,7 +220,7 @@ input[type=color] {
 }
 
 input[type=range] {
-    -webkit-appearance: none;
+    appearance: none;
     width: 100px;
     height: 5px;
     border-radius: 5px;
