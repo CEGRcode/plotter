@@ -64,12 +64,22 @@
     margin-bottom: 5px;
 }
 
-.global-slider {
-    margin-left: 10px;
+#opacity-input {
+    position: relative;
 }
 
-.double-slider {
+#smoothing-input {
+    position: relative;
+}
+
+#bp-shift-input {
+    position: relative;
+}
+
+.global-slider {
     position: absolute;
+    top: 13px;
+    margin-left: 10px;
 }
 
 .double-slider::-webkit-slider-thumb {
@@ -210,7 +220,12 @@ input[type=color] {
 }
 
 input[type=range] {
+    -webkit-appearance: none;
     width: 100px;
+    height: 5px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
 }
 
 .scale-slider {
