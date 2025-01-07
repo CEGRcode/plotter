@@ -123,10 +123,10 @@ const plotObject = class {
         this.xscale.domain([dataObj.globalSettings.xmin, dataObj.globalSettings.xmax]);
         this.yscale.domain([ymin, ymax]);
         // Update static axes
-        this._elements.axisTop.call(d3.axisTop(this.xscale).tickFormat(""));
-        this._elements.axisBottom.call(d3.axisBottom(this.xscale).tickFormat(""));
-        this._elements.axisRight.call(d3.axisRight(this.yscale).tickFormat(""));
-        this._elements.axisLeft.call(d3.axisLeft(this.yscale).tickFormat(""));
+        this._elements.axisTop.call(d3.axisTop(this.xscale).tickFormat("")).style("color", "#000000");
+        this._elements.axisBottom.call(d3.axisBottom(this.xscale).tickFormat("")).style("color", "#000000");
+        this._elements.axisRight.call(d3.axisRight(this.yscale).tickFormat("")).style("color", "#000000");
+        this._elements.axisLeft.call(d3.axisLeft(this.yscale).tickFormat("")).style("color", "#000000");
         // Update dynamic axes
         if (dataObj.globalSettings.combined) {
             this._elements.midaxisBottom.attr("display", "none");
