@@ -8,15 +8,12 @@ const compositeLoader = class {
         for (let i = 0; i < n; i++) {
             promise_arr.push(new Promise(function(resolve, reject) {
                 const file = file_list[i];
+                let overwrite = false;
                 if (file.name in dataObj.fileData) {
                     if (!confirm(file.name + " already loaded. Overwrite?")) {
                         reject(file.name + " already loaded.")
                     } else {
-                        for (const compositeDataObj of dataObj.compositeData) {
-                            if (compositeDataObj.ids.includes(file.name)) {
-                                compositeDataObj.updateData()
-                            }
-                        }
+                        overwrite = true
                     }
                 };
                 const reader = new FileReader();
@@ -25,7 +22,7 @@ const compositeLoader = class {
                     // Update files object
                     dataObj.fileData[file.name] = self.parseComposite(reader.result);
 
-                    resolve()
+                    resolve(overwrite)
                 };
 
                 reader.onerror = function() {

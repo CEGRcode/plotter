@@ -98,9 +98,11 @@ const compositeObject = class {
                 self.filesLoaded++
             };
     
-            await Promise.all(compositeLoaderObj.loadFiles(file_list));
-            
-            self.updateData();
+            if ((await Promise.all(compositeLoaderObj.loadFiles(file_list))).some(overwrite => overwrite)) {
+                dataObj.updateAllComposites()
+            } else {
+                self.updateData()
+            };
 
             resolve()
         })

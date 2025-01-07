@@ -87,6 +87,14 @@ const dataObject = class {
         this.compositeData = compositeData
     }
 
+    updateAllComposites() {
+        for (const compositeDataObj of this.compositeData) {
+            if (compositeDataObj.filesLoaded > 0) {
+                compositeDataObj.updateData()
+            }
+        }
+    }
+
     updateGlobalSettings(globalSettings) {
         Object.assign(this.globalSettings, globalSettings)
     }
