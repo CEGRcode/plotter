@@ -11,6 +11,12 @@ const compositeLoader = class {
                 if (file.name in dataObj.fileData) {
                     if (!confirm(file.name + " already loaded. Overwrite?")) {
                         reject(file.name + " already loaded.")
+                    } else {
+                        for (const compositeDataObj of dataObj.compositeData) {
+                            if (compositeDataObj.ids.includes(file.name)) {
+                                compositeDataObj.updateData()
+                            }
+                        }
                     }
                 };
                 const reader = new FileReader();
