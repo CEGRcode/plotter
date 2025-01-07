@@ -135,11 +135,11 @@ const plotObject = class {
             this._elements.midaxisBottom
                 .attr("display", null)
                 .attr("transform", "translate(0 " + this.yscale(0) + ")")
-                .call(d3.axisBottom(this.xscale).tickFormat(""));
+                .call(d3.axisBottom(this.xscale).tickFormat("")).style("color", "#000000");
             this._elements.midaxisTop
                 .attr("display", null)
                 .attr("transform", "translate(0 " + this.yscale(0) + ")")
-                .call(d3.axisTop(this.xscale).tickFormat(""))
+                .call(d3.axisTop(this.xscale).tickFormat("")).style("color", "#000000")
         }
         // Update vertical line at reference point
         this._elements.refline
