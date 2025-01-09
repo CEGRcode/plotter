@@ -106,10 +106,10 @@ const dataObject = class {
 
         const self = this;
         return new Promise(function(resolve) {
-            const xmin = self.compositeData.reduce((a, c) => Math.min(a, c.xmin), Infinity),
-            xmax = self.compositeData.reduce((a, c) => Math.max(a, c.xmax), -Infinity),
-            ymin = -self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.anti) * c.scale), -Infinity),
-            ymax = self.compositeData.reduce((a, c) => Math.max(a, Math.max(...c.sense) * c.scale), -Infinity);
+            const xmin = self.compositeData.reduce((a, c) => c.hideSense && c.hideAnti ? a : Math.min(a, c.xmin), Infinity),
+            xmax = self.compositeData.reduce((a, c) => c.hideSense && c.hideAnti ? a : Math.max(a, c.xmax), -Infinity),
+            ymin = -self.compositeData.reduce((a, c) => c.hideAnti ? a : Math.max(a, Math.max(...c.anti) * c.scale), -Infinity),
+            ymax = self.compositeData.reduce((a, c) => c.hideSense ? a : Math.max(a, Math.max(...c.sense) * c.scale), -Infinity);
 
             self.changeXmin(xmin);
             self.changeXmax(xmax);
