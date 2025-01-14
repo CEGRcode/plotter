@@ -6,11 +6,11 @@ const smoothingInput = class {
 
         const self = this;
         this.element = d3.select("#" + elementID);
-        this.label = this.element.append("label")
+        this.label = this.element.append("td").append("label")
             .attr("id", "smoothing-input-label")
             .classed("setting-label", true)
             .text("Smoothing:");
-        this.textInput = this.element.append("input")
+        this.textInput = this.element.append("td").append("input")
             .attr("type", "text")
             .attr("id", "smoothing-text")
             .classed("setting-text", true)
@@ -19,18 +19,20 @@ const smoothingInput = class {
                 self.update();
                 plotObj.updatePlot()
             });
-        this.sliderInput = this.element.append("input")
-            .attr("type", "range")
-            .attr("id", "smoothing-slider")
-            .classed("global-slider", true)
-            .attr("min", 1)
-            .attr("max", 31)
-            .attr("step", 2)
-            .on("input", function() {
-                dataObj.globalSettings.smoothing = parseInt(this.value);
-                self.textInput.node().value = dataObj.globalSettings.smoothing;
-                plotObj.updatePlot()
-            });
+        this.sliderInput = this.element.append("td")
+            .classed("slider-container", true)
+            .append("input")
+                .attr("type", "range")
+                .attr("id", "smoothing-slider")
+                .classed("global-slider", true)
+                .attr("min", 1)
+                .attr("max", 31)
+                .attr("step", 2)
+                .on("input", function() {
+                    dataObj.globalSettings.smoothing = parseInt(this.value);
+                    self.textInput.node().value = dataObj.globalSettings.smoothing;
+                    plotObj.updatePlot()
+                });
         
         this.update()
     }

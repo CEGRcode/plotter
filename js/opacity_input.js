@@ -6,11 +6,12 @@ const opacityInput = class {
 
         const self = this;
         this.element = d3.select("#" + elementID);
-        this.label = this.element.append("label")
+        this.label = this.element.append("td").append("label")
             .attr("id", "opacity-input-label")
             .classed("setting-label", true)
             .text("Opacity:");
-        this.minTextInput = this.element.append("input")
+        this.textInputCol = this.element.append("td");
+        this.minTextInput = this.textInputCol.append("input")
             .attr("type", "text")
             .attr("id", "min-opacity-text")
             .classed("setting-text", true)
@@ -23,9 +24,9 @@ const opacityInput = class {
                 }
                 plotObj.updatePlot()
             });
-        this.element.append("span")
+        this.textInputCol.append("span")
             .text(" - ");
-        this.maxTextInput = this.element.append("input")
+        this.maxTextInput = this.textInputCol.append("input")
             .attr("type", "text")
             .attr("id", "max-opacity-text")
             .classed("setting-text", true)
@@ -38,7 +39,8 @@ const opacityInput = class {
                 }
                 plotObj.updatePlot()
             });
-        this.slider1 = this.element.append("input")
+        this.sliderInputCol = this.element.append("td").classed("slider-container", true);
+        this.slider1 = this.sliderInputCol.append("input")
             .attr("type", "range")
             .attr("id", "opacity-slider-1")
             .classed("global-slider", true)
@@ -59,7 +61,7 @@ const opacityInput = class {
                 self.maxTextInput.node().value = dataObj.globalSettings.maxOpacity;
                 plotObj.updatePlot()
             });
-        this.slider2 = this.element.append("input")
+        this.slider2 = this.sliderInputCol.append("input")
             .attr("type", "range")
             .attr("id", "opacity-slider-2")
             .classed("global-slider", true)

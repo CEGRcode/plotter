@@ -72,15 +72,7 @@
     margin-bottom: 5px;
 }
 
-#opacity-input {
-    position: relative;
-}
-
-#smoothing-input {
-    position: relative;
-}
-
-#bp-shift-input {
+.slider-container {
     position: relative;
 }
 
