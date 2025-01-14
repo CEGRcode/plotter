@@ -15,7 +15,8 @@ const xAxisInput = class {
             .on("change", function() {
                 dataObj.globalSettings.xmin = parseInt(this.value);
                 plotObj.updatePlot();
-                referenceLinesObj.updateReferenceLines()
+                referenceLinesObj.updateReferenceLines();
+                nucleosomeSliderObj.updateNucleosomeSlider()
             });
         this.xMaxInput = this.element.append("input")
             .attr("type", "text")
@@ -24,7 +25,8 @@ const xAxisInput = class {
             .on("change", function() {
                 dataObj.globalSettings.xmax = parseInt(this.value);
                 plotObj.updatePlot();
-                referenceLinesObj.updateReferenceLines()
+                referenceLinesObj.updateReferenceLines();
+                nucleosomeSliderObj.updateNucleosomeSlider()
             });
 
         this.update()

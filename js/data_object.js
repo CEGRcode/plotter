@@ -205,5 +205,8 @@ let dataObj = new dataObject({
         horizontalLines: [],
         verticalLines: []
     },
-    nucleosomeSlider: {}
+    nucleosomeSlider: {
+        x: 0,
+        lines: []
+    }
 })

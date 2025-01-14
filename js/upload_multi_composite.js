@@ -14,5 +14,6 @@ d3.select("#multi-composite-loader").on("input", async function() {
     yAxisInputObj.update();
     plotObj.updatePlot();
     legendObj.updateLegend();
-    referenceLinesObj.updateReferenceLines()
+    referenceLinesObj.updateReferenceLines();
+    nucleosomeSliderObj.updateNucleosomeSlider()
 })

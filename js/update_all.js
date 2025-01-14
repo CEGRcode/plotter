@@ -14,5 +14,7 @@ const updateAll = function() {
     plotObj.updatePlot();
     legendObj.updateLegend();
     referenceLinesObj.updateReferenceLines();
-    referenceLinesInputObj.update()
+    referenceLinesInputObj.update();
+    nucleosomeSliderObj.updateNucleosomeSlider();
+    nucleosomeSliderInputObj.update()
 }

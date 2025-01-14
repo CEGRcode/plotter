@@ -45,6 +45,14 @@
     cursor: grab;
 }
 
+#nucleosome-rect {
+    cursor: grab;
+}
+
+.nucleosome-marker {
+    cursor: grab;
+}
+
 #settings-tabs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -152,6 +160,18 @@
 .add-row-icon {
     cursor: pointer;
     margin-top: 5px;
+}
+
+.nucleosome-marker-section {
+    width: 100%;
+}
+
+.nucleosome-marker-input {
+    margin-top: 5px;
+}
+
+.mol-viz-section {
+    padding-top: 15px;
 }
 
 #composite-table {

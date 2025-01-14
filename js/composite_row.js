@@ -397,6 +397,7 @@ const compositeRow = class {
         plotObj.updatePlot();
         legendObj.updateLegend();
         referenceLinesObj.updateReferenceLines();
+        nucleosomeSliderObj.updateNucleosomeSlider();
         this.updateInputs()
     }
 

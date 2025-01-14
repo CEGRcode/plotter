@@ -8,5 +8,6 @@ d3.select("#autoscale-axes-button").on("click", async function() {
     xAxisInputObj.update();
     yAxisInputObj.update();
     plotObj.updatePlot();
-    referenceLinesObj.updateReferenceLines()
+    referenceLinesObj.updateReferenceLines();
+    nucleosomeSliderObj.updateNucleosomeSlider()
 })

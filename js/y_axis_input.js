@@ -19,7 +19,8 @@ const yAxisInput = class {
                     yAxisInputObj.update()
                 };
                 plotObj.updatePlot();
-                referenceLinesObj.updateReferenceLines()
+                referenceLinesObj.updateReferenceLines();
+                nucleosomeSliderObj.updateNucleosomeSlider()
             });
         this.yMaxInput = this.element.append("input")
             .attr("type", "text")
@@ -38,7 +39,8 @@ const yAxisInput = class {
                 };
                 yAxisInputObj.update();
                 plotObj.updatePlot();
-                referenceLinesObj.updateReferenceLines()
+                referenceLinesObj.updateReferenceLines();
+                nucleosomeSliderObj.updateNucleosomeSlider()
             });
         
         this.symmetricYCheckbox = this.element.append("input")
@@ -48,7 +50,8 @@ const yAxisInput = class {
                 dataObj.globalSettings.symmetricY = this.checked;
                 yAxisInputObj.update();
                 plotObj.updatePlot();
-                referenceLinesObj.updateReferenceLines()
+                referenceLinesObj.updateReferenceLines();
+                nucleosomeSliderObj.updateNucleosomeSlider()
             });
         this.symmetricYLabel = this.element.append("label")
             .attr("for", "symmetric-y-checkbox")
