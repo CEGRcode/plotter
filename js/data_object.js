@@ -8,19 +8,27 @@ const dataObject = class {
     }
 
     changeXmin(xmin) {
-        this.globalSettings.xmin = xmin
+        if (isFinite(xmin)) {
+            this.globalSettings.xmin = xmin
+        }
     }
 
     changeXmax(xmax) {
-        this.globalSettings.xmax = xmax
+        if (isFinite(xmax)) {
+            this.globalSettings.xmax = xmax
+        }
     }
 
     changeYmin(ymin) {
-        this.globalSettings.ymin = ymin
+        if (isFinite(ymin)) {
+            this.globalSettings.ymin = ymin
+        }
     }
 
     changeYmax(ymax) {
-        this.globalSettings.ymax = ymax
+        if (isFinite(ymax)) {
+            this.globalSettings.ymax = ymax
+        }
     }
 
     changeSymmetricY(symmetricY) {
@@ -106,10 +114,29 @@ const dataObject = class {
 
         const self = this;
         return new Promise(function(resolve) {
-            const xmin = self.compositeData.reduce((a, c) => c.hideSense && c.hideAnti ? a : Math.min(a, c.xmin), Infinity),
-            xmax = self.compositeData.reduce((a, c) => c.hideSense && c.hideAnti ? a : Math.max(a, c.xmax), -Infinity),
-            ymin = -self.compositeData.reduce((a, c) => c.hideAnti ? a : Math.max(a, Math.max(...c.anti) * c.scale), -Infinity),
-            ymax = self.compositeData.reduce((a, c) => c.hideSense ? a : Math.max(a, Math.max(...c.sense) * c.scale), -Infinity);
+            let xmin = Infinity,
+                xmax = -Infinity,
+                ymin = Infinity,
+                ymax = -Infinity;
+            for (const compositeDataObj of self.compositeData) {
+                if (compositeDataObj.hideSense && compositeDataObj.hideAnti) {
+                    continue
+                };
+                const smoothing = compositeDataObj.smoothing === null ?
+                        self.globalSettings.smoothing : compositeDataObj.smoothing,
+                    bpShift = compositeDataObj.bpShift === null ?
+                        self.globalSettings.bpShift : compositeDataObj.bpShift;
+                xmin = Math.min(xmin, compositeDataObj.xmin - bpShift);
+                xmax = Math.max(xmax, compositeDataObj.xmax + bpShift);
+                if (!compositeDataObj.hideSense) {
+                    ymax = Math.max(ymax, Math.max(...plotObj.slidingWindow(compositeDataObj.sense, smoothing)) *
+                        compositeDataObj.scale)
+                };
+                if (!compositeDataObj.hideAnti) {
+                    ymin = Math.min(ymin, -Math.max(...plotObj.slidingWindow(compositeDataObj.anti, smoothing)) *
+                        compositeDataObj.scale)
+                }
+            };
 
             self.changeXmin(xmin);
             self.changeXmax(xmax);
