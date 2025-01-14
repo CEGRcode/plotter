@@ -124,8 +124,8 @@ const dataObject = class {
                 };
                 const smoothing = compositeDataObj.smoothing === null ?
                         self.globalSettings.smoothing : compositeDataObj.smoothing,
-                    bpShift = compositeDataObj.bpShift === null ?
-                        self.globalSettings.bpShift : compositeDataObj.bpShift;
+                    bpShift = Math.abs(compositeDataObj.bpShift === null ?
+                        self.globalSettings.bpShift : compositeDataObj.bpShift);
                 xmin = Math.min(xmin, compositeDataObj.xmin - bpShift);
                 xmax = Math.max(xmax, compositeDataObj.xmax + bpShift);
                 if (!compositeDataObj.hideSense) {
