@@ -8,232 +8,110 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="js/reset.js"></script>
-    <script src="js/csrf_token.js"></script>
-    <script src="js/parse_composite.js"></script>
 </head>
 <body>
     <main>
         <div class="container-fluid">
-            <div class="row" style="padding-top:5px;">
+            <div class="row">
                 <div class="col-4">
-                    <div class="row">
-                        <div class="col-8">
-                            <input type="button" id="json-button" value="Import JSON session">
-                            <input type="file" id="json-loader" style="display:none;">
-                            <script src="js/events/import_json_button.js"></script>
-                            <input type="button" id="json-download" value="Export session as JSON">
-                            <script src="js/events/export_json_button.js"></script>
-                            <input type="button" id="tsv-download" value="Export metadata as TSV">
-                            <script src="js/events/export_tsv_button.js"></script>
-                        </div>
-                        <div class="col-4 text-right">
-                            <input type="button" id="load-composite-button" value="Load multi-composite">
-                            <input type="file" id="composite-loader" style="display:none;">
-                            <script src="js/events/load_composite_button.js"></script>
-                        </div>
-                    </div>
+                    <input type="button" id="json-button" value="Import JSON session">
+                    <input type="file" id="json-loader">
+                    <input type="button" id="json-download" value="Export session as JSON">
+                    <input type="file" id="multi-composite-loader">
+                    <input type="button" id="multi-composite-button" value="Upload multi-composite">
                 </div>
-                <div class="col-5">
+                <div class="col-8">
                     <div class="row">
-                        <div id="axes-input" class="col-8"></div>
-                        <script src="js/widgets/axes_input.js"></script>
+                        <div id="axes-input" class="col-8">
+                            <div class="row">
+                                <div class="col">
+                                    <div id="x-axis-input"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div id="y-axis-input"></div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-4 text-right">
                             <div class="row">
                                 <div class="col">
                                     <input type="button" id="autoscale-axes-button" value="Autoscale axes">
-                                    <script src="js/events/autoscale_axes_button.js"></script>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col">
-                                    <input type="checkbox" id="lock-axes-checkbox">
-                                    <label for="lock-axes-checkbox" id="lock-axes-label">Lock axes</label>
-                                    <script src="js/events/lock_axes_checkbox.js"></script>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="row">
-                        <div class="col text-right">
-                            <input type="button" id="reset-plot-button" value="Reset plot">
-                            <script src="js/events/reset_button.js"></script>
-                            <div style="display: block; margin-top: 5px;">
-                                <label for="enable-tooltips-checkbox" id="enable-tooltips-label">Enable tooltips</label>
-                                <input id="enable-tooltips-checkbox" type="checkbox">
-                                <script src="js/tooltips.js"></script>
+                                <div id="lock-axes" class="col"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-4" style="overflow:auto; height:50vh; padding-right:31px;">
-                    <div class="row">
-                        <div class="col-6">
-                            <h4>Composite metadata</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <input type="button" id="import-metadata-button" value="Import metadata from PEGR">
-                            <div id="import-metadata-form" class="form-popup" style="display:none;">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="pegr-api-key-input">PEGR API key:</label>
-                                        <input type="password" id="pegr-api-key-input" style="width:200px;">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="email-input">Email:</label>
-                                        <input type="text" id="email-input" style="width:200px;">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="button" id="import-metadata-submit-button" value="Submit">
-                                        <input type="button" id="import-metadata-cancel-button" value="Cancel">
-                                    </div>
-                                </div>
-                            </div>
-                            <script src="js/events/import_metadata_button.js"></script>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <table id="metadata-table" class="table"></table>
-                            <script src="js/widgets/metadata_table.js"></script>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-8">
-                    <div class="row" style="display:flex; align-items:center;">
-                        <div style="max-width:calc(100% - 270px);" id="main-plot-div">
-                            <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica" style="height: 50vh; max-width: 100%; overflow: hide;"></svg>
-                            <script src="js/sliding_window.js"></script>
-                            <script src="js/widgets/main_plot.js"></script>
-                        </div>
-                        <div class="text-right" style="width:270px; padding-right:20px;">
-                            <div id="plot-tabs">
-                                <input type="button" id="plot-options-tab" value="Plot Options" style="grid-column:1; height: auto;" class="plot-tab selected-tab">
-                                <input type="button" id="reference-axes-tab" value="Reference Axes" style="grid-column:2; height: auto;" class="plot-tab">
-                                <input type="button" id="nucleosome-slider-tab" value="Nucleosome Slider" style="grid-column:3; height: auto;" class="plot-tab">
-                                <script src="js/events/plot_tabs.js"></script>
-                            </div>
-                            <div style="display: block;" id="plot-options" class="plot-pane">
-                                <div id="settings-dropdown"></div>
-                                <script src="js/widgets/preset_dropdown.js"></script>
-                                <div id="opacity-input"></div>
-                                <script src="js/widgets/opacity_input.js"></script>
-                                <div id="smoothing-input"></div>
-                                <script src="js/widgets/smoothing_input.js"></script>
-                                <div id="shift-input"></div>
-                                <script src="js/widgets/shift_input.js"></script>
-                                <div>
-                                    <label for="combined-checkbox" id="combined-label">Combined</label>
-                                    <input id="combined-checkbox" type="checkbox">
-                                    <script src="js/events/combined_checkbox.js"></script>
-                                </div>
-                                <div>
-                                    <label for="separate-color-checkbox" id="seperate-color-label">Separate colors for strands</label>
-                                    <input id="separate-color-checkbox" type="checkbox">
-                                    <script src="js/events/separate_color_checkbox.js"></script>
-                                </div>
-                                <div>
-                                    <label for="color-trace-checkbox" id="color-trace-label">Color trace</label>
-                                    <input id="color-trace-checkbox" type="checkbox">
-                                    <script src="js/events/color_trace_checkbox.js"></script>
-                                </div>
-                                <div>
-                                    <label for="tooltip-checkbox" id="tooltip-label">Enable tooltip</label>
-                                    <input id="tooltip-checkbox" type="checkbox" checked>
-                                    <script src="js/events/tooltip_checkbox.js"></script>
-                                </div>
-                                <div>
-                                    <label for="show-legend-checkbox" id="show-legend-label">Show legend</label>
-                                    <input id="show-legend-checkbox" type="checkbox" checked>
-                                    <script src="js/events/show_legend_checkbox.js"></script>
-                                </div>
-                                <div>
-                                    <input type="button" id="download-svg-button" value="Download as SVG">
-                                    <script src="js/events/download_svg_button.js"></script>
-                                </div>
-                            </div>
-                            <div style="display: none;" id="nucleosome-slider-options" class="plot-pane">
-                                <div id="nucleosome-slider">
-                                    <svg id="nucleosome-svg" class="nucleosome-svg" style="display: inline; width:146px; height:50px; position:relative;" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="100%" height="100%" style="fill:rgb(46, 139, 185);stroke-width:5;stroke:rgb(3, 100, 122)" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <label for="nucleosome-start-text" style="display: inline-block; margin-top: 10px;">Starting coord</label>
-                                    <input type="text" id="nucleosome-start-text" value="0" style="display: inline;">
-                                </div>
-                                <div>
-                                    <label for="nucleosome-projection-text" style="display: inline-block;">Project to nucleosome</label>
-                                    <input type="text" id="nucleosome-projection-text" value="" style="display: inline;border-style:solid; border-color:yellow; border-width:3px">
-                                </div>
-                                <div>
-                                    <label for="mark-nucleosome-text" style="display: inline-block; margin-top: 10px">Mark nucleosome</label>
-                                    <input type="text" id="mark-nucleosome-text" value="" style="display: inline;border-style:solid; border-color:rgb(205, 233, 255); border-width:3px">
-                                </div>
-                                <div>
-                                    <input type="button" id="generate-3D-button" value="Generate 3D Visual" style="margin-top: 10px;">
-                                </div>
-                                <div>
-                                    <label for="keep-nucleosome" id="keep-nucleosome-lable">Keep nucleosome on plot</label>
-                                    <input type="checkbox" id="keep-nucleosome" label="Plot Nucleosome" style="margin-top: 15px;">
-                                </div>
-                                <script src="js/widgets/nucleosome_slider.js"></script>
-                                <script src="js/events/generate_3D_Button.js"></script>
-                            </div>
-                            <div style="display: none;" id="reference-axes-pane" class="plot-pane">
-                                <label for="y-axis-lines" style="float: left;">Y-Axis Lines</label>
-                                <div class="reference-table-div">
-                                    <table id="y-axis-lines" class="reference-lines-table"></table>
-                                </div>
-                                <svg id="y-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
-                                    <circle r="15" cx="15" cy="15" fill="grey" />
-                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
-                                </svg>
-                                <label for="x-axis-lines" style="float: left;">X-Axis Lines</label>
-                                <div class="reference-table-div">
-                                    <table id="x-axis-lines" class="reference-lines-table"></table>                                    </table>
-                                </div>
-                                <svg id="x-plus" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="margin-left:41%;margin-right:59%;margin-top:10px;">
-                                    <circle r="15" cx="15" cy="15" fill="grey" />
-                                    <path d="m 15 2 l 0 26 M 2 15 l 26 0" stroke-width="4" stroke="white" />
-                                </svg>
-                                <div>
-                                    <label for="keep-reference-lines" id="keep-reference-lable">Keep reference lines on plot</label>
-                                    <input type="checkbox" id="keep-reference-lines" style="margin-top: 15px;">
-                                </div>
-                                <script src="js/widgets/reference_axes.js"></script>
-                            </div>
-                        </div>
+                    <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica"></svg>
+                </div>
+                <div class="col-4">
+                    <div id="settings-tabs"></div>
+                    <div id="global-settings" class="settings-section">
+                        <select id="preset-dropdown"></select>
+                        <table>
+                            <tr id="opacity-input"></tr>
+                            <tr id="smoothing-input"></tr>
+                            <tr id="bp-shift-input"></tr>
+                        </table>
+                        <div id="combine-strands"></div>
+                        <div id="separate-colors"></div>
+                        <div id="color-trace"></div>
+                        <div id="enable-plot-tooltip"></div>
+                        <div id="show-legend"></div>
+                        <button id="download-as-svg">Download as SVG</button>
+                    </div>
+                    <div id="reference-lines-input" class="settings-section hidden"></div>
+                    <div id="nucleosome-slider-input" class="settings-section hidden"></div>
                 </div>
             </div>
             <div class="row">
-                <div class="col" style="overflow:auto; height:calc(50vh - 80px);">
-                    <div class="row">
-                        <div class="col">
-                            <h4 style="display:inline; padding-right:20px;">Composite settings</h4>
-                            <input type="button" id="autoscale-composites-button" value="Scale composites by number of samples" style="display:inline;">
-                            <script src="js/events/autoscale_composites_button.js"></script>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <table id="settings-table" class="table"></table>
-                        <script>
-                            let individual_composites = {};
-                        </script>
-                        <script src="js/widgets/settings_table.js"></script>
-                    </div>
+                <div class="col-12">
+                    <div id="composite-table"></div>
                 </div>
             </div>
         </div>
     </main>
+    <script src="js/data_object.js"></script>
+    <script src="js/composite_object.js"></script>
+    <script src="js/export_json.js"></script>
+    <script src="js/import_json.js"></script>
+    <script src="js/upload_multi_composite.js"></script>
+    <script src="js/round_with_precision.js"></script>
+    <script src="js/x_axis_input.js"></script>
+    <script src="js/y_axis_input.js"></script>
+    <script src="js/autoscale_axes.js"></script>
+    <script src="js/lock_axes.js"></script>
+    <script src="js/default_colors.js"></script>
+    <script src="js/composite_loader.js"></script>
+    <script src="js/editable_svg_text.js"></script>
+    <script src="js/composite_plot.js"></script>
+    <script src="js/composite_legend.js"></script>
+    <script src="js/plot_tooltip.js"></script>
+    <script src="js/settings_tabs.js"></script>
+    <script src="js/preset_settings.js"></script>
+    <script src="js/preset_dropdown.js"></script>
+    <script src="js/opacity_input.js"></script>
+    <script src="js/smoothing_input.js"></script>
+    <script src="js/bp_shift_input.js"></script>
+    <script src="js/combined_checkbox.js"></script>
+    <script src="js/separate_colors_checkbox.js"></script>
+    <script src="js/color_trace_checkbox.js"></script>
+    <script src="js/enable_plot_tooltip_checkbox.js"></script>
+    <script src="js/show_legend_checkbox.js"></script>
+    <script src="js/download_as_svg_button.js"></script>
+    <script src="js/nucleosome_slider.js"></script>
+    <script src="js/nucleosome_slider_input.js"></script>
+    <script src="js/reference_lines.js"></script>
+    <script src="js/reference_lines_input.js"></script>
+    <script src="js/composite_row.js"></script>
+    <script src="js/composite_table.js"></script>
+    <script src="js/update_all.js"></script>
 </body>

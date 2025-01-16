@@ -1,0 +1,1 @@
+d3.select("#download-as-svg").on("click", function() {plotObj.downloadAsSVG()})
