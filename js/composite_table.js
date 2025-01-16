@@ -91,6 +91,10 @@ const compositeTable = class {
     }
 
     removeRow(idx) {
+        for (let i = idx + 1; i < this.rows.length; i++) {
+            this.rows[i].updateIndex(i - 1)
+        };
+        
         this.rows[idx].remove();
         this.rows.splice(idx, 1);
         this.nRows--
