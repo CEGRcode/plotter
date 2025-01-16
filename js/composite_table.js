@@ -35,7 +35,9 @@ const compositeTable = class {
             .text("Add new composite");
         this.table = this.container.append("table").append("tbody");
         this.rows = [];
-        this.nRows = 0
+        this.nRows = 0;
+
+        this.addRow(dataObj.addCompositeData({idx: this.nRows}))
     }
 
     addRow(compositeDataObj) {
