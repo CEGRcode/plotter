@@ -287,6 +287,17 @@ const compositeRow = class {
             .classed("upload-label", true)
             .style("padding-left", "10px");
 
+        // Add clear data column
+        this.row.append("td").append("button")
+            .classed("clear-button", true)
+            .text("Clear")
+            .on("click", function() {
+                self.compositeDataObj.clearData();
+                plotObj.updatePlot();
+                legendObj.updateLegend();
+                self.updateInputs()
+            });
+
         // Add remove column
         const removeIcon = this.row.append("td").append("svg")
             .classed("remove-icon", true)

@@ -131,4 +131,14 @@ const compositeObject = class {
         this.changeAnti(anti);
         this.filesLoaded = this.ids.length
     }
+
+    clearData() {
+        this.ids = [];
+        this.filesLoaded = 0;
+        
+        this.changeXmin(Infinity);
+        this.changeXmax(-Infinity);
+        this.changeSense([]);
+        this.changeAnti([])
+    }
 }
