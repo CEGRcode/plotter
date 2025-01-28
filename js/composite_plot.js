@@ -385,7 +385,7 @@ const plotObject = class {
     }
 
     downloadAsSVG() {
-        const b64doc = btoa(this._elements.mainPlot.node().outerHTML),
+        const b64doc = btoa(this._elements.mainPlot.node().outerHTML.replaceAll("&nbsp;", "")),
             a = document.createElement("a"),
             e = new MouseEvent("click");
         a.download = "composite_plot.svg";
