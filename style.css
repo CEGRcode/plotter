@@ -166,6 +166,18 @@
     padding-top: 15px;
 }
 
+.tableFixHead {
+    overflow: auto;
+    font-size: 16px;
+    /* height: 80px; */
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 #composite-table {
     width: 100%;
     margin-top: 10px;
@@ -184,6 +196,22 @@
     height: 50px;
     width: 100%;
     border: 1px solid black;
+}
+
+#composite-table th, td {
+    padding: 8px 16px;
+}
+
+#composite-table th {
+    background: #eee;
+}
+
+#composite-table th:nth-child(n+3):nth-child(-n+7) {
+    text-align: center;
+}
+
+#composite-table td:nth-child(n+3):nth-child(-n+7) {
+    text-align: center;
 }
 
 #add-row {

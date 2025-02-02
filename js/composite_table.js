@@ -33,7 +33,23 @@ const compositeTable = class {
             .attr("y", 21)
             .attr("font-size", 16)
             .text("Add new composite");
-        this.table = this.container.append("table").append("tbody");
+        const thb = this.container.append("table").classed("tableFixHead", true);
+        const headerRow = thb.append("thead").append("tr");
+        headerRow.append("th");
+        headerRow.append("th").append("text").text("Composite");
+        headerRow.append("th").append("text").text("Color");
+        headerRow.append("th").append("text").text("Scale");
+        headerRow.append("th").append("text").text("Opacity");
+        headerRow.append("th").append("text").text("Smooth");
+        headerRow.append("th").append("text").text("BP shift");
+        headerRow.append("th");
+        headerRow.append("th");
+        headerRow.append("th").append("text").text("Upload files");
+        headerRow.append("th");
+        headerRow.append("th");
+
+        this.table = thb.append("tbody");
+
         this.rows = [];
         this.nRows = 0;
 
@@ -94,7 +110,7 @@ const compositeTable = class {
         for (let i = idx + 1; i < this.rows.length; i++) {
             this.rows[i].updateIndex(i - 1)
         };
-        
+
         this.rows[idx].remove();
         this.rows.splice(idx, 1);
         this.nRows--
