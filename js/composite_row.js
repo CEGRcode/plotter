@@ -67,9 +67,6 @@ const compositeRow = class {
         // Add the scale column
         const scaleDiv = this.row.append("td").append("div")
                 .classed("slider-div", true);
-                scaleDiv.append("label")
-                .classed("setting-label", true)
-                .text("Scale:");
         this.scaleTextInput = scaleDiv.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -98,9 +95,6 @@ const compositeRow = class {
             .on("mouseup", function() {self.enableDrag()});
         // Add the opacity column
         const opacityCol = this.row.append("td");
-        opacityCol.append("label")
-            .classed("setting-label", true)
-            .text("Opacity:");
         this.minOpacityInput = opacityCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -128,9 +122,6 @@ const compositeRow = class {
         
         // Add the smoothing column
         const smoothingCol = this.row.append("td");
-        smoothingCol.append("label")
-                .classed("setting-label", true)
-                .text("Smoothing:");
         this.smoothingInput = smoothingCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -145,9 +136,6 @@ const compositeRow = class {
         
         // Add the bp shift column
         const bpShiftCol = this.row.append("td");
-        bpShiftCol.append("label")
-            .classed("setting-label", true)
-            .text("BP Shift:");
         this.shiftInput = bpShiftCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
