@@ -25,24 +25,10 @@ const compositeRow = class {
         this.dragIcon = this.row.append("td").append("div")
             .classed("drag-col", true)
             .attr("title", "Drag to reorder")
-            .append("svg")
-                .classed("drag-icon", true)
-                .attr("baseProfile", "full")
-                .attr("width", "24px")
-                .attr("viewBox", "0 0 16 16")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g")
-                    .selectAll("line")
-                    .data([4, 8, 12])
-                    .join("line")
-                        .attr("x1", 0)
-                        .attr("y1", d => d)
-                        .attr("x2", 16)
-                        .attr("y2", d => d)
-                        .attr("stroke", "gray")
-                        .attr("stroke-width", 2);
-        
+            .append("i")
+                .classed("drag-icon fa-solid fa-2xl fa-bars", true);
+                // .classed("drag-icon fa-solid fa-2xl fa-grip-lines", true);
+
         // Add the name column
         this.nameInput = this.row.append("td").append("div")
             .classed("name-div", true)
