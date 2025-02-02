@@ -150,8 +150,10 @@
 }
 
 .add-row-icon {
+    /* &:extend(.fa, .fa-circle-plus, .fa-2xl, .fa-solid); */
     cursor: pointer;
     margin-top: 5px;
+    color: green;
 }
 
 .nucleosome-marker-section {
@@ -206,17 +208,20 @@
     background: #eee;
 }
 
+#composite-table th:nth-child(1) {
+    text-align: center;
+}
+
+#composite-table td:nth-child(1) {
+    text-align: center;
+}
+
 #composite-table th:nth-child(n+3):nth-child(-n+7) {
     text-align: center;
 }
 
 #composite-table td:nth-child(n+3):nth-child(-n+7) {
     text-align: center;
-}
-
-#add-row {
-    padding-left: 10px;
-    padding-bottom: 5px;
 }
 
 .mouse-highlight {
@@ -228,7 +233,6 @@
 }
 
 .drag-col {
-    padding-left: 10px;
     color: gray;
 }
 

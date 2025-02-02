@@ -6,36 +6,15 @@ const compositeTable = class {
         const self = this;
 
         this.container = d3.select("#" + elementID)
-        this.addRowContainer = this.container.append("div")
-            .attr("id", "add-row");
-        this.addRowIcon = this.addRowContainer.append("svg")
-            .classed("add-row-icon", true)
-            .attr("title", "Add new composite")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("viewbox", "0 0 185 30")
-            .attr("width", "185")
-            .attr("height", "30")
+        const thb = this.container.append("table").classed("tableFixHead", true);
+        const headerRow = thb.append("thead").append("tr");
+        // Insert "Add composite row" in table header
+        this.addRowIcon = headerRow.append("th").append("i")
+            .classed("add-row-icon fa-solid fa-2xl fa-circle-plus", true)
             .on("click", function() {
                 const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
                 self.addRow(compositeDataObj)
             });
-        this.addRowIcon.append("circle")
-            .attr("cx", 15)
-            .attr("cy", 15)
-            .attr("r", 15)
-            .attr("fill", "#468C00");
-        this.addRowIcon.append("path")
-            .attr("d", "m 15 5 l 0 20 M 5 15 l 20 0")
-            .attr("stroke", "#FFFFFF")
-            .attr("stroke-width", 4);
-        this.addRowIcon.append("text")
-            .attr("x", 40)
-            .attr("y", 21)
-            .attr("font-size", 16)
-            .text("Add new composite");
-        const thb = this.container.append("table").classed("tableFixHead", true);
-        const headerRow = thb.append("thead").append("tr");
-        headerRow.append("th");
         headerRow.append("th").append("text").text("Composite");
         headerRow.append("th").append("text").text("Color");
         headerRow.append("th").append("text").text("Scale");
