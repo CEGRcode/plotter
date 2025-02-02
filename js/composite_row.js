@@ -185,25 +185,12 @@ const compositeRow = class {
 
                 self.closeEyeIcon()
             })
-            .append("svg")
+            .append("i")
                 .classed("hide-icon", true)
                 .classed("eye-open", true)
+                .classed("fas fa-2xl fa-eye", true)
                 .attr("baseProfile", "full")
-                .attr("viewBox", "-100 -100 200 200")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g");
-        this.eyeOpenIcon.append("path")
-            .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 3);
-        this.eyeOpenIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 30)
-            .attr("fill", "black")
-            .attr("stroke", "none");
+                .attr("viewBox", "-100 -100 200 200");
         this.eyeClosedIcon = hideCol.append("div")
             .classed("hide-container", true)
             .attr("title", "Show")
@@ -215,21 +202,12 @@ const compositeRow = class {
 
                 self.openEyeIcon()
             })
-            .append("svg")
+            .append("i")
                 .classed("hide-icon", true)
                 .classed("eye-closed", true)
+                .classed("fas fa-2xl fa-eye-slash", true)
                 .attr("title", "Show")
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-100 -100 200 200")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .style("display", "none")
-                .append("g");
-        this.eyeClosedIcon.append("path")
-            .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 3);
+                .attr("viewBox", "-100 -100 200 200");
 
         // Add file upload column
         const uploadCol = this.row.append("td"),
