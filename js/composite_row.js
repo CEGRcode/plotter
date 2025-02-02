@@ -273,28 +273,14 @@ const compositeRow = class {
             });
 
         // Add remove column
-        const removeIcon = this.row.append("td").append("svg")
-            .classed("remove-icon", true)
-            .attr("baseProfile", "full")
-            .attr("viewBox", "-200 -200 400 400")
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
+        const removeIcon = this.row.append("td").append("i")
+            .classed("remove-icon fa-solid fa-2xl fa-times-circle", true)
             .on("click", function() {
                 tableObj.removeRow(self.idx);
                 dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
                 plotObj.updatePlot();
                 legendObj.updateLegend()
             });
-        removeIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 200)
-            .attr("fill", "#DD0000");
-        removeIcon.append("polygon")
-            .attr("points", "-130,30 -30,30 -30,130 30,130 30,30 130,30 130,-30 30,-30 30,-130 -30,-130 -30,-30 -130,-30")
-            .attr("fill", "#FFFFFF")
-            .attr("transform", "rotate(45)");
-            
         this.updateInputs()
     }
 

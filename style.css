@@ -144,9 +144,9 @@
 }
 
 .remove-icon {
+    /* &:extend(.fa, .fa-times-circle, .fa-2xl, .fa-solid); */
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    color: red;
 }
 
 .add-row-icon {

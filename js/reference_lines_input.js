@@ -108,27 +108,14 @@ const referenceLinesInput = class {
 
         const removeIcon = newRow.append("td")
             .classed("ref-line-remove-col", true)
-            .append("svg")
-                .classed("remove-icon", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-200 -200 400 400")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
+            .append("i")
+                .classed("remove-icon fa-solid fa-lg fa-times-circle", true)
                 .on("click", function() {
                     const idx = this.parentNode.parentNode.rowIndex;
                     referenceLinesArr.splice(idx, 1);
                     referenceLinesObj.updateReferenceLines();
                     this.parentNode.parentNode.remove()
                 });
-        removeIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 200)
-            .attr("fill", "#DD0000");
-        removeIcon.append("polygon")
-            .attr("points", "-130,30 -30,30 -30,130 30,130 30,30 130,30 130,-30 30,-30 30,-130 -30,-130 -30,-30 -130,-30")
-            .attr("fill", "#FFFFFF")
-            .attr("transform", "rotate(45)")
     }
 
     createStyleSVG(selector, style) {
