@@ -1,3 +1,32 @@
+#top-panel {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#top-left-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px
+}
+
+#top-right-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+}
+
+.padded-container {
+    margin: 10px;
+}
+
+.stretch-button {
+    align-self: stretch;
+}
+
 #json-loader {
     display: none;
 }
@@ -20,9 +49,7 @@
 }
 
 #main-plot {
-    height: 50vh;
-    padding-top: 10px;
-    max-width: 100%;
+    flex-basis: 50%;
     overflow: hide;
     float: right;
 }
@@ -60,8 +87,8 @@
 }
 
 #settings-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-flow: row nowrap;
     margin-bottom: 10px;
 }
 

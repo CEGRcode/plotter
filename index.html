@@ -13,47 +13,24 @@
 </head>
 <body>
     <main>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-4">
-                    <button id="json-button" ><i class="fas fa-lg fa-file-arrow-up"></i> Import session (JSON)</button>
+        <div class="padded-container">
+            <div id="top-panel">
+                <div id="top-left-panel">
+                    <button id="json-button" class="stretch-button"><i class="fas fa-lg fa-file-arrow-up"></i> Import session (JSON)</button>
                     <input type="file" id="json-loader">
-                    <button id="json-download"><i class="fas fa-lg fa-file-arrow-down"></i> Export session (JSON)</button>
+                    <button id="json-download" class="stretch-button"><i class="fas fa-lg fa-file-arrow-down"></i> Export session (JSON)</button>
                     <input type="file" id="multi-composite-loader">
-                    <button id="multi-composite-button"><i class="fas fa-lg fa-layer-group"></i> Upload multi-composite</button>
-                </div>
-                <div class="col-8">
-                    <div class="row">
-                        <div id="axes-input" class="col-8">
-                            <div class="row">
-                                <div class="col">
-                                    <div id="x-axis-input"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div id="y-axis-input"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4 text-right">
-                            <div class="row">
-                                <div class="col">
-                                    <button id="autoscale-axes-button"><i class="fas fa-lg fa-maximize"></i> Autoscale axes</button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id="lock-axes" class="col"></div>
-                            </div>
-                        </div>
+                    <button id="multi-composite-button" class="stretch-button"><i class="fas fa-lg fa-layer-group"></i> Upload multi-composite</button>
+                    <br/>
+                    <div id="axes-input" class="text-left">
+                        <div id="x-axis-input"></div>
+                        <div id="y-axis-input"></div>
                     </div>
+                    <button id="autoscale-axes-button"><i class="fas fa-lg fa-maximize"></i> Autoscale axes</button>
+                    <div id="lock-axes"></div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-8">
-                    <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica"></svg>
-                </div>
-                <div class="col-4">
+                <svg id="main-plot" baseProfile="full" version="1.1" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica"></svg>
+                <div id="top-right-panel">
                     <div id="settings-tabs"></div>
                     <div id="global-settings" class="settings-section">
                         <select id="preset-dropdown"></select>
@@ -67,17 +44,14 @@
                         <div id="color-trace"></div>
                         <div id="enable-plot-tooltip"></div>
                         <div id="show-legend"></div>
+                        <br/>
                         <button id="download-as-svg"><i class="fa fas fa-lg fa-image"></i> Download as SVG</button>
                     </div>
                     <div id="reference-lines-input" class="settings-section hidden"></div>
                     <div id="nucleosome-slider-input" class="settings-section hidden"></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <div id="composite-table"></div>
-                </div>
-            </div>
+            <div id="composite-table"></div>
         </div>
     </main>
     <script src="js/data_object.js"></script>
