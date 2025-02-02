@@ -220,19 +220,8 @@ const compositeRow = class {
             .classed("upload-button", true)
             .attr("title", "Upload file(s)")
             .on("click", function() {$(fileInput.node()).click()})
-            .append("svg")
-                .classed("upload-icon", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "0 0 24 24")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g")
-                    .append("path")
-                        .attr("d", "M9 10L12 7L15 10M12 7V21M20 7V4A1 1 0 0 0 19 3H5A1 1 0 0 0 4 4V7")
-                        .attr("stroke", "#000000")
-                        .attr("stroke-width", 2)
-                        .attr("stroke-linejoin", "round")
-                        .attr("fill", "none");
+            .append("i")
+            .classed("upload-icon fas fa-upload", true);
         this.uploadLabel = uploadCol.append("label")
             .classed("upload-label", true)
             .style("padding-left", "10px");
