@@ -47,10 +47,16 @@
 
 #nucleosome-rect {
     cursor: grab;
+    fill: #BBB;
+    stroke: #777;
+    stroke-width: 1;
 }
 
 .nucleosome-marker {
     cursor: grab;
+    fill: #FFFC61;
+    stroke: #000;
+    stroke-width: .5;
 }
 
 #settings-tabs {

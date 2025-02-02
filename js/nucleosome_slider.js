@@ -1,9 +1,7 @@
 const nucleosomeSlider = class {
-    constructor(width=146, height=18, fillColor="#2E8BB9", strokeColor="#03647A", lineColor="#FFFC61") {
+    constructor(width=146, height=18, lineColor="#FFFC61") {
         this.width = width;
         this.height = height;
-        this.fillColor = fillColor;
-        this.strokeColor = strokeColor;
         this.lineColor = lineColor;
 
         this.mainPlot = plotObj._elements.mainPlot;
@@ -33,9 +31,6 @@ const nucleosomeSlider = class {
             .attr("width", this.width / (dataObj.globalSettings.xmax - dataObj.globalSettings.xmin) *
                 (plotObj.width - plotObj.margins.right - plotObj.margins.left))
             .attr("height", this.height)
-            .attr("fill", this.fillColor)
-            .attr("stroke", this.strokeColor)
-            .attr("stroke-width", 3)
             .on("mousedown", function(ev) {
                 self.selectedElement = d3.select(this);
                 const {x: plotX, width} = self.mainPlot.node().getBoundingClientRect(),
