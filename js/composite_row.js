@@ -189,8 +189,7 @@ const compositeRow = class {
                 .classed("hide-icon", true)
                 .classed("eye-open", true)
                 .classed("fas fa-2xl fa-eye", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-100 -100 200 200");
+                .attr("baseProfile", "full");
         this.eyeClosedIcon = hideCol.append("div")
             .classed("hide-container", true)
             .attr("title", "Show")
@@ -206,8 +205,7 @@ const compositeRow = class {
                 .classed("hide-icon", true)
                 .classed("eye-closed", true)
                 .classed("fas fa-2xl fa-eye-slash", true)
-                .attr("title", "Show")
-                .attr("viewBox", "-100 -100 200 200");
+                .attr("title", "Show");
 
         // Add file upload column
         const uploadCol = this.row.append("td"),
