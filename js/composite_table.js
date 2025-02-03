@@ -15,12 +15,12 @@ const compositeTable = class {
                 const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
                 self.addRow(compositeDataObj)
             });
-        headerRow.append("th").text("Composite");
+        headerRow.append("th").text("Name");
         headerRow.append("th").text("Color");
         headerRow.append("th").text("Scale");
         headerRow.append("th").text("Opacity");
         headerRow.append("th").text("Smooth");
-        headerRow.append("th").text("BP shift");
+        headerRow.append("th").text("Shift");
         headerRow.append("th");
         headerRow.append("th");
         headerRow.append("th").text("Upload files");
