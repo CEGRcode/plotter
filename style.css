@@ -306,10 +306,6 @@ input[type=range] {
     width: 40px;
 }
 
-.swap-col {
-    width: 60px;
-}
-
 .swap-container {
     width: 40px;
     cursor: pointer;
