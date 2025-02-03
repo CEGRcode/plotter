@@ -6,8 +6,8 @@ const compositeTable = class {
         const self = this;
 
         this.container = d3.select("#" + elementID)
-        const thb = this.container.append("table").classed("tableFixHead", true);
-        const headerRow = thb.append("thead");
+        const thb = this.container.append("table");
+        const headerRow = thb.append("thead").classed("tableFixHead", true);
         // Insert "Add composite row" in table header
         this.addRowIcon = headerRow.append("th").append("i")
             .classed("add-row-icon fa-solid fa-2xl fa-circle-plus", true)
