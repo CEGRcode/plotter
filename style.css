@@ -216,9 +216,6 @@
     height: 50px;
     width: 100%;
     border: 1px solid black;
-}
-
-.tableFixHead thead th {
     position: sticky;
     top: 0;
     z-index: 1;
