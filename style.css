@@ -1,3 +1,32 @@
+#top-panel {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#top-left-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px
+}
+
+#top-right-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+}
+
+.padded-container {
+    margin: 10px;
+}
+
+.stretch-button {
+    align-self: stretch;
+}
+
 #json-loader {
     display: none;
 }
@@ -20,9 +49,7 @@
 }
 
 #main-plot {
-    height: 50vh;
-    padding-top: 10px;
-    max-width: 100%;
+    flex-basis: 50%;
     overflow: hide;
     float: right;
 }
@@ -47,15 +74,21 @@
 
 #nucleosome-rect {
     cursor: grab;
+    fill: #BBB;
+    stroke: #777;
+    stroke-width: 1;
 }
 
 .nucleosome-marker {
     cursor: grab;
+    fill: #FFFC61;
+    stroke: #000;
+    stroke-width: .5;
 }
 
 #settings-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-flow: row nowrap;
     margin-bottom: 10px;
 }
 
@@ -78,7 +111,7 @@
 
 .global-slider {
     position: absolute;
-    top: 13px;
+    top: 21px;
     margin-left: 10px;
 }
 
@@ -144,14 +177,16 @@
 }
 
 .remove-icon {
+    /* &:extend(.fa, .fa-times-circle, .fa-2xl, .fa-solid); */
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    color: red;
 }
 
 .add-row-icon {
+    /* &:extend(.fa, .fa-circle-plus, .fa-2xl, .fa-solid); */
     cursor: pointer;
     margin-top: 5px;
+    color: green;
 }
 
 .nucleosome-marker-section {
@@ -164,6 +199,20 @@
 
 .mol-viz-section {
     padding-top: 15px;
+}
+
+.tableFixHead {
+    overflow: auto;
+    font-size: 16px;
+    height: 50px;
+    width: 100%;
+    border: 1px solid black;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 #composite-table {
@@ -186,9 +235,28 @@
     border: 1px solid black;
 }
 
-#add-row {
-    padding-left: 10px;
-    padding-bottom: 5px;
+#composite-table th, td {
+    padding: 8px 16px;
+}
+
+#composite-table th {
+    background: #eee;
+}
+
+#composite-table th:nth-child(1) {
+    text-align: center;
+}
+
+#composite-table td:nth-child(1) {
+    text-align: center;
+}
+
+#composite-table th:nth-child(n+3):nth-child(-n+7) {
+    text-align: center;
+}
+
+#composite-table td:nth-child(n+3):nth-child(-n+7) {
+    text-align: center;
 }
 
 .mouse-highlight {
@@ -199,12 +267,8 @@
     background-color: #CCCCCC;
 }
 
-.setting-label {
-    margin-right: 5px;
-}
-
 .drag-col {
-    padding-left: 10px;
+    color: gray;
 }
 
 .name-div {
@@ -234,6 +298,8 @@ input[type=range] {
 }
 
 .scale-slider {
+    position: relative;
+    top: -3px;
     margin-left: 10px;
     margin-top: 10px;
 }
@@ -242,12 +308,8 @@ input[type=range] {
     width: 40px;
 }
 
-.swap-col {
-    width: 60px;
-    padding-right: 20px;
-}
-
 .swap-container {
+    width: 40px;
     cursor: pointer;
 }
 
@@ -259,12 +321,9 @@ input[type=range] {
     filter: grayscale(100%);
 }
 
-.hide-col {
-    width: 60px;
-    padding-right: 20px;
-}
-
 .hide-container {
+    width: 45px;
+    text-align: center;
     cursor: pointer;
 }
 

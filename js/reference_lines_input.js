@@ -10,13 +10,10 @@ const referenceLinesInput = class {
 
         const self = this;
 
-        this.horizontalLinesSection = this.container.append("div")
+        this.horizontalLinesSection = this.container.append("span")
             .classed("ref-line-section", true)
-            .text("Horizontal lines");
-        this.horizontalLinesTable = this.horizontalLinesSection.append("table")
-            .classed("ref-line-table", true);
-        const horizontalLinesAddRow = this.horizontalLinesSection.append("svg")
-            .classed("add-row-icon", true)
+        const horizontalLinesAddRow = this.horizontalLinesSection.append("i")
+            .classed("add-row-icon fa-solid fa-lg fa-circle-plus", true)
             .on("click", function() {
                 const y = (plotObj.yscale.domain()[0] + plotObj.yscale.domain()[1]) / 2;
                 dataObj.referenceLines.horizontalLines.push({
@@ -28,15 +25,15 @@ const referenceLinesInput = class {
                     "y", y, dataObj.referenceLines.horizontalLines);
                 referenceLinesObj.updateReferenceLines()
             });
-        this.createAddRowIcon(horizontalLinesAddRow);
-
-        this.verticalLinesSection = this.container.append("div")
-            .classed("ref-line-section", true)
-            .text("Vertical lines");
-        this.verticalLinesTable = this.verticalLinesSection.append("table")
+        this.horizontalLinesSection.append("text")
+            .text("  Horizontal lines");
+        this.horizontalLinesTable = this.horizontalLinesSection.append("table")
             .classed("ref-line-table", true);
-        const verticalLinesAddRow = this.verticalLinesSection.append("svg")
-            .classed("add-row-icon", true)
+
+        this.verticalLinesSection = this.container.append("span")
+            .classed("ref-line-section", true)
+        const verticalLinesAddRow = this.verticalLinesSection.append("i")
+            .classed("add-row-icon fa-solid fa-lg fa-circle-plus", true)
             .on("click", function() {
                 const x = Math.floor((dataObj.globalSettings.xmin + dataObj.globalSettings.xmax) / 2);
                 dataObj.referenceLines.verticalLines.push({
@@ -48,24 +45,11 @@ const referenceLinesInput = class {
                     "x", x, dataObj.referenceLines.verticalLines);
                 referenceLinesObj.updateReferenceLines()
             });
-        this.createAddRowIcon(verticalLinesAddRow);
-    }
+        this.verticalLinesSection.append("text")
+            .text("  Vertical lines");
+        this.verticalLinesTable = this.verticalLinesSection.append("table")
+            .classed("ref-line-table", true);
 
-    createAddRowIcon(selector) {
-        selector
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("viewbox", "0 0 30 30")
-            .attr("width", "30")
-            .attr("height", "30");
-        selector.append("circle")
-            .attr("cx", 15)
-            .attr("cy", 15)
-            .attr("r", 15)
-            .attr("fill", "#DDDDDD");
-        selector.append("path")
-            .attr("d", "m 15 2 l 0 26 M 2 15 l 26 0")
-            .attr("stroke", "#000000")
-            .attr("stroke-width", 4)
     }
 
     addRow(newRow, axis, pos, referenceLinesArr) {
@@ -73,7 +57,7 @@ const referenceLinesInput = class {
             .classed("ref-line-pos-col", true);
         posCol.append("label")
             .classed("setting-label", true)
-            .text(axis + ":");
+            .text(axis + "=");
         posCol.append("input")
             .attr("type", "text")
             .classed("ref-line-pos-input", true)
@@ -124,27 +108,14 @@ const referenceLinesInput = class {
 
         const removeIcon = newRow.append("td")
             .classed("ref-line-remove-col", true)
-            .append("svg")
-                .classed("remove-icon", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-200 -200 400 400")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
+            .append("i")
+                .classed("remove-icon fa-solid fa-lg fa-times-circle", true)
                 .on("click", function() {
                     const idx = this.parentNode.parentNode.rowIndex;
                     referenceLinesArr.splice(idx, 1);
                     referenceLinesObj.updateReferenceLines();
                     this.parentNode.parentNode.remove()
                 });
-        removeIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 200)
-            .attr("fill", "#DD0000");
-        removeIcon.append("polygon")
-            .attr("points", "-130,30 -30,30 -30,130 30,130 30,30 130,30 130,-30 30,-30 30,-130 -30,-130 -30,-30 -130,-30")
-            .attr("fill", "#FFFFFF")
-            .attr("transform", "rotate(45)")
     }
 
     createStyleSVG(selector, style) {

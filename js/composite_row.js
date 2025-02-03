@@ -25,24 +25,10 @@ const compositeRow = class {
         this.dragIcon = this.row.append("td").append("div")
             .classed("drag-col", true)
             .attr("title", "Drag to reorder")
-            .append("svg")
-                .classed("drag-icon", true)
-                .attr("baseProfile", "full")
-                .attr("width", "24px")
-                .attr("viewBox", "0 0 16 16")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g")
-                    .selectAll("line")
-                    .data([4, 8, 12])
-                    .join("line")
-                        .attr("x1", 0)
-                        .attr("y1", d => d)
-                        .attr("x2", 16)
-                        .attr("y2", d => d)
-                        .attr("stroke", "gray")
-                        .attr("stroke-width", 2);
-        
+            .append("i")
+                .classed("drag-icon fa-solid fa-2xl fa-bars", true);
+                // .classed("drag-icon fa-solid fa-2xl fa-grip-lines", true);
+
         // Add the name column
         this.nameInput = this.row.append("td").append("div")
             .classed("name-div", true)
@@ -81,9 +67,6 @@ const compositeRow = class {
         // Add the scale column
         const scaleDiv = this.row.append("td").append("div")
                 .classed("slider-div", true);
-                scaleDiv.append("label")
-                .classed("setting-label", true)
-                .text("Scale:");
         this.scaleTextInput = scaleDiv.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -112,9 +95,6 @@ const compositeRow = class {
             .on("mouseup", function() {self.enableDrag()});
         // Add the opacity column
         const opacityCol = this.row.append("td");
-        opacityCol.append("label")
-            .classed("setting-label", true)
-            .text("Opacity:");
         this.minOpacityInput = opacityCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -142,9 +122,6 @@ const compositeRow = class {
         
         // Add the smoothing column
         const smoothingCol = this.row.append("td");
-        smoothingCol.append("label")
-                .classed("setting-label", true)
-                .text("Smoothing:");
         this.smoothingInput = smoothingCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -159,9 +136,6 @@ const compositeRow = class {
         
         // Add the bp shift column
         const bpShiftCol = this.row.append("td");
-        bpShiftCol.append("label")
-            .classed("setting-label", true)
-            .text("BP Shift:");
         this.shiftInput = bpShiftCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
@@ -211,25 +185,11 @@ const compositeRow = class {
 
                 self.closeEyeIcon()
             })
-            .append("svg")
+            .append("i")
                 .classed("hide-icon", true)
                 .classed("eye-open", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-100 -100 200 200")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g");
-        this.eyeOpenIcon.append("path")
-            .attr("d", "M-100 0C-50 60 50 60 100 0C50 -60 -50 -60 -100 0")
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 3);
-        this.eyeOpenIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 30)
-            .attr("fill", "black")
-            .attr("stroke", "none");
+                .classed("fas fa-2xl fa-eye", true)
+                .attr("baseProfile", "full");
         this.eyeClosedIcon = hideCol.append("div")
             .classed("hide-container", true)
             .attr("title", "Show")
@@ -241,21 +201,11 @@ const compositeRow = class {
 
                 self.openEyeIcon()
             })
-            .append("svg")
+            .append("i")
                 .classed("hide-icon", true)
                 .classed("eye-closed", true)
-                .attr("title", "Show")
-                .attr("baseProfile", "full")
-                .attr("viewBox", "-100 -100 200 200")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .style("display", "none")
-                .append("g");
-        this.eyeClosedIcon.append("path")
-            .attr("d", "M-100 0C-50 60 50 60 100 0M-66.77 27.7L-74.21 40.78M-24.62 42.82L-27.26 57.58M24.62 42.82L27.26 57.58M66.77 27.7L74.21 40.78")
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 3);
+                .classed("fas fa-2xl fa-eye-slash", true)
+                .attr("title", "Show");
 
         // Add file upload column
         const uploadCol = this.row.append("td"),
@@ -270,19 +220,8 @@ const compositeRow = class {
             .classed("upload-button", true)
             .attr("title", "Upload file(s)")
             .on("click", function() {$(fileInput.node()).click()})
-            .append("svg")
-                .classed("upload-icon", true)
-                .attr("baseProfile", "full")
-                .attr("viewBox", "0 0 24 24")
-                .attr("version", "1.1")
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .append("g")
-                    .append("path")
-                        .attr("d", "M9 10L12 7L15 10M12 7V21M20 7V4A1 1 0 0 0 19 3H5A1 1 0 0 0 4 4V7")
-                        .attr("stroke", "#000000")
-                        .attr("stroke-width", 2)
-                        .attr("stroke-linejoin", "round")
-                        .attr("fill", "none");
+            .append("i")
+            .classed("upload-icon fas fa-upload", true);
         this.uploadLabel = uploadCol.append("label")
             .classed("upload-label", true)
             .style("padding-left", "10px");
@@ -299,28 +238,14 @@ const compositeRow = class {
             });
 
         // Add remove column
-        const removeIcon = this.row.append("td").append("svg")
-            .classed("remove-icon", true)
-            .attr("baseProfile", "full")
-            .attr("viewBox", "-200 -200 400 400")
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
+        const removeIcon = this.row.append("td").append("i")
+            .classed("remove-icon fa-solid fa-2xl fa-times-circle", true)
             .on("click", function() {
                 tableObj.removeRow(self.idx);
                 dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
                 plotObj.updatePlot();
                 legendObj.updateLegend()
             });
-        removeIcon.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 200)
-            .attr("fill", "#DD0000");
-        removeIcon.append("polygon")
-            .attr("points", "-130,30 -30,30 -30,130 30,130 30,30 130,30 130,-30 30,-30 30,-130 -30,-130 -30,-30 -130,-30")
-            .attr("fill", "#FFFFFF")
-            .attr("transform", "rotate(45)");
-            
         this.updateInputs()
     }
 
