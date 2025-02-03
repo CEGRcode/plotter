@@ -204,7 +204,9 @@
 .tableFixHead {
     overflow: auto;
     font-size: 16px;
-    /* height: 80px; */
+    height: 50px;
+    width: 100%;
+    border: 1px solid black;
 }
 
 .tableFixHead thead th {
@@ -306,10 +308,10 @@ input[type=range] {
 
 .swap-col {
     width: 60px;
-    padding-right: 20px;
 }
 
 .swap-container {
+    width: 40px;
     cursor: pointer;
 }
 
@@ -321,12 +323,9 @@ input[type=range] {
     filter: grayscale(100%);
 }
 
-.hide-col {
-    width: 60px;
-    padding-right: 20px;
-}
-
 .hide-container {
+    width: 45px;
+    text-align: center;
     cursor: pointer;
 }
 
