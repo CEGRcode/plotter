@@ -6,6 +6,20 @@ const nucleosomeSliderInput = class {
         this.container = d3.select("#" + elementID);
 
         const self = this;
+
+        this.nucleosomePositionSection = this.container.append("div")
+            .classed("nucleosome-position-section", true)
+            .text("Nucleosome position:");
+        this.nucleosomePositionSection.append("br");
+        this.nucleosomePositionInput = this.nucleosomePositionSection.append("input")
+            .attr("type", "text")
+            .classed("nucleosome-position-input", true)
+            .on("change", function() {
+                dataObj.nucleosomeSlider.x = parseInt(this.value);
+                nucleosomeSliderObj.updateNucleosomeSlider();
+                self.update()
+            });
+
         this.nucleosomeMarkerSection = this.container.append("div")
             .classed("nucleosome-marker-section", true)
             .text("Mark positions in nucleosome slider:");
@@ -31,6 +45,8 @@ const nucleosomeSliderInput = class {
             .text("Generate 3D visual ")
             .append("i")
             .classed("fas fa-up-right-from-square", true);
+
+        this.update()
     }
 
     generate3DVisual() {
@@ -53,6 +69,7 @@ const nucleosomeSliderInput = class {
     }
 
     update() {
+        this.nucleosomePositionInput.node().value = dataObj.nucleosomeSlider.x;
         this.nucleosomeMarkerInput.node().value = dataObj.nucleosomeSlider.lines.join(",")
     }
 };

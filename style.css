@@ -189,8 +189,17 @@
     color: green;
 }
 
+.nucleosome-position-section {
+    width: 100%;
+}
+
+.nucleosome-position-input {
+    margin-top: 5px;
+}
+
 .nucleosome-marker-section {
     width: 100%;
+    margin-top: 10px;
 }
 
 .nucleosome-marker-input {
