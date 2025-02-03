@@ -215,6 +215,7 @@
     font-size: 16px;
     height: 50px;
     width: 100%;
+    background: #eee;
     border: 1px solid black;
     position: sticky;
     top: 0;
@@ -243,10 +244,6 @@
 
 #composite-table th, td {
     padding: 8px 16px;
-}
-
-#composite-table th {
-    background: #eee;
 }
 
 #composite-table th:nth-child(1) {
