@@ -72,8 +72,8 @@ const compositeLoader = class {
             };
             // Tab-separated fields
             let fields = line.split("\t");
-            // If the first field is empty or "NAME" it is the x domain
-            if (fields[0] === "" || fields[0] === "NAME") {
+            // If the first field is empty or "NAME" or "YORF" it is the x domain
+            if (fields[0] === "" || fields[0] === "NAME" || fields[0] === "YORF") {
                 xmin_curr = parseInt(fields[1]);
                 xmax_curr = parseInt(fields[fields.length - 1]);
                 // If the x domain starts at 0 shift it to the left
@@ -143,7 +143,7 @@ const compositeLoader = class {
             // Get the first field
             let fields = line.split("\t"),
                 col0 = fields[0];
-            if (col0 === "" || col0 === "NAME") {
+            if (col0 === "" || col0 === "NAME" || col0 === "YORF") {
                 // If the x domain is defined, save the composite
                 if (save_comp) {
                     composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
