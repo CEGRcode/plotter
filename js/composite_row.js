@@ -65,7 +65,9 @@ const compositeRow = class {
             });
         
         // Add the scale column
-        const scaleDiv = this.row.append("td").append("div")
+        const scaleDiv = this.row.append("td")
+            .classed("scale-col", true)
+            .append("div")
                 .classed("slider-div", true);
         this.scaleTextInput = scaleDiv.append("input")
             .attr("type", "text")
@@ -94,7 +96,7 @@ const compositeRow = class {
             .on("mousedown", function() {self.disableDrag()})
             .on("mouseup", function() {self.enableDrag()});
         // Add the opacity column
-        const opacityCol = this.row.append("td");
+        const opacityCol = this.row.append("td").classed("opacity-col", true);
         this.minOpacityInput = opacityCol.append("input")
             .attr("type", "text")
             .classed("setting-text", true)
