@@ -218,6 +218,19 @@ const compositeLoader = class {
         };
         return {composites, ids}
     }
+
+    updateReferenceCounter() {
+        this.referenceCounter = {};
+        for (const compositeDataObj of dataObj.compositeData) {
+            for (const id of compositeDataObj.ids) {
+                if (id in this.referenceCounter) {
+                    this.referenceCounter[id]++
+                } else {
+                    this.referenceCounter[id] = 1
+                }
+            }
+        }
+    }
 };
 
 const compositeLoaderObj = new compositeLoader();
