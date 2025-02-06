@@ -233,6 +233,9 @@ const compositeRow = class {
             .classed("clear-button", true)
             .text("Clear")
             .on("click", function() {
+                for (const id of self.compositeDataObj.ids) {
+                    compositeLoaderObj.referenceCounter[id]--
+                };
                 self.compositeDataObj.clearData();
                 plotObj.updatePlot();
                 legendObj.updateLegend();
@@ -243,6 +246,9 @@ const compositeRow = class {
         const removeIcon = this.row.append("td").append("i")
             .classed("remove-icon fa-solid fa-2xl fa-times-circle", true)
             .on("click", function() {
+                for (const id of self.compositeDataObj.ids) {
+                    compositeLoaderObj.referenceCounter[id]--
+                };
                 tableObj.removeRow(self.idx);
                 dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
                 plotObj.updatePlot();

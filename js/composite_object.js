@@ -92,13 +92,24 @@ const compositeObject = class {
 
     async loadFiles(file_list) {
         const self = this;
-        return new Promise(async function(resolve) {
-            for (const file of file_list) {
-                self.ids.push(file.name);
-                self.filesLoaded++
+        return new Promise(async function(resolve, reject) {
+            const promiseArr = await Promise.allSettled(compositeLoaderObj.loadFiles(file_list));
+
+            if (promiseArr.every(p => p.status == "rejected")) {
+                self.clearData();
+                reject("All loaded files invalid");
+                return
             };
-    
-            if ((await Promise.all(compositeLoaderObj.loadFiles(file_list))).some(overwrite => overwrite)) {
+
+            for (const p of promiseArr) {
+                if (p.status == "fulfilled") {
+                    const id = p.value[0];
+                    self.ids.push(id);
+                    self.filesLoaded++
+                }
+            };
+
+            if (promiseArr.some(p => p.value[1])) {
                 dataObj.updateAllComposites()
             } else {
                 self.updateData()
