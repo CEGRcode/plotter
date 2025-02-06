@@ -58,7 +58,7 @@ const compositeLoader = class {
             reader.onload = function() {
                 try {
                     const {composites: multiCompositeData, ids} = self.parseMultiComposite(reader.result);
-                    for (const id in ids) {
+                    for (const id of ids) {
                         if (self.referenceCounter[id] > 0) {
                             if (!confirm(id + " already loaded. Overwrite?")) {
                                 self.referenceCounter[id]++;
