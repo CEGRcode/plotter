@@ -42,6 +42,8 @@ const yAxisInput = class {
                 referenceLinesObj.updateReferenceLines();
                 nucleosomeSliderObj.updateNucleosomeSlider()
             });
+            
+        this.element.append("br");
         
         this.symmetricYCheckbox = this.element.append("input")
             .attr("type", "checkbox")
