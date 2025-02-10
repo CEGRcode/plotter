@@ -17,11 +17,8 @@ const opacityInput = class {
             .classed("setting-text", true)
             .on("change", function() {
                 dataObj.globalSettings.minOpacity = parseFloat(this.value);
-                if (self.slider1.node().value < self.slider2.node().value) {
-                    self.slider1.node().value = dataObj.globalSettings.minOpacity * 100
-                } else {
-                    self.slider2.node().value = dataObj.globalSettings.minOpacity * 100
-                }
+                self.slider1.node().value = dataObj.globalSettings.minOpacity * 100;
+                self.slider2.node().value = dataObj.globalSettings.maxOpacity * 100;
                 plotObj.updatePlot()
             });
         this.textInputCol.append("span")
@@ -32,11 +29,8 @@ const opacityInput = class {
             .classed("setting-text", true)
             .on("change", function() {
                 dataObj.globalSettings.maxOpacity = parseFloat(this.value);
-                if (self.slider1.node().value > self.slider2.node().value) {
-                    self.slider1.node().value = dataObj.globalSettings.maxOpacity * 100
-                } else {
-                    self.slider2.node().value = dataObj.globalSettings.maxOpacity * 100
-                }
+                self.slider1.node().value = dataObj.globalSettings.minOpacity * 100;
+                self.slider2.node().value = dataObj.globalSettings.maxOpacity * 100;
                 plotObj.updatePlot()
             });
         this.sliderInputCol = this.element.append("td").classed("slider-container", true);
