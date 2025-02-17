@@ -5,6 +5,17 @@ import math
 import composite
 import os
 
+"""
+This script is designed to parse data from composite files, extract sense and anti-sense data, and organize the data into a
+structured format. 
+
+The key functions in the script:
+1. parse_simple
+2. get_prefixes_from_multiple_composites
+3. parse_multiple_composite
+4. 
+"""
+
 # Returns a simple composite from a single file
 def parse_simple(file):
     fileArr = open(file, "r").read().split("\n")
