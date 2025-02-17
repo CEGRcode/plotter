@@ -1,17 +1,42 @@
-# Quick start
+---
+title: Quick Start
+---
+
+Welcome to Plotter! 
+
+Plotter is a web application made for plotting genomic data. 
+
+# Getting Started 
 1. Download the repository labeled “plotter” from [CEGRcode Github](https://github.com/CEGRcode)
 2. Open “plotter” from your device’s local directory.
 3. Right-click the index.html file to open with your device’s home browser.
-4. The locus plotter interface should now be displayed on your screen through your device’s home browser.
+4. The locus plotter interface should now be displayed on your screen through your device’s home browser. 
 5. Download the provided data to your device and import it onto the interface
 To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Tutorials/chipexo-tutorial.md)
 
-# Important Buttons
-- Import/Export JSON session: allows users to save their current JSON session (export) and import it at a later date to start where they left off
-- Reset Plot: allows users to reset the plot, outputting an empty plot
-- Select a preset: allows users to apply a preset of already-customized inputs to their plot
-- Autoscale axes: allows the system to automatically scale the axes of the plot
-- Lock axes: locks the current axes inputs so that they are not changeable 
+## Important Buttons
+- **Import/Export JSON session**: allows users to save their current JSON session (export) and import it at a later date to start where they left off
+- **Upload Multi-Composite**: 
+- **Autoscale axes**: allows the system to automatically scale the axes of the plot
+- **Lock axes**: locks the current axes inputs so that they are not changeable 
+
+# Additional Options
+**Global Settings Features**
+- Opacity: 
+- Smoothing: 
+- Color Trace: 
+- Enable Plot Tooltip: 
+- Show Legend: 
+
+**Reference Lines Features**
+- Horizontal Lines:
+- Vertical Lines: 
+
+**Nucleosome Slider**
+- Nucleosome Position: 
+- Mark Position in Nucleosome Slider: 
+- General 3D Visual: 
+
 
 # Tutorial
 1. Click “add entry” to create a new row under IDs
