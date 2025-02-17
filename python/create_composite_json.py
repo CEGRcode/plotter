@@ -2,6 +2,15 @@ import json
 import os
 import argparse
 
+""" This script creates a composite object by taking in a list of file paths (IDs) and additional optional parameters. 
+It returns a Python dictionary that represents the composite structure, which can later be converted into a JSON file for storage, 
+sharing, or further processing.
+
+The key functions in the script:
+1. create_composite_obj
+"""
+
+# Creating composite plot python dictionary
 def create_composite_obj(ids, name=None, primary_color=None, secondary_color=None, scale=1.,
                          min_opacity=None, max_opacity=None, smoothing=None, bp_shift=None, shift_occupancy=0.,
                          hide_sense=False, hide_anti=False, swap=False):
@@ -21,6 +30,7 @@ def create_composite_obj(ids, name=None, primary_color=None, secondary_color=Non
         'swap': swap
     }
 
+# Adding argparse arguments for user flexibiity
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a composite JSON file')
     parser.add_argument('--ids', type=str, nargs='*', required=True, help='List of composite .out file handles')
@@ -42,7 +52,8 @@ if __name__ == '__main__':
     composite_obj = create_composite_obj(args.ids, args.name, args.primary_color, args.secondary_color, args.scale,
                                          args.min_opacity, args.max_opacity, args.smoothing, args.bp_shift,
                                          args.shift_occupancy, args.hide_sense, args.hide_anti, args.swap)
-
+    
+    # Converting composite python dictionary to JSON file
     with open(args.output, 'w') as f:
         json.dump(composite_obj, f, indent=4)
         
