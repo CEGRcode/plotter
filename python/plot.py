@@ -5,6 +5,27 @@ import math
 import json
 import composite
 
+"""
+This script defines a class Plot that allows the creation of a composite plot with support for scaling, 
+plotting composite data, reference lines, and generating an SVG representation of the plot.The plot supports both combined and 
+individual strand representations of the data.
+
+The key functions in the script (Most of these functions are helper methods for managing SVG elements and data transformations.):
+1. plot_composite
+2. scale axes
+3. autoscale_axes
+4. add_composite_group
+5. plot_composites
+6. plot_reference_line
+7. create_legend 
+8. get_plot
+9. expot
+10. import_data
+11. generateGradients
+
+"""
+
+
 document = dom.Document()
 
 # Class that generates composite and reference lines svg elements

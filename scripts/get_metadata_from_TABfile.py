@@ -2,6 +2,11 @@ import argparse
 import json
 import requests
 
+"""
+This script is designed to parse metadata from a tab-delimited input file. The parsed metadata is stored in a dictionary and then exported to a JSON file. 
+The script takes command-line arguments for the input file and output JSON file and processes the tab-delimited data into a structured JSON format.
+"""
+
 def getParams():
     '''Parse parameters from the command line'''
     parser = argparse.ArgumentParser(description='Retrieve metadata from a tab-delimited file for plotter.')
