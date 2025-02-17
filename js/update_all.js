@@ -1,5 +1,6 @@
 const updateAll = function() {
     tableObj.loadFromDataObject();
+    compositeLoaderObj.updateReferenceCounter();
     xAxisInputObj.update();
     yAxisInputObj.update();
     lockAxesObj.update();

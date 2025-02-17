@@ -1,5 +1,7 @@
 const compositeLoader = class {
-    constructor() {}
+    constructor() {
+        this.referenceCounter = {}
+    }
 
     loadFiles(file_list) {
         const self = this,
@@ -9,9 +11,11 @@ const compositeLoader = class {
             promise_arr.push(new Promise(function(resolve, reject) {
                 const file = file_list[i];
                 let overwrite = false;
-                if (file.name in dataObj.fileData) {
+                if (self.referenceCounter[file.name] > 0) {
                     if (!confirm(file.name + " already loaded. Overwrite?")) {
-                        reject(file.name + " already loaded.")
+                        resolve([file.name, false]);
+                        self.referenceCounter[file.name]++;
+                        return
                     } else {
                         overwrite = true
                     }
@@ -20,9 +24,17 @@ const compositeLoader = class {
 
                 reader.onload = function() {
                     // Update files object
-                    dataObj.fileData[file.name] = self.parseComposite(reader.result);
-
-                    resolve(overwrite)
+                    try {
+                        dataObj.fileData[file.name] = self.parseComposite(reader.result);
+                        if (!(file.name in self.referenceCounter)) {
+                            self.referenceCounter[file.name] = 0
+                        };
+                        self.referenceCounter[file.name]++;
+                        resolve([file.name, overwrite])
+                    } catch (e) {
+                        alert("Invalid composite file " + file.name);
+                        reject("Invalid composite file " + file.name)
+                    }
                 };
 
                 reader.onerror = function() {
@@ -44,10 +56,26 @@ const compositeLoader = class {
             const reader = new FileReader();
 
             reader.onload = function() {
-                const {composites: multiCompositeData, ids} = self.parseMultiComposite(reader.result);
-                Object.assign(dataObj.fileData, multiCompositeData);
-
-                resolve(ids)
+                try {
+                    const {composites: multiCompositeData, ids} = self.parseMultiComposite(reader.result);
+                    for (const id of ids) {
+                        if (self.referenceCounter[id] > 0) {
+                            if (!confirm(id + " already loaded. Overwrite?")) {
+                                self.referenceCounter[id]++;
+                                continue
+                            }
+                        };
+                        dataObj.fileData[id] = multiCompositeData[id];
+                        if (!(id in self.referenceCounter)) {
+                            self.referenceCounter[id] = 0
+                        };
+                        self.referenceCounter[id]++
+                    };
+                    resolve(ids)
+                } catch (e) {
+                    alert("Invalid multi-composite file");
+                    reject("Invalid multi-composite file")
+                }
             };
 
             reader.onerror = function() {
@@ -72,8 +100,8 @@ const compositeLoader = class {
             };
             // Tab-separated fields
             let fields = line.split("\t");
-            // If the first field is empty or "NAME" it is the x domain
-            if (fields[0] === "" || fields[0] === "NAME") {
+            // If the first field is empty or "NAME" or "YORF" it is the x domain
+            if (fields[0] === "" || fields[0] === "NAME" || fields[0] === "YORF") {
                 xmin_curr = parseInt(fields[1]);
                 xmax_curr = parseInt(fields[fields.length - 1]);
                 // If the x domain starts at 0 shift it to the left
@@ -121,7 +149,12 @@ const compositeLoader = class {
     
             i++
         };
-    
+        
+        if (xmin === undefined || xmax === undefined || sense === undefined ||
+                anti === undefined || sense.some(isNaN) || anti.some(isNaN)) {
+            throw "Invalid composite file"
+        };
+
         return {xmin: xmin, xmax: xmax, sense: sense, anti: anti}
     }
 
@@ -143,7 +176,7 @@ const compositeLoader = class {
             // Get the first field
             let fields = line.split("\t"),
                 col0 = fields[0];
-            if (col0 === "" || col0 === "NAME") {
+            if (col0 === "" || col0 === "NAME" || col0 === "YORF") {
                 // If the x domain is defined, save the composite
                 if (save_comp) {
                     composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
@@ -176,10 +209,27 @@ const compositeLoader = class {
     
         // Save the last composite
         if (save_comp) {
+            if (xmin === undefined || xmax === undefined || sense === undefined ||
+                    anti === undefined || sense.some(isNaN) || anti.some(isNaN)) {
+                throw "Invalid composite file"
+            };
             composites[id] = {xmin: xmin, xmax: xmax, sense: sense, anti: anti};
             ids.push(id)
         };
         return {composites, ids}
+    }
+
+    updateReferenceCounter() {
+        this.referenceCounter = {};
+        for (const compositeDataObj of dataObj.compositeData) {
+            for (const id of compositeDataObj.ids) {
+                if (id in this.referenceCounter) {
+                    this.referenceCounter[id]++
+                } else {
+                    this.referenceCounter[id] = 1
+                }
+            }
+        }
     }
 };
 

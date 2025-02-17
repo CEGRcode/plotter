@@ -60,7 +60,7 @@ const referenceLines = class {
                 .attr("x2", plotObj.width - plotObj.margins.right)
                 .attr("y1", d => plotObj.yscale(d.y))
                 .attr("y2", d => plotObj.yscale(d.y))
-                .style("display", d => inPlotY(d.y) ? null : "none");
+                .attr("display", d => inPlotY(d.y) ? null : "none");
         this.horizontalLineGroup.selectAll("line.draggable-reference-line")
             .data(dataObj.referenceLines.horizontalLines)
             .join("line")
@@ -72,17 +72,17 @@ const referenceLines = class {
                 .attr("y1", d => plotObj.yscale(d.y))
                 .attr("y2", d => plotObj.yscale(d.y))
                 .attr("index", (_, i) => "h" + i)
-                .style("display", d => inPlotY(d.y) ? null : "none")
+                .attr("display", d => inPlotY(d.y) ? null : "none")
                 .on("mousedown", function() {self.selectedLine = d3.select(this)});
         this.horizontalLineGroup.selectAll("text")
             .data(dataObj.referenceLines.horizontalLines)
             .join("text")
                 .classed("plot-text", true)
                 .attr("x", plotObj.width - plotObj.margins.right + 5)
-                .attr("y", d => plotObj.yscale(d.y) + 4)
-                .attr("font-size", "8px")
+                .attr("y", d => plotObj.yscale(d.y) + 2)
+                .attr("font-size", "6px")
                 .attr("fill", d => d.color)
-                .style("display", d => inPlotY(d.y) ? null : "none")
+                .attr("display", d => inPlotY(d.y) ? null : "none")
                 .text(d => d.y);
 
         this.verticalLineGroup.selectAll("line.visible-reference-line")
@@ -96,7 +96,7 @@ const referenceLines = class {
                 .attr("x2", d => plotObj.xscale(d.x))
                 .attr("y1", plotObj.margins.top)
                 .attr("y2", plotObj.height - plotObj.margins.bottom)
-                .style("display", d => inPlotX(d.x) ? null : "none");
+                .attr("display", d => inPlotX(d.x) ? null : "none");
         this.verticalLineGroup.selectAll("line.draggable-reference-line")
             .data(dataObj.referenceLines.verticalLines)
             .join("line")
@@ -108,7 +108,7 @@ const referenceLines = class {
                 .attr("y1", plotObj.margins.top)
                 .attr("y2", plotObj.height - plotObj.margins.bottom)
                 .attr("index", (_, i) => "v" + i)
-                .style("display", d => inPlotX(d.x) ? null : "none")
+                .attr("display", d => inPlotX(d.x) ? null : "none")
                 .on("mousedown", function() {self.selectedLine = d3.select(this)});
         this.verticalLineGroup.selectAll("text")
             .data(dataObj.referenceLines.verticalLines)
@@ -117,9 +117,10 @@ const referenceLines = class {
                 .attr("text-anchor", "middle")
                 .attr("x", d => plotObj.xscale(d.x))
                 .attr("y", plotObj.height - plotObj.margins.bottom + 10)
-                .attr("font-size", "8px")
+                .attr("transform", d => "rotate(-90 " + plotObj.xscale(d.x) + " " + (plotObj.height - plotObj.margins.bottom + 8) + ")")
+                .attr("font-size", "6px")
                 .attr("fill", d => d.color)
-                .style("display", d => inPlotX(d.x) ? null : "none")
+                .attr("display", d => inPlotX(d.x) ? null : "none")
                 .text(d => d.x)
     }
 };

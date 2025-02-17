@@ -9,7 +9,7 @@ const bpShiftInput = class {
         this.label = this.element.append("td").append("label")
             .attr("id", "bp-shift-input-label")
             .classed("setting-label", true)
-            .text("BP shift:");
+            .text("Shift:");
         this.textInput = this.element.append("td").append("input")
             .attr("type", "text")
             .attr("id", "bp-shift-text")

@@ -42,6 +42,8 @@ const yAxisInput = class {
                 referenceLinesObj.updateReferenceLines();
                 nucleosomeSliderObj.updateNucleosomeSlider()
             });
+            
+        this.element.append("br");
         
         this.symmetricYCheckbox = this.element.append("input")
             .attr("type", "checkbox")
@@ -67,14 +69,14 @@ const yAxisInput = class {
         this.symmetricYCheckbox.property("disabled", dataObj.globalSettings.combined);
         
         if (dataObj.globalSettings.combined) {
-            this.yMaxInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin);
+            this.yMaxInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymax - dataObj.globalSettings.ymin).toPrecision(2);
             this.yMinInput.node().value = 0
         } else if (dataObj.globalSettings.symmetricY) {
-            this.yMaxInput.node().value = roundUpWithPrecision(Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin));
-            this.yMinInput.node().value = roundUpWithPrecision(Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin))
+            this.yMaxInput.node().value = roundUpWithPrecision(Math.max(dataObj.globalSettings.ymax, -dataObj.globalSettings.ymin)).toPrecision(2);
+            this.yMinInput.node().value = roundUpWithPrecision(Math.min(-dataObj.globalSettings.ymax, dataObj.globalSettings.ymin)).toPrecision(2)
         } else {
-            this.yMaxInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymax);
-            this.yMinInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymin)
+            this.yMaxInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymax).toPrecision(2);
+            this.yMinInput.node().value = roundUpWithPrecision(dataObj.globalSettings.ymin).toPrecision(2)
         }
     }
 

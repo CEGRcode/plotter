@@ -6,8 +6,8 @@ const compositeTable = class {
         const self = this;
 
         this.container = d3.select("#" + elementID)
-        const thb = this.container.append("table").classed("tableFixHead", true);
-        const headerRow = thb.append("thead");
+        const thb = this.container.append("table");
+        const headerRow = thb.append("thead").classed("tableFixHead", true);
         // Insert "Add composite row" in table header
         this.addRowIcon = headerRow.append("th").append("i")
             .classed("add-row-icon fa-solid fa-2xl fa-circle-plus", true)
@@ -15,12 +15,12 @@ const compositeTable = class {
                 const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
                 self.addRow(compositeDataObj)
             });
-        headerRow.append("th").text("Composite");
+        headerRow.append("th").text("Name");
         headerRow.append("th").text("Color");
         headerRow.append("th").text("Scale");
         headerRow.append("th").text("Opacity");
         headerRow.append("th").text("Smooth");
-        headerRow.append("th").text("BP shift");
+        headerRow.append("th").text("Shift");
         headerRow.append("th");
         headerRow.append("th");
         headerRow.append("th").text("Upload files");
