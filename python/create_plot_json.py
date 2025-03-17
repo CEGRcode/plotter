@@ -3,6 +3,19 @@ import argparse
 from create_file_data_json import create_file_data_obj
 from create_composite_json import create_composite_obj
 
+"""
+This script is designed to generate a JSON object that contains all necessary information for creating a plot. 
+The user can provide multiple options for composite and file data, customize axis limits, plot appearance (opacity, smoothing, etc.), 
+and control various other aspects of the plot's behavior. The generated data object can then be used to create the plot visually.
+
+The key functions in the script:
+1. get_axis_limits
+2. aggregate_composite_data
+3. create_data_obj
+4. main
+"""
+
+# Calculates axis limits.
 def get_axis_limits(file_data_obj):
     xmin = float('inf')
     xmax = float('-inf')
@@ -16,6 +29,7 @@ def get_axis_limits(file_data_obj):
 
     return xmin, xmax, ymin, ymax
 
+# Loads composite JSON files.
 def aggregate_composite_data(composite_jsons):
     composites = []
     for composite_json in composite_jsons:
@@ -23,6 +37,7 @@ def aggregate_composite_data(composite_jsons):
             composites.append(json.load(f))
     return composites
 
+# Assembles all the settings and data into a structured object.
 def create_data_obj(composites, file_data_obj, xmin, xmax, ymin, ymax, symmetric_y, lock_axes, min_opacity,
                     max_opacity, smoothing, bp_shift, combined, separate_colors, color_trace, enable_tooltip,
                     show_legend, title, xlabel, ylabel):
@@ -56,6 +71,7 @@ def create_data_obj(composites, file_data_obj, xmin, xmax, ymin, ymax, symmetric
         'nucleosomeSlider': {}
     }
 
+# Handles argument parsing and data file processing, then outputs the final JSON data.
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a plot JSON file')
     parser.add_argument('--composite-jsons', type=str, nargs='*', default=False,

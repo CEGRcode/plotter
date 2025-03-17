@@ -2,6 +2,11 @@ import argparse
 import json
 import requests
 
+"""
+This script retrieves metadata from the 4DNucleome Data API using BAM file accessions and processes it for visualization or further analysis.
+It allows the user to specify an input file containing accessions, fetches corresponding metadata, and outputs the results as a JSON file. 
+"""
+
 def getParams():
     '''Parse parameters from the command line'''
     parser = argparse.ArgumentParser(description='Retrieve 4D Nucleosome metadata from API for plotter.')
