@@ -5,7 +5,7 @@ const editPlotLabel = function(labelGroup, label, field) {
         text = label.text(),
         transform = label.attr("transform");
     // Remove the current label
-    label.style("display", "none");
+    labelGroup.selectAll("*").attr("display", "none");
     // Add a foreign object with an input field
     const foreignObject = labelGroup.append("foreignObject")
         .attr("x", x - 200)
@@ -35,10 +35,8 @@ const enterPlotLabelInput = function(ev, label, field) {
     if (ev.keyCode === 13) {
         d3.select(ev.target.parentNode).remove();
         label.style("display", null);
-        if (ev.target.value.trim().length > 0) {
-            dataObj.changeLabel(field, ev.target.value);
-            plotObj.updatePlot()
-        };
+        dataObj.changeLabel(field, ev.target.value);
+        plotObj.updatePlot();
         // Enable the download as svg button
         d3.select("#download-as-svg").property("disabled", false)
     }

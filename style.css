@@ -69,6 +69,11 @@
     fill: #6D98E6;
 }
 
+.blank-plot-label:hover {
+    cursor: pointer;
+    stroke: #6D98E6;
+}
+
 .draggable-reference-line {
     cursor: grab;
 }

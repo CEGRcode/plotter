@@ -100,6 +100,16 @@ const plotObject = class {
             .attr("text-anchor", "middle")
             .attr("font-size", "16px")
             .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
+        this._elements.blankTitle = titleGroup.append("rect")
+            .classed("blank-plot-label", true)
+            .attr("x", (this.margins.left + this.width - this.margins.right) / 2 - 50)
+            .attr("y", 5)
+            .attr("width", 100)
+            .attr("height", 20)
+            .attr("fill", "#FFFFFF")
+            .attr("stroke", "#000000")
+            .attr("stroke-width", .5)
+            .on("click", function() {editPlotLabel(titleGroup, self._elements.title, "title")});
         const xlabelGroup = this._elements.mainPlot.append("g");
         this._elements.xlabel = xlabelGroup.append("text")
             .classed("plot-text", true)
@@ -108,6 +118,16 @@ const plotObject = class {
             .attr("y", this.height - 5)
             .attr("text-anchor", "middle")
             .attr("font-size", "14px")
+            .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
+        this._elements.blankXlabel = xlabelGroup.append("rect")
+            .classed("blank-plot-label", true)
+            .attr("x", (this.margins.left + this.width - this.margins.right) / 2 - 50)
+            .attr("y", this.height - 18)
+            .attr("width", 100)
+            .attr("height", 16)
+            .attr("fill", "#FFFFFF")
+            .attr("stroke", "#000000")
+            .attr("stroke-width", .5)
             .on("click", function() {editPlotLabel(xlabelGroup, self._elements.xlabel, "xlabel")});
         const ylabelGroup = this._elements.mainPlot.append("g");
         this._elements.ylabel = ylabelGroup.append("text")
@@ -118,6 +138,16 @@ const plotObject = class {
             .attr("transform", "rotate(-90 " + (this.margins.left - 18) + " " + ((this.margins.top + this.height - this.margins.bottom) / 2) + ")")
             .attr("text-anchor", "middle")
             .attr("font-size", "14px")
+            .on("click", function() {editPlotLabel(ylabelGroup, self._elements.ylabel, "ylabel")});
+        this._elements.blankYlabel = ylabelGroup.append("rect")
+            .classed("blank-plot-label", true)
+            .attr("x", this.margins.left - 29)
+            .attr("y", (this.margins.top + this.height - this.margins.bottom) / 2 - 60)
+            .attr("width", 16)
+            .attr("height", 120)
+            .attr("fill", "#FFFFFF")
+            .attr("stroke", "#000000")
+            .attr("stroke-width", .5)
             .on("click", function() {editPlotLabel(ylabelGroup, self._elements.ylabel, "ylabel")});
 
         this.updatePlot()
@@ -165,9 +195,15 @@ const plotObject = class {
         this._elements.yminLabel.text(String(parseFloat(ymin.toPrecision(2))).length > 7 ? parseFloat(ymin.toPrecision(2)).toExponential() : parseFloat(ymin.toPrecision(2)));
         this._elements.ymaxLabel.text(String(parseFloat(ymax.toPrecision(2))).length > 6 ? parseFloat(ymax.toPrecision(2)).toExponential() : parseFloat(ymax.toPrecision(2)));
         // Update axis labels
-        this._elements.title.text(dataObj.globalSettings.labels.title);
-        this._elements.xlabel.text(dataObj.globalSettings.labels.xlabel);
-        this._elements.ylabel.text(dataObj.globalSettings.labels.ylabel);
+        this._elements.title.text(dataObj.globalSettings.labels.title)
+            .attr("display", dataObj.globalSettings.labels.title.trim().length > 0 ? null : "none");
+        this._elements.blankTitle.attr("display", dataObj.globalSettings.labels.title.trim().length > 0 ? "none" : null);
+        this._elements.xlabel.text(dataObj.globalSettings.labels.xlabel)
+            .attr("display", dataObj.globalSettings.labels.xlabel.trim().length > 0 ? null : "none");
+        this._elements.blankXlabel.attr("display", dataObj.globalSettings.labels.xlabel.trim().length > 0 ? "none" : null);
+        this._elements.ylabel.text(dataObj.globalSettings.labels.ylabel)
+            .attr("display", dataObj.globalSettings.labels.ylabel.trim().length > 0 ? null : "none");
+        this._elements.blankYlabel.attr("display", dataObj.globalSettings.labels.ylabel.trim().length > 0 ? "none" : null);
 
         // Update composite plots
         const plotN = this._elements.compositesArr.length,
@@ -397,12 +433,17 @@ const plotObject = class {
     }
 
     downloadAsSVG() {
+        // Hide placeholder labels
+        this._elements.mainPlot.selectAll(".blank-plot-label").attr("display", "none");
+        // Download plot as SVG
         const b64doc = btoa(this._elements.mainPlot.node().outerHTML.replaceAll("&nbsp;", "")),
             a = document.createElement("a"),
             e = new MouseEvent("click");
         a.download = "composite_plot.svg";
         a.href = "data:image/svg+xml;base64," + b64doc;
-        a.dispatchEvent(e)
+        a.dispatchEvent(e);
+        // Revert any changes to the plot
+        this.updatePlot()
     }
 };
 
