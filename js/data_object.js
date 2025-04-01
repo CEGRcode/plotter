@@ -3,6 +3,7 @@ const dataObject = class {
         this.globalSettings = globalSettings;
         this.fileData = fileData;
         this.compositeData = compositeData;
+        this.legendOrder = [...compositeData.keys()];
         this.referenceLines = referenceLines;
         this.nucleosomeSlider = nucleosomeSlider
     }
@@ -87,12 +88,38 @@ const dataObject = class {
             maxOpacity: maxOpacity, smoothing: smoothing, bpShift: bpShift, shiftOccupancy: shiftOccupancy,
             hideSense: hideSense, hideAnti: hideAnti, swap: swap, ids: ids});
         this.compositeData.push(compositeDataObj);
+        this.legendOrder.push(idx);
 
         return compositeDataObj
     }
 
-    updateCompositeData(compositeData) {
-        this.compositeData = compositeData
+    moveCompositeData(oldIdx, newIdx) {
+        const compositeDataObj = this.compositeData[oldIdx];
+        this.compositeData.splice(oldIdx, 1);
+        this.compositeData.splice(newIdx, 0, compositeDataObj);
+
+        for (const i in this.legendOrder) {
+            if (this.legendOrder[i] == oldIdx) {
+                this.legendOrder[i] = newIdx
+            } else if (this.legendOrder[i] > oldIdx && this.legendOrder[i] <= newIdx) {
+                this.legendOrder[i]--
+            } else if (this.legendOrder[i] < oldIdx && this.legendOrder[i] >= newIdx) {
+                this.legendOrder[i]++
+            }
+        }
+    }
+
+    removeCompositeData(idx) {
+        this.compositeData.splice(idx, 1);
+
+        for (const i in this.legendOrder) {
+            if (this.legendOrder[i] == idx) {
+                this.legendOrder.splice(i, 1)
+            };
+            if (this.legendOrder[i] > idx) {
+                this.legendOrder[i]--
+            }
+        }
     }
 
     updateAllComposites() {
@@ -175,8 +202,30 @@ const dataObject = class {
                     self.compositeData.push(compositeObj)
                 };
 
-                self.referenceLines = data.referenceLines;
-                self.nucleosomeSlider = data.nucleosomeSlider;
+                if (data.legendOrder) {
+                    self.legendOrder = data.legendOrder
+                } else {
+                    self.legendOrder = [...self.compositeData.keys()]
+                };
+
+                if (data.referenceLines) {
+                    self.referenceLines = data.referenceLines
+                } else {
+                    self.referenceLines = {
+                        horizontalLines: [],
+                        verticalLines: []
+                    }
+                };
+
+                if (data.nucleosomeSlider) {
+                    self.nucleosomeSlider = data.nucleosomeSlider
+                } else {
+                    self.nucleosomeSlider = {
+                        x: 0,
+                        lines: []
+                    }
+                };
+
                 resolve_()
             } else {
                 alert("JSON file does not contain the required data");
@@ -194,6 +243,7 @@ const dataObject = class {
                 globalSettings: this.globalSettings,
                 fileData: this.fileData,
                 compositeData: this.compositeData,
+                legendOrder: this.legendOrder,
                 referenceLines: this.referenceLines,
                 nucleosomeSlider: this.nucleosomeSlider
             },

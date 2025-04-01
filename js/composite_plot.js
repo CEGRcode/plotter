@@ -435,6 +435,7 @@ const plotObject = class {
     downloadAsSVG() {
         // Hide placeholder labels
         this._elements.mainPlot.selectAll(".blank-plot-label").attr("display", "none");
+        this._elements.mainPlot.selectAll(".legend-move").attr("display", "none");
         // Download plot as SVG
         const b64doc = btoa(this._elements.mainPlot.node().outerHTML.replaceAll("&nbsp;", "")),
             a = document.createElement("a"),
@@ -443,7 +444,8 @@ const plotObject = class {
         a.href = "data:image/svg+xml;base64," + b64doc;
         a.dispatchEvent(e);
         // Revert any changes to the plot
-        this.updatePlot()
+        this.updatePlot();
+        legendObj.updateLegend()
     }
 };
 

@@ -46,10 +46,6 @@ const compositeTable = class {
     }
 
     insertRowBefore(dragIdx, dropIdx) {
-        if (dragIdx === dropIdx) {
-            return
-        };
-
         // Move row elements
         const dragRow = this.rows[dragIdx],
             dropRow = this.rows[dropIdx];
@@ -57,19 +53,15 @@ const compositeTable = class {
 
         // Update row array
         this.rows.splice(dragIdx, 1);
-        this.rows.splice(dropIdx - (dropIdx > dragIdx), 0, dragRow);
+        this.rows.splice(dropIdx - (dropIdx >= dragIdx), 0, dragRow);
 
         // Update row indices
         for (const i in this.rows) {
             this.rows[i].updateIndex(i)
-        }
+        };
     }
 
     insertRowAfter(dragIdx, dropIdx) {
-        if (dragIdx === dropIdx) {
-            return
-        };
-
         // Move row elements
         const dragRow = this.rows[dragIdx],
             dropRow = this.rows[dropIdx];
@@ -77,7 +69,7 @@ const compositeTable = class {
 
         // Update row array
         this.rows.splice(dragIdx, 1);
-        this.rows.splice(dropIdx - (dropIdx > dragIdx) + 1, 0, dragRow);
+        this.rows.splice(dropIdx - (dropIdx >= dragIdx) + 1, 0, dragRow);
 
         // Update row indices
         for (const i in this.rows) {

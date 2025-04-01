@@ -250,7 +250,7 @@ const compositeRow = class {
                     compositeLoaderObj.referenceCounter[id]--
                 };
                 tableObj.removeRow(self.idx);
-                dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
+                dataObj.removeCompositeData(self.idx);
                 plotObj.updatePlot();
                 legendObj.updateLegend()
             });
@@ -327,7 +327,6 @@ const compositeRow = class {
             this.loadFiles(files)
         } else {
             this.insertRow(parseInt(ev.dataTransfer.getData("text/plain")), ev.clientY);
-            dataObj.updateCompositeData(tableObj.rows.map(row => row.compositeDataObj));
             plotObj.updatePlot();
             legendObj.updateLegend()
         }
@@ -346,10 +345,12 @@ const compositeRow = class {
     }
 
     insertRow(dragIdx, dropY) {
-        let {y, height} = this.row.node().getBoundingClientRect();
+        const {y, height} = this.row.node().getBoundingClientRect();
         if (dropY > y + (height / 2)) {
+            dataObj.moveCompositeData(dragIdx, this.idx - (this.idx >= dragIdx) + 1);
             tableObj.insertRowAfter(dragIdx, this.idx)
         } else {
+            dataObj.moveCompositeData(dragIdx, this.idx - (this.idx > dragIdx));
             tableObj.insertRowBefore(dragIdx, this.idx)
         }
     }
