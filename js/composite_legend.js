@@ -12,10 +12,8 @@ const legendObject = class {
         
         const self = this,
             visibleLegendOrder = [...dataObj.legendOrder.keys()].filter(function(legendIdx) {
-                const compositeIdx = dataObj.legendOrder[legendIdx];
-                return !dataObj.compositeData[compositeIdx].hideSense &&
-                    !dataObj.compositeData[compositeIdx].hideAnti &&
-                    dataObj.compositeData[compositeIdx].filesLoaded > 0
+                const compositeObj = dataObj.compositeData[dataObj.legendOrder[legendIdx]];
+                return !compositeObj.hideSense && !compositeObj.hideAnti && compositeObj.filesLoaded > 0
             }),
             elSelect = this.legend.selectAll("g.legend-element")
                 .data(visibleLegendOrder.map(idx => dataObj.compositeData[dataObj.legendOrder[idx]]))
@@ -44,7 +42,8 @@ const legendObject = class {
             .join("polygon")
                 .classed("legend-color-anti", true)
                 .attr("points", "15,0 15,15 0,15")
-                .attr("fill", d => dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ? (d.secondaryColor || d.primaryColor) : d.primaryColor)
+                .attr("fill", d => dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined ?
+                    (d.secondaryColor || d.primaryColor) : d.primaryColor)
                 .attr("display", d => d.hideAnti ? "none" : null);
         elSelect.selectAll("text")
             .data(d => [d])
