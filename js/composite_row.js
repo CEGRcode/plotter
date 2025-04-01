@@ -327,8 +327,7 @@ const compositeRow = class {
             this.loadFiles(files)
         } else {
             this.insertRow(parseInt(ev.dataTransfer.getData("text/plain")), ev.clientY);
-            plotObj.updatePlot();
-            legendObj.updateLegend()
+            plotObj.updatePlot()
         }
     }
 
