@@ -52,7 +52,7 @@ const compositeTable = class {
         $(dragRow.row.node()).insertBefore(dropRow.row.node());
 
         // Update row array
-        this.rows.splice(dropIdx - (dropIdx >= dragIdx), 0, this.rows.splice(dragIdx, 1)[0]);
+        this.rows.splice(dropIdx - (dropIdx > dragIdx), 0, this.rows.splice(dragIdx, 1)[0]);
 
         // Update row indices
         for (const i in this.rows) {
