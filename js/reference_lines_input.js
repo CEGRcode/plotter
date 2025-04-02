@@ -19,7 +19,7 @@ const referenceLinesInput = class {
             .on("click", function() {
                 const y = (plotObj.yscale.domain()[0] + plotObj.yscale.domain()[1]) / 2;
                 dataObj.addHorizontalReferenceLine(y, self.defaultColor, self.defaultLineStyle,
-                    self.defaultFontSize, self.defaultColor, "vertical", self.defaultLabelOffset);
+                    self.defaultFontSize, self.defaultColor, "horizontal", self.defaultLabelOffset);
                 self.update("horizontal");
                 referenceLinesObj.updateReferenceLines()
             });
