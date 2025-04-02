@@ -195,6 +195,7 @@ const referenceLinesInput = class {
             .join("input")
                 .classed("font-size-input", true)
                 .attr("type", "number")
+                .attr("min", 0)
                 .each(function(d) {
                     this.value = d.data.fontSize;
                     d3.select(this).on("change", function() {
