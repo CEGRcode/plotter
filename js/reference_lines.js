@@ -80,13 +80,15 @@ const referenceLines = class {
             .join("text")
                 .classed("plot-text", true)
                 .attr("text-anchor", "middle")
-                .attr("x", d => plotObj.width - plotObj.margins.right + d.labelOffset)
+                .attr("x", d => plotObj.width - plotObj.margins.right +
+                    (typeof d.labelOffset === "number" ? d.labelOffset : 10))
                 .attr("y", d => plotObj.yscale(d.y) + 2)
-                .attr("transform", d => d.textOrientation === "horizontal" ? "" :
-                    "rotate(-90 " + (plotObj.width - plotObj.margins.right + d.labelOffset) +
-                    " " + (plotObj.yscale(d.y) + 2) + ")")
+                .attr("transform", d => d.textOrientation === "vertical" ?
+                    "rotate(-90 " + (plotObj.width - plotObj.margins.right +
+                        (typeof d.labelOffset === "number" ? d.labelOffset : 10)) +
+                    " " + (plotObj.yscale(d.y) + 2) + ")" : "")
                 .attr("font-size", d => (d.fontSize || 0) + "px")
-                .attr("fill", d => d.fontColor)
+                .attr("fill", d => d.fontColor || d.color)
                 .attr("display", d => inPlotY(d.y) ? null : "none")
                 .text(d => d.y);
 
@@ -122,12 +124,14 @@ const referenceLines = class {
                 .classed("plot-text", true)
                 .attr("text-anchor", "middle")
                 .attr("x", d => plotObj.xscale(d.x))
-                .attr("y", d => plotObj.height - plotObj.margins.bottom + d.labelOffset)
-                .attr("transform", d => d.textOrientation === "horizontal" ? "" :
+                .attr("y", d => plotObj.height - plotObj.margins.bottom +
+                    (typeof d.labelOffset === "number" ? d.labelOffset : 10))
+                .attr("transform", d => d.textOrientation === "vertical" ?
                     "rotate(-90 " + plotObj.xscale(d.x) + " " +
-                    (plotObj.height - plotObj.margins.bottom + d.labelOffset - 2) + ")")
+                    (plotObj.height - plotObj.margins.bottom +
+                        (typeof d.labelOffset === "number" ? d.labelOffset : 10) - 2) + ")" : "")
                 .attr("font-size", d => (d.fontSize || 0) + "px")
-                .attr("fill", d => d.fontColor)
+                .attr("fill", d => d.fontColor || d.color)
                 .attr("display", d => inPlotX(d.x) ? null : "none")
                 .text(d => d.x)
     }
