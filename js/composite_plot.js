@@ -16,7 +16,6 @@ const plotObject = class {
             axisLeft: null,
             midaxisBottom: null,
             midaxisTop: null,
-            refline: null,
             xminLabel: null,
             xmaxLabel: null,
             yminLabel: null,
@@ -51,19 +50,6 @@ const plotObject = class {
         // Create dynamic axes
         this._elements.midaxisBottom = this._elements.mainPlot.append("g");
         this._elements.midaxisTop = this._elements.mainPlot.append("g");
-        // Create vertical line at reference point
-        this._elements.refline = this._elements.mainPlot.append("line")
-            .attr("stroke", "gray")
-            .attr("stroke-width", 1)
-            .attr("stroke-dasharray", "5,5")
-            .attr("opacity", .5);
-        // Create reference point label
-        this._elements.reflineLabel = this._elements.mainPlot.append("text")
-            .classed("plot-text", true)
-            .attr("y", this.height - this.margins.bottom + 15)
-            .attr("text-anchor", "middle")
-            .attr("font-size", "14px")
-            .text("0");
         // Create axis bound labels
         this._elements.xminLabel = this._elements.mainPlot.append("text")
             .classed("plot-text", true)
@@ -177,18 +163,7 @@ const plotObject = class {
                 .attr("display", null)
                 .attr("transform", "translate(0 " + this.yscale(0) + ")")
                 .call(d3.axisTop(this.xscale).tickFormat("")).style("color", "#000000")
-        }
-        // Update vertical line at reference point
-        this._elements.refline
-            .attr("x1", this.xscale(0))
-            .attr("x2", this.xscale(0))
-            .attr("y1", this.yscale(ymin))
-            .attr("y2", this.yscale(ymax))
-            .attr("display", dataObj.globalSettings.xmin < 0 && dataObj.globalSettings.xmax > 0 ? null : "none");
-        // Update reference point label
-        this._elements.reflineLabel
-            .attr("x", this.xscale(0))
-            .attr("display", dataObj.globalSettings.xmin < 0 && dataObj.globalSettings.xmax > 0 ? null : "none");
+        };
         // Update axis bound labels
         this._elements.xminLabel.text(dataObj.globalSettings.xmin);
         this._elements.xmaxLabel.text(dataObj.globalSettings.xmax);

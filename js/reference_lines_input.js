@@ -7,22 +7,20 @@ const referenceLinesInput = class {
 
         this.defaultColor = defaultColor;
         this.defaultLineStyle = defaultLineStyle;
+        this.defaultFontSize = 6;
+        this.defaultLabelOffset = 10;
 
         const self = this;
 
         this.horizontalLinesSection = this.container.append("span")
             .classed("ref-line-section", true)
-        const horizontalLinesAddRow = this.horizontalLinesSection.append("i")
+        this.horizontalLinesSection.append("i")
             .classed("add-row-icon fa-solid fa-lg fa-circle-plus", true)
             .on("click", function() {
                 const y = (plotObj.yscale.domain()[0] + plotObj.yscale.domain()[1]) / 2;
-                dataObj.referenceLines.horizontalLines.push({
-                    y: y,
-                    color: self.defaultColor,
-                    linestyle: self.defaultLineStyle
-                });
-                self.addRow(self.horizontalLinesTable.append("tr").classed("ref-line-row", true),
-                    "y", y, dataObj.referenceLines.horizontalLines);
+                dataObj.addHorizontalReferenceLine(y, self.defaultColor, self.defaultLineStyle,
+                    self.defaultFontSize, self.defaultColor, "vertical", self.defaultLabelOffset);
+                self.update("horizontal");
                 referenceLinesObj.updateReferenceLines()
             });
         this.horizontalLinesSection.append("text")
@@ -32,17 +30,13 @@ const referenceLinesInput = class {
 
         this.verticalLinesSection = this.container.append("span")
             .classed("ref-line-section", true)
-        const verticalLinesAddRow = this.verticalLinesSection.append("i")
+        this.verticalLinesSection.append("i")
             .classed("add-row-icon fa-solid fa-lg fa-circle-plus", true)
             .on("click", function() {
                 const x = Math.floor((dataObj.globalSettings.xmin + dataObj.globalSettings.xmax) / 2);
-                dataObj.referenceLines.verticalLines.push({
-                    x: x,
-                    color: self.defaultColor,
-                    linestyle: self.defaultLineStyle
-                });
-                self.addRow(self.verticalLinesTable.append("tr").classed("ref-line-row", true),
-                    "x", x, dataObj.referenceLines.verticalLines);
+                dataObj.addVerticalReferenceLine(x, self.defaultColor, self.defaultLineStyle,
+                    self.defaultFontSize, self.defaultColor, "horizontal", self.defaultLabelOffset);
+                self.update("vertical");
                 referenceLinesObj.updateReferenceLines()
             });
         this.verticalLinesSection.append("text")
@@ -50,72 +44,228 @@ const referenceLinesInput = class {
         this.verticalLinesTable = this.verticalLinesSection.append("table")
             .classed("ref-line-table", true);
 
+        dataObj.addVerticalReferenceLine(0, "#999999", "dashed", 14, "#000000", "horizontal", 15);
+        referenceLinesObj.updateReferenceLines();
+        this.updateAll()
     }
 
-    addRow(newRow, axis, pos, referenceLinesArr) {
-        const posCol = newRow.append("td")
-            .classed("ref-line-pos-col", true);
-        posCol.append("label")
-            .classed("setting-label", true)
-            .text(axis + "=");
-        posCol.append("input")
-            .attr("type", "text")
-            .classed("ref-line-pos-input", true)
-            .on("change", function() {
-                const idx = this.parentNode.parentNode.rowIndex;
-                referenceLinesArr[idx][axis] = parseFloat(this.value);
-                referenceLinesObj.updateReferenceLines()
-            })
-            .node().value = pos;
+    update(hv) {
+        const table = hv === "horizontal" ? this.horizontalLinesTable : this.verticalLinesTable,
+            referenceLinesArr = hv === "horizontal" ? dataObj.referenceLines.horizontalLines :
+                dataObj.referenceLines.verticalLines,
+            axis = hv === "horizontal" ? "y" : "x",
+            rowsSelector = table.selectAll("tr.ref-line-row")
+                .data(referenceLinesArr)
+                .join("tr")
+                    .classed("ref-line-row", true)
+                    .selectAll("table")
+                        .data((d, i) => [{data: d, index: i}])
+                        .join("table"),
+            lineSettingsSelector = rowsSelector.selectAll("tr.ref-line-line-settings")
+                .data(d => [d])
+                .join("tr")
+                    .classed("ref-line-line-settings", true),
+            labelSettingsSelector = rowsSelector.selectAll("tr.ref-line-label-settings")
+                .data(d => [d])
+                .join("tr")
+                    .classed("ref-line-label-settings", true)
+                    .classed("hidden", true);
+            self = this;
+
+        // Add a column for the position input
+        const posColSelector = lineSettingsSelector.selectAll("td.ref-line-pos-col")
+            .data(d => [d])
+            .join("td")
+                .classed("ref-line-pos-col", true);
+        posColSelector.selectAll("label.setting-label")
+            .data(() => [null])
+            .join("label")
+                .classed("setting-label", true)
+                .text(axis + "=");
+        posColSelector.selectAll("input.ref-line-pos-input")
+            .data(d => [d])
+            .join("input")
+                .attr("type", "text")
+                .classed("ref-line-pos-input", true)
+                .each(function(d) {
+                    this.value = d.data[axis];
+                    d3.select(this).on("change", function() {
+                        referenceLinesArr[d.index][axis] = parseFloat(this.value);
+                        referenceLinesObj.updateReferenceLines()
+                    })
+                });
+
+        // Add a column for the color input
+        lineSettingsSelector.selectAll("td.ref-line-color-col")
+            .data(d => [d])
+            .join("td")
+                .classed("ref-line-color-col", true)
+                .selectAll("input.ref-line-color-input")
+                    .data(d => [d])
+                    .join("input")
+                        .attr("type", "color")
+                        .classed("ref-line-color-input", true)
+                        .each(function(d) {
+                            this.value = d.data.color;
+                            d3.select(this).on("change", function() {
+                                referenceLinesArr[d.index].color = this.value;
+                                referenceLinesObj.updateReferenceLines()
+                            })
+                        });
         
-        newRow.append("td")
-            .classed("ref-line-color-col", true)
-            .append("input")
-                .attr("type", "color")
-                .classed("ref-line-color-input", true)
-                .on("change", function() {
-                    const idx = this.parentNode.parentNode.rowIndex;
-                    referenceLinesArr[idx].color = this.value;
-                    referenceLinesObj.updateReferenceLines()
-                })
-                .node().value = this.defaultColor;
-        
-        const styleCol = newRow.append("td")
-                .classed("ref-line-style-col", true),
-            styleSVG = styleCol.append("svg")
+        // Add a column for the line style selector
+        const styleColSelector = lineSettingsSelector.selectAll("td.ref-line-style-col")
+            .data(d => [d])
+            .join("td")
+                .classed("ref-line-style-col", true);
+        styleColSelector.selectAll("svg.ref-line-style-svg")
+            .data(d => [d])
+            .join("svg")
                 .classed("ref-line-style-svg", true)
+                .each(function(d) {
+                    const selector = d3.select(this);
+                    self.createStyleSVG(selector, d.data.linestyle)
+                })
                 .on("click", function() {
                     d3.select(this.parentNode).select(".ref-line-style-selector").classed("hidden", false)
                 });
-        this.createStyleSVG(styleSVG, this.defaultLineStyle);
+        styleColSelector.selectAll("div.ref-line-style-selector")
+            .data(d => [d])
+            .join("div")
+                .classed("ref-line-style-selector", true)
+                .classed("hidden", true)
+                .selectAll("svg.ref-line-style-svg")
+                    .data(d => Object.keys(lineStyles).map(s => ({style: s, index: d.index})))
+                    .join("svg")
+                        .classed("ref-line-style-svg", true)
+                        .each(function(d) {
+                            const selector = d3.select(this);
+                            self.createStyleSVG(selector, d.style);
+                            selector.on("click", function() {
+                                referenceLinesArr[d.index].linestyle = d.style;
+                                referenceLinesObj.updateReferenceLines();
+                                styleColSelector.select("svg").select("line").attr("stroke-dasharray", lineStyles[d.style]);
+                                d3.select(this.parentNode).classed("hidden", true)
+                            })
+                        });
 
-        const styleSelector = styleCol.append("div")
-            .classed("ref-line-style-selector", true)
-            .classed("hidden", true);
-        for (const style in lineStyles) {
-            const styleOption = styleSelector.append("svg")
-                .classed("ref-line-style-svg", true)
-                .on("click", function() {
-                    const idx = this.parentNode.parentNode.parentNode.rowIndex;
-                    referenceLinesArr[idx].linestyle = style;
-                    referenceLinesObj.updateReferenceLines();
-                    styleSVG.select("line").attr("stroke-dasharray", lineStyles[style]);
+        // Add a column for the label settings button
+        lineSettingsSelector.selectAll("td.ref-line-label-col")
+            .data(d => [d])
+            .join("td")
+                .classed("ref-line-label-col", true)
+                .selectAll("button")
+                    .data(() => [null])
+                    .join("button")
+                        .text("Label settings")
+                        .on("click", function() {
+                            const selector = d3.select(this.parentNode.parentNode.parentNode),
+                                notHidden = selector.select("tr.ref-line-label-settings").classed("not-hidden");
+                            selector.select("tr.ref-line-label-settings").classed("not-hidden", !notHidden)
+                        });
+        
+        // Add a column for the remove icon
+        lineSettingsSelector.selectAll("td.ref-line-remove-col")
+            .data(d => [d])
+            .join("td")
+                .classed("ref-line-remove-col", true)
+                .selectAll("i.remove-icon")
+                    .data(d => [d])
+                    .join("i")
+                        .classed("remove-icon fa-solid fa-lg fa-times-circle", true)
+                        .each(function(d) {
+                            d3.select(this).on("click", function() {
+                                referenceLinesArr.splice(d.index, 1);
+                                referenceLinesObj.updateReferenceLines();
+                                self.update(hv)
+                            })
+                        });
 
-                    styleSelector.classed("hidden", true)
+        const fontSizeCol = labelSettingsSelector.selectAll("td.font-size-col")
+            .data(d => [d])
+            .join("td")
+                .classed("font-size-col", true);
+        fontSizeCol.selectAll("label")
+            .data(() => [null])
+            .join("label")
+                .classed("setting-label", true)
+                .text("Size:");
+        fontSizeCol.selectAll("input")
+            .data(d => [d])
+            .join("input")
+                .classed("font-size-input", true)
+                .attr("type", "number")
+                .each(function(d) {
+                    this.value = d.data.fontSize;
+                    d3.select(this).on("change", function() {
+                        referenceLinesArr[d.index].fontSize = parseFloat(this.value);
+                        referenceLinesObj.updateReferenceLines()
+                    })
                 });
-            this.createStyleSVG(styleOption, style)
-        };
+        
+        labelSettingsSelector.selectAll("td.font-color-col")
+            .data(d => [d])
+            .join("td")
+                .classed("font-color-col", true)
+                .selectAll("input")
+                    .data(d => [d])
+                    .join("input")
+                        .attr("type", "color")
+                        .each(function(d) {
+                            this.value = d.data.fontColor;
+                            d3.select(this).on("change", function() {
+                                referenceLinesArr[d.index].fontColor = this.value;
+                                referenceLinesObj.updateReferenceLines()
+                            })
+                        });
+        
+        labelSettingsSelector.selectAll("td.text-orientation-col")
+            .data(d => [d])
+            .join("td")
+                .classed("text-orientation-col", true)
+                .attr("colspan", 2)
+                .selectAll("select")
+                    .data(d => [d])
+                    .join("select")
+                        .each(function(d) {
+                            this.value = d.data.textOrientation;
+                            d3.select(this).on("change", function() {
+                                referenceLinesArr[d.index].textOrientation = this.value;
+                                referenceLinesObj.updateReferenceLines()
+                            })
+                        })
+                        .selectAll("option")
+                            .data(["horizontal", "vertical"])
+                            .join("option")
+                                .text(d => d)
+                                .attr("value", d => d);
+        
+        const offsetCol = labelSettingsSelector.selectAll("td.label-offset-col")
+            .data(d => [d])
+            .join("td")
+                .classed("label-offset-col", true);
+        offsetCol.selectAll("label")
+            .data(() => [null])
+            .join("label")
+                .classed("setting-label", true)
+                .text("Pad:");
+        offsetCol.selectAll("input")
+            .data(d => [d])
+            .join("input")
+                .attr("type", "number")
+                .classed("label-offset-input", true)
+                .each(function(d) {
+                    this.value = d.data.labelOffset;
+                    d3.select(this).on("change", function() {
+                        referenceLinesArr[d.index].labelOffset = parseFloat(this.value);
+                        referenceLinesObj.updateReferenceLines()
+                    })
+                })
+    }
 
-        const removeIcon = newRow.append("td")
-            .classed("ref-line-remove-col", true)
-            .append("i")
-                .classed("remove-icon fa-solid fa-lg fa-times-circle", true)
-                .on("click", function() {
-                    const idx = this.parentNode.parentNode.rowIndex;
-                    referenceLinesArr.splice(idx, 1);
-                    referenceLinesObj.updateReferenceLines();
-                    this.parentNode.parentNode.remove()
-                });
+    updateAll() {
+        this.update("horizontal");
+        this.update("vertical")
     }
 
     createStyleSVG(selector, style) {
@@ -141,53 +291,6 @@ const referenceLinesInput = class {
             .attr("stroke", "#000000")
             .attr("stroke-width", 2)
             .attr("stroke-dasharray", lineStyles[style])
-    }
-
-    update() {
-        const dataNH = dataObj.referenceLines.horizontalLines.length,
-            tableNH = this.horizontalLinesTable.selectAll(".ref-line-row").size();
-        for (let i = 0; i < Math.max(tableNH, dataNH); i++) {
-            // If there are more rows in the table than data elements, remove the last row
-            if (i >= dataNH && i < tableNH) {
-                this.horizontalLinesTable.select(".ref-line-row:last-child").remove()
-            }
-            // If there are more data elements than rows in the table, add a new row
-            else if (i >= tableNH && i < dataNH) {
-                const newRow = this.horizontalLinesTable.append("tr").classed("ref-line-row", true);
-                this.addRow(newRow, "y", dataObj.referenceLines.horizontalLines[i].y,
-                    dataObj.referenceLines.horizontalLines);
-                newRow.select(".ref-line-color-input").node().value = dataObj.referenceLines.horizontalLines[i].color;
-                newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",
-                    lineStyles[dataObj.referenceLines.horizontalLines[i].linestyle])
-            } else {
-                const row = d3.select(this.horizontalLinesTable.node().rows[i]);
-                row.select(".ref-line-pos-input").node().value = dataObj.referenceLines.horizontalLines[i].y;
-                row.select(".ref-line-color-input").node().value = dataObj.referenceLines.horizontalLines[i].color;
-                row.select(".ref-line-style-svg line").attr("stroke-dasharray",
-                    lineStyles[dataObj.referenceLines.horizontalLines[i].linestyle])
-            }
-        };
-
-        const dataNV = dataObj.referenceLines.verticalLines.length,
-            tableNV = this.verticalLinesTable.selectAll(".ref-line-row").size();
-        for (let i = 0; i < Math.max(tableNV, dataNV); i++) {
-            if (i >= dataNV && i < tableNV) {
-                this.verticalLinesTable.select(".ref-line-row:last-child").remove()
-            } else if (i >= tableNV && i < dataNV) {
-                const newRow = this.verticalLinesTable.append("tr").classed("ref-line-row", true);
-                this.addRow(newRow, "x", dataObj.referenceLines.verticalLines[i].x,
-                    dataObj.referenceLines.verticalLines);
-                newRow.select(".ref-line-color-input").node().value = dataObj.referenceLines.verticalLines[i].color;
-                newRow.select(".ref-line-style-svg line").attr("stroke-dasharray",
-                    lineStyles[dataObj.referenceLines.verticalLines[i].linestyle])
-            } else {
-                const row = d3.select(this.verticalLinesTable.node().rows[i]);
-                row.select(".ref-line-pos-input").node().value = dataObj.referenceLines.verticalLines[i].x;
-                row.select(".ref-line-color-input").node().value = dataObj.referenceLines.verticalLines[i].color;
-                row.select(".ref-line-style-svg line").attr("stroke-dasharray",
-                    lineStyles[dataObj.referenceLines.verticalLines[i].linestyle])
-            }
-        }
     }
 };
 

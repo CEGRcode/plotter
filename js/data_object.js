@@ -173,6 +173,44 @@ const dataObject = class {
             resolve()
         })
     }
+
+    addHorizontalReferenceLine(y, color, linestyle, fontSize, fontColor, textOrientation, labelOffset) {
+        const referenceLineObj = {
+            y: y,
+            color: color,
+            linestyle: linestyle,
+            fontSize: fontSize,
+            fontColor: fontColor,
+            textOrientation: textOrientation,
+            labelOffset: labelOffset
+        };
+        this.referenceLines.horizontalLines.push(referenceLineObj);
+
+        return referenceLineObj
+    }
+
+    removeHorizontalReferenceLine(idx) {
+        this.referenceLines.horizontalLines.splice(idx, 1)
+    }
+
+    addVerticalReferenceLine(x, color, linestyle, fontSize, fontColor, textOrientation, labelOffset) {
+        const referenceLineObj = {
+            x: x,
+            color: color,
+            linestyle: linestyle,
+            fontSize: fontSize,
+            fontColor: fontColor,
+            textOrientation: textOrientation,
+            labelOffset: labelOffset
+        };
+        this.referenceLines.verticalLines.push(referenceLineObj);
+
+        return referenceLineObj
+    }
+
+    removeVerticalReferenceLine(idx) {
+        this.referenceLines.verticalLines.splice(idx, 1)
+    }
     
     async importDataFromJSON(file) {
         const self = this;

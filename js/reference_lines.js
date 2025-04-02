@@ -33,7 +33,7 @@ const referenceLines = class {
                     Math.min(plotObj.xscale.domain()[1], x))
             };
             referenceLinesObj.updateReferenceLines();
-            referenceLinesInputObj.update()
+            referenceLinesInputObj.updateAll()
         }).on("mouseup", function() {
             self.selectedLine = null
         });
@@ -56,6 +56,7 @@ const referenceLines = class {
                 .attr("stroke", d => d.color)
                 .attr("stroke-width", 1)
                 .attr("stroke-dasharray", d => lineStyles[d.linestyle])
+                .attr("opacity", .7)
                 .attr("x1", plotObj.margins.left)
                 .attr("x2", plotObj.width - plotObj.margins.right)
                 .attr("y1", d => plotObj.yscale(d.y))
@@ -78,10 +79,14 @@ const referenceLines = class {
             .data(dataObj.referenceLines.horizontalLines)
             .join("text")
                 .classed("plot-text", true)
-                .attr("x", plotObj.width - plotObj.margins.right + 5)
+                .attr("text-anchor", "middle")
+                .attr("x", d => plotObj.width - plotObj.margins.right + d.labelOffset)
                 .attr("y", d => plotObj.yscale(d.y) + 2)
-                .attr("font-size", "6px")
-                .attr("fill", d => d.color)
+                .attr("transform", d => d.textOrientation === "horizontal" ? "" :
+                    "rotate(-90 " + (plotObj.width - plotObj.margins.right + d.labelOffset) +
+                    " " + (plotObj.yscale(d.y) + 2) + ")")
+                .attr("font-size", d => (d.fontSize || 0) + "px")
+                .attr("fill", d => d.fontColor)
                 .attr("display", d => inPlotY(d.y) ? null : "none")
                 .text(d => d.y);
 
@@ -92,6 +97,7 @@ const referenceLines = class {
                 .attr("stroke", d => d.color)
                 .attr("stroke-width", 1)
                 .attr("stroke-dasharray", d => lineStyles[d.linestyle])
+                .attr("opacity", .7)
                 .attr("x1", d => plotObj.xscale(d.x))
                 .attr("x2", d => plotObj.xscale(d.x))
                 .attr("y1", plotObj.margins.top)
@@ -116,10 +122,12 @@ const referenceLines = class {
                 .classed("plot-text", true)
                 .attr("text-anchor", "middle")
                 .attr("x", d => plotObj.xscale(d.x))
-                .attr("y", plotObj.height - plotObj.margins.bottom + 10)
-                .attr("transform", d => "rotate(-90 " + plotObj.xscale(d.x) + " " + (plotObj.height - plotObj.margins.bottom + 8) + ")")
-                .attr("font-size", "6px")
-                .attr("fill", d => d.color)
+                .attr("y", d => plotObj.height - plotObj.margins.bottom + d.labelOffset)
+                .attr("transform", d => d.textOrientation === "horizontal" ? "" :
+                    "rotate(-90 " + plotObj.xscale(d.x) + " " +
+                    (plotObj.height - plotObj.margins.bottom + d.labelOffset - 2) + ")")
+                .attr("font-size", d => (d.fontSize || 0) + "px")
+                .attr("fill", d => d.fontColor)
                 .attr("display", d => inPlotX(d.x) ? null : "none")
                 .text(d => d.x)
     }
