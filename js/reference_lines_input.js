@@ -122,6 +122,7 @@ const referenceLinesInput = class {
             .data(d => [d])
             .join("svg")
                 .classed("ref-line-style-svg", true)
+                .classed("main-line-style-svg", true)
                 .each(function(d) {
                     const selector = d3.select(this);
                     self.createStyleSVG(selector, d.data.linestyle)
@@ -144,7 +145,12 @@ const referenceLinesInput = class {
                             selector.on("click", function() {
                                 referenceLinesArr[d.index].linestyle = d.style;
                                 referenceLinesObj.updateReferenceLines();
-                                styleColSelector.select("svg").select("line").attr("stroke-dasharray", lineStyles[d.style]);
+                                table.select("tr.ref-line-row:nth-child(" + (d.index + 1) + ")")
+                                    .select("svg.main-line-style-svg")
+                                    .selectAll("line")
+                                        .data(() => [null])
+                                        .join("line")
+                                            .attr("stroke-dasharray", lineStyles[d.style]);
                                 d3.select(this.parentNode).classed("hidden", true)
                             })
                         });
