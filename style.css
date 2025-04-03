@@ -285,7 +285,7 @@
 #composite-table th {
     text-align: center;
     border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-bottom: .5px solid black;
 }
 
 #composite-table th:nth-child(1) {
@@ -296,7 +296,7 @@
     text-align: left;
 }
 
-#composite-table th:nth-child(13) {
+#composite-table th:last-child {
     border-right: 1px solid black;
 }
 
@@ -317,6 +317,11 @@
 }
 
 #composite-table td {
+    border-top: .5px solid black;
+    border-bottom: .5px solid black;
+}
+
+#composite-table tr:last-child td {
     border-bottom: 1px solid black;
 }
 
@@ -328,20 +333,25 @@
     text-align: left;
 }
 
-#composite-table td:nth-child(13) {
+#composite-table td:last-child {
     border-right: 1px solid black;
 }
 
-.mouse-highlight td {
-    border-bottom: 1px solid #8888FF !important;
+#composite-table tr.mouse-highlight td {
+    border-top: .5px solid #8888FF;
+    border-bottom: .5px solid #8888FF;
 }
 
-.mouse-highlight td:nth-child(1) {
-    border-left: 1px solid #8888FF !important;
+#composite-table tr:last-child.mouse-highlight td {
+    border-bottom: 1px solid #8888FF;
 }
 
-.mouse-highlight td:nth-child(13) {
-    border-right: 1px solid #8888FF !important;
+#composite-table tr.mouse-highlight td:nth-child(1) {
+    border-left: 1px solid #8888FF;
+}
+
+#composite-table tr.mouse-highlight td:nth-child(13) {
+    border-right: 1px solid #8888FF;
 }
 
 .file-drag-highlight td {
