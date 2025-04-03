@@ -288,11 +288,15 @@
     border-bottom: .5px solid black;
 }
 
-#composite-table th:nth-child(1) {
+#composite-table th:first-child {
     border-left: 1px solid black;
 }
 
-#composite-table th:nth-child(2) {
+#composite-table th.name-col {
+    text-align: left;
+}
+
+#composite-table th.upload-col {
     text-align: left;
 }
 
@@ -326,11 +330,15 @@
     border-bottom: 1px solid black;
 }
 
-#composite-table td:nth-child(1) {
+#composite-table td:first-child {
     border-left: 1px solid black;
 }
 
-#composite-table td:nth-child(2) {
+#composite-table td.name-col {
+    text-align: left;
+}
+
+#composite-table td.upload-col {
     text-align: left;
 }
 
@@ -347,7 +355,7 @@
     border-bottom: 1px solid #8888FF;
 }
 
-#composite-table tr.mouse-highlight td:nth-child(1) {
+#composite-table tr.mouse-highlight td:first-child {
     border-left: 1px solid #8888FF;
 }
 

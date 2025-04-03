@@ -30,7 +30,7 @@ const compositeRow = class {
                 // .classed("drag-icon fa-solid fa-2xl fa-grip-lines", true);
 
         // Add the name column
-        this.nameInput = this.row.append("td").append("div")
+        this.nameInput = this.row.append("td").classed("name-col", true).append("div")
             .classed("name-div", true)
             .attr("contenteditable", true)
             .on("input", function(ev) {
@@ -231,7 +231,7 @@ const compositeRow = class {
                 .classed("sticky-icon fa-solid fa-thumbtack-slash", true);
 
         // Add file upload column
-        const uploadCol = this.row.append("td"),
+        const uploadCol = this.row.append("td").classed("upload-col", true),
             fileInput = uploadCol.append("input")
                 .attr("type", "file")
                 .property("multiple", true)

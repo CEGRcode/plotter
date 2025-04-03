@@ -15,7 +15,7 @@ const compositeTable = class {
                 const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
                 self.addRow(compositeDataObj)
             });
-        this.headerRow.append("th").text("Name");
+        this.headerRow.append("th").classed("name-col", true).text("Name");
         this.headerRow.append("th").text("Color");
         this.headerRow.append("th").text("Scale");
         this.headerRow.append("th").text("Opacity");
@@ -24,7 +24,7 @@ const compositeTable = class {
         this.headerRow.append("th");
         this.headerRow.append("th");
         this.headerRow.append("th");
-        this.headerRow.append("th").text("Upload files");
+        this.headerRow.append("th").classed("upload-col", true).text("Upload files");
         this.headerRow.append("th");
         this.headerRow.append("th");
 
