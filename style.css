@@ -344,7 +344,7 @@
     border-right: 1px solid #8888FF !important;
 }
 
-.file-drag-highlight {
+.file-drag-highlight td {
     background-color: #CCCCCC;
 }
 
