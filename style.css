@@ -317,6 +317,7 @@
 }
 
 #composite-table td {
+    text-align: center;
     border-top: .5px solid black;
     border-bottom: .5px solid black;
 }
