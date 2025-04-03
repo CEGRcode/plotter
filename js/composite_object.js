@@ -1,7 +1,7 @@
 const compositeObject = class {
     constructor({idx, name=null, xmin=Infinity, xmax=-Infinity, sense=null, anti=null, primaryColor=null, secondaryColor=null,
         scale=1, minOpacity=null, maxOpacity=null, smoothing=null, bpShift=null, shiftOccupancy=0, hideSense=false,
-        hideAnti=false, swap=false, ids=null}) {
+        hideAnti=false, swap=false, sticky=false, ids=null}) {
         this.name = name || "Composite " + idx;
         this.xmin = xmin;
         this.xmax = xmax;
@@ -18,6 +18,7 @@ const compositeObject = class {
         this.hideSense = hideSense;
         this.hideAnti = hideAnti;
         this.swap = swap;
+        this.sticky = sticky;
         this.ids = ids || [];
         this.filesLoaded = this.ids.length
     }
@@ -68,6 +69,10 @@ const compositeObject = class {
 
     changeSwap(swap) {
         this.swap = swap
+    }
+
+    changeSticky(sticky) {
+        this.sticky = sticky
     }
 
     changeBulkSettings(settings) {

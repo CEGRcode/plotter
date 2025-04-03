@@ -7,25 +7,26 @@ const compositeTable = class {
 
         this.container = d3.select("#" + elementID)
         const thb = this.container.append("table");
-        const headerRow = thb.append("thead").classed("tableFixHead", true);
+        this.headerRow = thb.append("thead").classed("tableFixHead", true);
         // Insert "Add composite row" in table header
-        this.addRowIcon = headerRow.append("th").append("i")
+        this.addRowIcon = this.headerRow.append("th").append("i")
             .classed("add-row-icon fa-solid fa-2xl fa-circle-plus", true)
             .on("click", function() {
                 const compositeDataObj = dataObj.addCompositeData({idx: self.nRows});
                 self.addRow(compositeDataObj)
             });
-        headerRow.append("th").text("Name");
-        headerRow.append("th").text("Color");
-        headerRow.append("th").text("Scale");
-        headerRow.append("th").text("Opacity");
-        headerRow.append("th").text("Smooth");
-        headerRow.append("th").text("Shift");
-        headerRow.append("th");
-        headerRow.append("th");
-        headerRow.append("th").text("Upload files");
-        headerRow.append("th");
-        headerRow.append("th");
+        this.headerRow.append("th").text("Name");
+        this.headerRow.append("th").text("Color");
+        this.headerRow.append("th").text("Scale");
+        this.headerRow.append("th").text("Opacity");
+        this.headerRow.append("th").text("Smooth");
+        this.headerRow.append("th").text("Shift");
+        this.headerRow.append("th");
+        this.headerRow.append("th");
+        this.headerRow.append("th");
+        this.headerRow.append("th").text("Upload files");
+        this.headerRow.append("th");
+        this.headerRow.append("th");
 
         this.table = thb.append("tbody");
 
@@ -58,6 +59,9 @@ const compositeTable = class {
         for (const i in this.rows) {
             this.rows[i].updateIndex(i)
         };
+
+        // Update sticky rows
+        this.updateStickyRows()
     }
 
     insertRowAfter(dragIdx, dropIdx) {
@@ -72,7 +76,10 @@ const compositeTable = class {
         // Update row indices
         for (const i in this.rows) {
             this.rows[i].updateIndex(parseInt(i))
-        }
+        };
+
+        // Update sticky rows
+        this.updateStickyRows()
     }
 
     removeRow(idx) {
@@ -96,6 +103,15 @@ const compositeTable = class {
         this.rows = [];
         this.nRows = 0;
         this.table.selectAll(".composite-row").remove()
+    }
+
+    updateStickyRows() {
+        let {height: y} = this.headerRow.node().getBoundingClientRect();
+        this.table.selectAll("tr.composite-row.sticky")
+            .each(function() {
+                d3.select(this).style("top", y + "px");
+                y += this.getBoundingClientRect().height
+            })
     }
 };
 

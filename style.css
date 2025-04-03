@@ -256,18 +256,6 @@
     padding-top: 15px;
 }
 
-.tableFixHead {
-    overflow: auto;
-    font-size: 16px;
-    height: 50px;
-    width: 100%;
-    background: #eee;
-    border: 1px solid black;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
 #composite-table {
     width: 100%;
     margin-top: 10px;
@@ -275,6 +263,41 @@
 
 #composite-table table {
     width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#composite-table thead {
+    overflow: auto;
+    font-size: 16px;
+    height: 50px;
+    width: 100%;
+    background: #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+#composite-table th, td {
+    padding: 8px 16px;
+}
+
+#composite-table th {
+    text-align: center;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+#composite-table th:nth-child(1) {
+    border-left: 1px solid black;
+}
+
+#composite-table th:nth-child(2) {
+    text-align: left;
+}
+
+#composite-table th:nth-child(13) {
+    border-right: 1px solid black;
 }
 
 #composite-table tbody {
@@ -285,31 +308,40 @@
     cursor: grab;
     height: 50px;
     width: 100%;
-    border: 1px solid black;
+    background: #FFFFFF;
 }
 
-#composite-table th, td {
-    padding: 8px 16px;
+#composite-table tr.sticky {
+    position: sticky;
+    z-index: 1;
 }
 
-#composite-table th:nth-child(1) {
-    text-align: center;
+#composite-table td {
+    border-bottom: 1px solid black;
 }
 
 #composite-table td:nth-child(1) {
-    text-align: center;
+    border-left: 1px solid black;
 }
 
-#composite-table th:nth-child(n+3):nth-child(-n+7) {
-    text-align: center;
+#composite-table td:nth-child(2) {
+    text-align: left;
 }
 
-#composite-table td:nth-child(n+3):nth-child(-n+7) {
-    text-align: center;
+#composite-table td:nth-child(13) {
+    border-right: 1px solid black;
 }
 
-.mouse-highlight {
-    border: 3px solid #8888FF !important;
+.mouse-highlight td {
+    border-bottom: 1px solid #8888FF !important;
+}
+
+.mouse-highlight td:nth-child(1) {
+    border-left: 1px solid #8888FF !important;
+}
+
+.mouse-highlight td:nth-child(13) {
+    border-right: 1px solid #8888FF !important;
 }
 
 .file-drag-highlight {
@@ -385,6 +417,16 @@ input[type=range] {
 }
 
 .hide-icon {
+    width: 100%;
+}
+
+.sticky-container {
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.sticky-icon {
     width: 100%;
 }
 
