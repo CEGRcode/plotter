@@ -213,7 +213,10 @@ const compositeRow = class {
             .on("click", function() {
                 self.compositeDataObj.changeSticky(false);
                 self.row.classed("sticky", false);
-                tableObj.updateStickyRows();
+                const resizeObserver = new ResizeObserver(function() {tableObj.updateStickyRows()});
+                for (const row of tableObj.table.selectAll("tr.composite-row.sticky").nodes()) {
+                    resizeObserver.observe(row)
+                };
                 self.disableSticky()
             })
             .append("i")
@@ -224,7 +227,10 @@ const compositeRow = class {
             .on("click", function() {
                 self.compositeDataObj.changeSticky(true);
                 self.row.classed("sticky", true);
-                tableObj.updateStickyRows();
+                const resizeObserver = new ResizeObserver(function() {tableObj.updateStickyRows()});
+                for (const row of tableObj.table.selectAll("tr.composite-row.sticky").nodes()) {
+                    resizeObserver.observe(row)
+                };
                 self.enableSticky()
             })
             .append("i")
