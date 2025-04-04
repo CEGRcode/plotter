@@ -82,11 +82,11 @@ const dataObject = class {
 
     addCompositeData({idx, name=null, xmin=Infinity, xmax=-Infinity, sense=null, anti=null, primaryColor=null,
         secondaryColor=null, scale=1, minOpacity=null, maxOpacity=null, smoothing=null, bpShift=null, shiftOccupancy=0,
-        hideSense=false, hideAnti=false, swap=false, ids=null}) {
+        hideSense=false, hideAnti=false, swap=false, sticky=false, ids=null}) {
         const compositeDataObj = new compositeObject({idx, name: name, xmin: xmin, xmax: xmax, sense: sense, anti: anti,
             primaryColor: primaryColor, secondaryColor: secondaryColor, scale: scale, minOpacity: minOpacity,
             maxOpacity: maxOpacity, smoothing: smoothing, bpShift: bpShift, shiftOccupancy: shiftOccupancy,
-            hideSense: hideSense, hideAnti: hideAnti, swap: swap, ids: ids});
+            hideSense: hideSense, hideAnti: hideAnti, swap: swap, sticky: sticky, ids: ids});
         this.compositeData.push(compositeDataObj);
         this.legendOrder.push(idx);
 

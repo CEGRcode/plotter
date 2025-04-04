@@ -30,7 +30,7 @@ const compositeRow = class {
                 // .classed("drag-icon fa-solid fa-2xl fa-grip-lines", true);
 
         // Add the name column
-        this.nameInput = this.row.append("td").append("div")
+        this.nameInput = this.row.append("td").classed("name-col", true).append("div")
             .classed("name-div", true)
             .attr("contenteditable", true)
             .on("input", function(ev) {
@@ -188,10 +188,9 @@ const compositeRow = class {
                 self.closeEyeIcon()
             })
             .append("i")
-                .classed("hide-icon", true)
-                .classed("eye-open", true)
-                .classed("fas fa-2xl fa-eye", true)
-                .attr("baseProfile", "full");
+                .classed("hide-icon eye-open fas fa-2xl fa-eye", true)
+                .classed("", true)
+                .classed("", true);
         this.eyeClosedIcon = hideCol.append("div")
             .classed("hide-container", true)
             .attr("title", "Show")
@@ -204,13 +203,41 @@ const compositeRow = class {
                 self.openEyeIcon()
             })
             .append("i")
-                .classed("hide-icon", true)
-                .classed("eye-closed", true)
-                .classed("fas fa-2xl fa-eye-slash", true)
-                .attr("title", "Show");
+                .classed("hide-icon eye-closed fas fa-2xl fa-eye-slash", true);
+
+        // Add sticky column
+        const stickyCol = this.row.append("td").classed("sticky-col", true);
+        this.stickyIcon = stickyCol.append("div")
+            .classed("sticky-container", true)
+            .attr("title", "Unsticky")
+            .on("click", function() {
+                self.compositeDataObj.changeSticky(false);
+                self.row.classed("sticky", false);
+                const resizeObserver = new ResizeObserver(function() {tableObj.updateStickyRows()});
+                for (const row of tableObj.table.selectAll("tr.composite-row.sticky").nodes()) {
+                    resizeObserver.observe(row)
+                };
+                self.disableSticky()
+            })
+            .append("i")
+                .classed("sticky-icon fa-solid fa-thumbtack", true);
+        this.noStickyIcon = stickyCol.append("div")
+            .classed("sticky-container", true)
+            .attr("title", "Sticky")
+            .on("click", function() {
+                self.compositeDataObj.changeSticky(true);
+                self.row.classed("sticky", true);
+                const resizeObserver = new ResizeObserver(function() {tableObj.updateStickyRows()});
+                for (const row of tableObj.table.selectAll("tr.composite-row.sticky").nodes()) {
+                    resizeObserver.observe(row)
+                };
+                self.enableSticky()
+            })
+            .append("i")
+                .classed("sticky-icon fa-solid fa-thumbtack-slash", true);
 
         // Add file upload column
-        const uploadCol = this.row.append("td"),
+        const uploadCol = this.row.append("td").classed("upload-col", true),
             fileInput = uploadCol.append("input")
                 .attr("type", "file")
                 .property("multiple", true)
@@ -252,7 +279,8 @@ const compositeRow = class {
                 tableObj.removeRow(self.idx);
                 dataObj.removeCompositeData(self.idx);
                 plotObj.updatePlot();
-                legendObj.updateLegend()
+                legendObj.updateLegend();
+                tableObj.updateStickyRows()
             });
         this.updateInputs()
     }
@@ -273,24 +301,43 @@ const compositeRow = class {
         this.smoothingInput.node().value = this.compositeDataObj.smoothing || "";
         this.shiftInput.node().value = this.compositeDataObj.bpShift || "";
         this.swapIcon.classed("grayed", !this.compositeDataObj.swap);
+        
         if (this.compositeDataObj.hideSense && this.compositeDataObj.hideAnti) {
             this.closeEyeIcon()
         } else {
             this.openEyeIcon()
         };
+        if (this.compositeDataObj.sticky) {
+            this.row.classed("sticky", true);
+            this.enableSticky()
+        } else {
+            this.row.classed("sticky", false);
+            this.disableSticky()
+        };
+
         this.uploadLabel.text(
             this.compositeDataObj.filesLoaded === 1 ? "1 file loaded" : this.compositeDataObj.filesLoaded + " files loaded"
         )
     } 
 
     openEyeIcon() {
-        this.row.select(".eye-open").style("display", null);
-        this.row.select(".eye-closed").style("display", "none")
+        this.eyeOpenIcon.classed("hidden", false);
+        this.eyeClosedIcon.classed("hidden", true)
     }
 
     closeEyeIcon() {
-        this.row.select(".eye-open").style("display", "none");
-        this.row.select(".eye-closed").style("display", null)
+        this.eyeOpenIcon.classed("hidden", true);
+        this.eyeClosedIcon.classed("hidden", false)
+    }
+
+    enableSticky() {
+        this.stickyIcon.classed("hidden", false);
+        this.noStickyIcon.classed("hidden", true)
+    }
+
+    disableSticky() {
+        this.stickyIcon.classed("hidden", true);
+        this.noStickyIcon.classed("hidden", false)
     }
 
     disableDrag() {
