@@ -449,6 +449,10 @@ input[type=range] {
     width: 100%;
 }
 
+.fa-thumbtack {
+    color: #0088FF;
+}
+
 .upload-button {
     width: 35px;
     height: 30px;
