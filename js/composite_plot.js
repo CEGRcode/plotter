@@ -407,10 +407,16 @@ const plotObject = class {
         }
     }
 
-    downloadAsSVG() {
+    downloadAsSVG(minimal=false) {
         // Hide placeholder labels
         this._elements.mainPlot.selectAll(".blank-plot-label").attr("display", "none");
         this._elements.mainPlot.selectAll(".legend-move").attr("display", "none");
+
+        if (minimal) {
+            this._elements.mainPlot.selectAll(".plot-text").attr("display", "none");
+            legendObj.legend.attr("display", "none")
+        };
+
         // Download plot as SVG
         const b64doc = btoa(this._elements.mainPlot.node().outerHTML.replaceAll("&nbsp;", "")),
             a = document.createElement("a"),
@@ -420,6 +426,7 @@ const plotObject = class {
         a.dispatchEvent(e);
         // Revert any changes to the plot
         this.updatePlot();
+        this._elements.mainPlot.selectAll(".plot-text").attr("display", null);
         legendObj.updateLegend()
     }
 };
