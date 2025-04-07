@@ -41,14 +41,14 @@ Reference lines are used to highlight specific genomic positions or values for b
 - **Horizontal Lines**: Draws a horizontal reference line at a specified y-axis value (occupancy). 
 - **Vertical Lines**: Draws a vertical reference line at a specified x-axis position (genomic position).
 
-### Nucleosome Slider**
+### Nucleosome Slider
 These features help analyze nucleosome positioning and dynamics in genomic data.
 - **Nucleosome Position**: Allows users to shift nucleosome data to correct for reference alignment or compare nucleosome shifts under different conditions.
 - **Mark Position in Nucleosome Slider**: Adds a marker at a specific nucleosome position within the slider interface. 
 - **General 3D Visual**: Enables a three-dimensional (3D) visualization of nucleosome positioning and occupancy. 
 
 # Creating a Plot
-1.  Download the provided data to your device. To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Tutorials/chipexo-tutorial.md)
+1.  Download the provided data to your device. To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Guides/Tutorials/chipexo-tutorial.md)
 
     * Loaded composite files should be the format of the composite    output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore ("_composite.out"). 
 
