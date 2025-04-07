@@ -69,18 +69,18 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
     * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
 
   <div style="text-align: center;">
-    <img src="alima_images/step3_.png" style="width:70%;" />
+    <img src="alima_images/tutorial_step3.png" style="width:70%;" />
   </div>
 
 4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
 
 <div style="text-align: center;">
-  <img src="alima_images/step4_.png" style="width:70%;" />
+  <img src="alima_images/tutorial_step4_.png" style="width:70%;" />
 </div>
 
 5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
 <div style="text-align: center;">
-  <img src="alima_images/step5_.png" style="width:70%;" />
+  <img src="alima_images/tutorial_step5_.png" style="width:70%;" />
 </div>
 
 
