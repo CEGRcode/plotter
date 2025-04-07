@@ -12,7 +12,7 @@ Plotter is a web application made for plotting genomic data.
 2. Open **“plotter”** from your device’s local directory.
 3. Right-click the **"index.html"** file to open with your device’s home browser.
 4. The locus plotter interface should now be displayed on your screen through your device’s home browser. 
-<div class="docs-img_alima_images" style={{ textAlign: 'center' }}>
+<div class="docs" style={{ textAlign: 'center' }}>
   <img src={require('./alima_images/interface.png').default} style={{width:70+'%',}} />
 </div>
 
@@ -41,7 +41,7 @@ Reference lines are used to highlight specific genomic positions or values for b
 - **Horizontal Lines**: Draws a horizontal reference line at a specified y-axis value (occupancy). 
 - **Vertical Lines**: Draws a vertical reference line at a specified x-axis position (genomic position).
 
-**Nucleosome Slider**
+### Nucleosome Slider**
 These features help analyze nucleosome positioning and dynamics in genomic data.
 - **Nucleosome Position**: Allows users to shift nucleosome data to correct for reference alignment or compare nucleosome shifts under different conditions.
 - **Mark Position in Nucleosome Slider**: Adds a marker at a specific nucleosome position within the slider interface. 
@@ -50,23 +50,38 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
 # Creating a Plot
 1.  Download the provided data to your device. To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Tutorials/chipexo-tutorial.md)
 
-* Loaded composite files should be the format of the compiste output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore. 
+    * Loaded composite files should be the format of the composite    output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore ("_composite.out"). 
 
 
 2. Initialize a composite via the "Add Entry" Section.
-<div class="docs-img_alima_images" style={{ textAlign: 'center' }}>
+<div class="docs" style={{ textAlign: 'center' }}>
   <img src={require('./alima_images/add_entry.png').default} style={{width:70+'%',}} />
 </div>
- 
 
-3. Upload Composite file into the entry section.
+    * For each "_composite.out file", make a different entry. 
 
-<div class="docs-img_alima_images" style={{ textAlign: 'center' }}>
+3. Upload a Composite file into each entry section.
+
+<div class="docs" style={{ textAlign: 'center' }}>
   <img src={require('./alima_images/upload_file.png').default} style={{width:70+'%',}} />
 </div>
 
-* Uploading multiple files to a single composite results in a new composite that is the sum of the components.
+    * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
+
+  <div class="docs" style={{ textAlign: 'center' }}>
+    <img src={require('./alima_images/tutorial_step3.png').default} style={{width:70+'%',}} />
+  </div>
 
 4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
+
+<div class="docs" style={{ textAlign: 'center' }}>
+  <img src={require('./alima_images/step4_.png').default} style={{width:70+'%',}} />
+</div>
+
+
+5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
+<div class="docs" style={{ textAlign: 'center' }}>
+    <img src={require('./alima_images/tutorial_step5_.png').default} style={{width:70+'%',}} />
+  </div>
 
 
