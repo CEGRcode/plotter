@@ -12,8 +12,8 @@ Plotter is a web application made for plotting genomic data.
 2. Open **“plotter”** from your device’s local directory.
 3. Right-click the **"index.html"** file to open with your device’s home browser.
 4. The locus plotter interface should now be displayed on your screen through your device’s home browser. 
-<div class="docs" style={{ textAlign: 'center' }}>
-  <img src={require('./alima_images/interface.png').default} style={{width:70+'%',}} />
+<div style="text-align: center;">
+  <img src="alima_images/interface.png" style="width:70%;" />
 </div>
 
 
@@ -54,34 +54,33 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
 
 
 2. Initialize a composite via the "Add Entry" Section.
-<div class="docs" style={{ textAlign: 'center' }}>
-  <img src={require('./alima_images/add_entry.png').default} style={{width:70+'%',}} />
+<div style="text-align: center;">
+  <img src="alima_images/add_entry.png" style="width:70%;" />
 </div>
 
     * For each "_composite.out file", make a different entry. 
 
 3. Upload a Composite file into each entry section.
 
-<div class="docs" style={{ textAlign: 'center' }}>
-  <img src={require('./alima_images/upload_file.png').default} style={{width:70+'%',}} />
+<div style="text-align: center;">
+  <img src="alima_images/upload_file.png" style="width:70%;" />
 </div>
 
     * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
 
-  <div class="docs" style={{ textAlign: 'center' }}>
-    <img src={require('./alima_images/tutorial_step3.png').default} style={{width:70+'%',}} />
+  <div style="text-align: center;">
+    <img src="alima_images/step3_.png" style="width:70%;" />
   </div>
 
 4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
 
-<div class="docs" style={{ textAlign: 'center' }}>
-  <img src={require('./alima_images/step4_.png').default} style={{width:70+'%',}} />
+<div style="text-align: center;">
+  <img src="alima_images/step4_.png" style="width:70%;" />
 </div>
 
-
 5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
-<div class="docs" style={{ textAlign: 'center' }}>
-    <img src={require('./alima_images/tutorial_step5_.png').default} style={{width:70+'%',}} />
-  </div>
+<div style="text-align: center;">
+  <img src="alima_images/step5_.png" style="width:70%;" />
+</div>
 
 
