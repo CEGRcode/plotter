@@ -81,7 +81,7 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
 
 5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
 <div style="text-align: center;">
-  <img src="alima_images/step5_.png" style="width:70%;" />
+  <img src="alima_images/step5.png" style="width:70%;" />
 </div>
 
 
