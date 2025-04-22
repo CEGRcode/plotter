@@ -76,7 +76,7 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
 4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
 
 <div style="text-align: center;">
-  <img src="alima_images/step4_.png" style="width:70%;" />
+  <img src="alima_images/step4.png" style="width:70%;" />
 </div>
 
 5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
