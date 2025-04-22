@@ -3,12 +3,12 @@ id: plotter tutorial
 title: Plotter Tutorial
 ---
 
-Welcome to Plotter! 
+Welcome to Plotter!  
 
 Plotter is a web application made for plotting genomic data. 
 
 # Getting Started 
-1. Download the repository labeled “plotter” from [CEGRcode Github](https://github.com/CEGRcode)
+1. Download the repository labeled “plotter” from [CEGRcode Github](https://github.com/CEGRcode/plotter/releases)
 2. Open **“plotter”** from your device’s local directory.
 3. Right-click the **"index.html"** file to open with your device’s home browser.
 4. The locus plotter interface should now be displayed on your screen through your device’s home browser. 
@@ -34,7 +34,8 @@ Plotter is a web application made for plotting genomic data.
 - **Color Trace**: Color-codes plotted traces
 - **Enable Plot Tooltip**: Enables tooltips that display data values when hovering over the plot.
 - **Show Legend**: Displays plot legend, which identifies different plotted elements. 
-- **Download as SVG**: Allows users to export the plot as an SVG (Scalable Vector Graphics) file. 
+- **Download as SVG**: Allows users to export the plot as a SVG (Scalable Vector Graphics) file. 
+- **Download as minimal SVG**: Allows users to export plot as a minimal SVG (Scalable Vector Graphics) file, which provides users with a minimized and optimized SVG form.m
 
 ### Reference Lines Features
 Reference lines are used to highlight specific genomic positions or values for better visualization and interpretation of data.
@@ -50,7 +51,7 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
 # Creating a Plot
 1.  Download the provided data to your device. To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Guides/Tutorials/chipexo-tutorial.md)
 
-    * Loaded composite files should be the format of the composite    output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore ("_composite.out"). 
+  * Loaded composite files should be the format of the composite    output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore ("_composite.out"). 
 
 
 2. Initialize a composite via the "Add Entry" Section.
@@ -58,7 +59,7 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
   <img src="alima_images/add_entry.png" style="width:70%;" />
 </div>
 
-    * For each "_composite.out file", make a different entry. 
+  * For each "_composite.out file", make a different entry. 
 
 3. Upload a Composite file into each entry section.
 
@@ -66,21 +67,21 @@ These features help analyze nucleosome positioning and dynamics in genomic data.
   <img src="alima_images/upload_file.png" style="width:70%;" />
 </div>
 
-    * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
+  * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
 
   <div style="text-align: center;">
-    <img src="alima_images/tutorial_step3.png" style="width:70%;" />
+    <img src="alima_images/step3.png" style="width:70%;" />
   </div>
 
 4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
 
 <div style="text-align: center;">
-  <img src="alima_images/tutorial_step4_.png" style="width:70%;" />
+  <img src="alima_images/step4_.png" style="width:70%;" />
 </div>
 
 5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
 <div style="text-align: center;">
-  <img src="alima_images/tutorial_step5_.png" style="width:70%;" />
+  <img src="alima_images/step5_.png" style="width:70%;" />
 </div>
 
 
