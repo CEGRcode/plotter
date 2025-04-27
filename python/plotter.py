@@ -53,14 +53,15 @@ if __name__ == "__main__":
     plot_parser.add_argument("--xmin",type=int)
     plot_parser.add_argument("--xmax",type=int)
     plot_parser.add_argument("--xlabel", nargs="+")
-    plot_parser.add_argument("--ymin", type=int)
-    plot_parser.add_argument("--ymax", type=int)
+    plot_parser.add_argument("--ymin", type=float)
+    plot_parser.add_argument("--ymax", type=float)
     plot_parser.add_argument("--ylabel", nargs="+")
     plot_parser.add_argument("--color-trace", action="store_true", default=False)
     plot_parser.add_argument("--combined", action="store_true", default=False)
     plot_parser.add_argument("--hide-legend", action="store_true", default=False)
     plot_parser.add_argument("--no-resize", action="store_true", default=False)
     plot_parser.add_argument("--no-shrink", action="store_true", default=False)
+    plot_parser.add_argument("--resolution")
     plot_parser.add_argument("--out")
     plot_parser.add_argument("--export-json")
     plot_parser.add_argument("--import-json")
@@ -69,7 +70,8 @@ if __name__ == "__main__":
     # Create plot based on plot subcommand, default values in Plot class will be used if argument is not specified
     plot_args = plot_parser.parse_args(plot_command.split())
     p = plot.Plot(title=" ".join(plot_args.title) if plot_args.title is not None else None, xmin=plot_args.xmin, xmax=plot_args.xmax, ymin=plot_args.ymin, ymax=plot_args.ymax, xlabel=" ".join(plot_args.xlabel) if plot_args.xlabel is not None else None, 
-                  ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend)
+                  ylabel=" ".join(plot_args.ylabel) if plot_args.ylabel is not None else None, opacity=plot_args.opacity, smoothing=plot_args.smoothing, bp_shift=plot_args.bp_shift, combined=plot_args.combined, color_trace=plot_args.color_trace, hide_legend=plot_args.hide_legend,
+                  resolution=plot_args.resolution)
 
     # Create arrays for default composite names and colors
     names = range(1, len(composite_commands) + 1)
@@ -115,12 +117,8 @@ if __name__ == "__main__":
     elif plot_args.import_settings_json:
         p.import_data(plot_args.import_settings_json, plot_args, False)
 
-    # If --no-shrink is specified, don't change y-axis but resize x-axis
-    if plot_args.no_shrink:
-        p.autoscale_axes(False)
-    # If --no-resize is specified, don't change either axis
-    elif not plot_args.no_resize:
-        p.autoscale_axes(True)
+    # Autoscale axis if options don't specify limits
+    p.autoscale_axes(plot_args)
 
     p.plot_composites()
 
