@@ -10,6 +10,14 @@ import parseComposite
 import sys
 from enum import Enum
 
+"""
+This script provides functionality to generate an SVG representation of a plot based on composite data and other customizable settings.
+
+The key functions in the script:
+1. generateSVG
+2. axis 
+"""
+
 def generateSVG(plot):
     # Create svg with similar attributes to plotter
     document = dom.Document()

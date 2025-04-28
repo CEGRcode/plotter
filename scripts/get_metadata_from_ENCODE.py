@@ -2,6 +2,10 @@ import argparse
 import json
 import requests
 
+
+"""
+This script retrieves metadata associated with a list of ENCODE accessions (BAM files) and exports the retrieved data to a JSON file.  
+"""
 def getParams():
     '''Parse parameters from the command line'''
     parser = argparse.ArgumentParser(description='Retrieve ENCODE metadata from API for plotter.')

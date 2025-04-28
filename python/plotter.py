@@ -12,6 +12,16 @@ from enum import Enum
 import svgFactory
 import json 
 
+"""
+This script defines the main plotter script by generating a composite plot using command-line arguments to configure the plot's settings and composite data. 
+It uses the Plot class to manage plot creation, compositing, and reference lines, and it provides various customization options such 
+as smoothing, axis scaling, and composite appearance. The script parses input commands, processes composite data, generates an SVG plot, 
+and optionally exports the plot to a JSON file.
+
+The key functions in the script:
+1. main
+"""
+
 document = dom.Document()
 
 def main():
