@@ -222,30 +222,31 @@ const plotObject = class {
             
         // Add traces at composite edges
         compositeGroup.append("path")
-            .classed("composite-path", true)
+            .classed("composite-line", true)
             .classed("top", true)
-            .attr("fill", "url(#composite-gradient-top-" + idx + ")")
+            .attr("fill", "none")
             .attr("stroke", "#FFFFFF")
             .attr("stroke-width", 1)
             .attr("d", "");
         compositeGroup.append("path")
-            .classed("composite-line", true)
+            .classed("composite-path", true)
             .classed("top", true)
-            .attr("fill", "none")
+            .attr("fill", "url(#composite-gradient-top-" + idx + ")")
             .attr("stroke", "#000000")
             .attr("stroke-width", 0.5)
+            .attr("d", "");
+        
+        compositeGroup.append("path")
+            .classed("composite-line", true)
+            .classed("bottom", true)
+            .attr("fill", "none")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1)
             .attr("d", "");
         compositeGroup.append("path")
             .classed("composite-path", true)
             .classed("bottom", true)
             .attr("fill", "url(#composite-gradient-bottom-" + idx + ")")
-            .attr("stroke", "#FFFFFF")
-            .attr("stroke-width", 1)
-            .attr("d", "");
-        compositeGroup.append("path")
-            .classed("composite-line", true)
-            .classed("bottom", true)
-            .attr("fill", "none")
             .attr("stroke", "#000000")
             .attr("stroke-width", 0.5)
             .attr("d", "");
@@ -304,12 +305,12 @@ const plotObject = class {
                 .x(d => this.xscale(d.x))
                 .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#000000")
                 .attr("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
                 .datum(truncatedOccupancy)
                 .attr("d", topLine);
             compositeElem.select(".composite-line.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#FFFFFF")
                 .attr("display", compositeData.hideSense && compositeData.hideAnti ? "none" : null)
                 .datum(truncatedOccupancy.slice(1, -1))
                 .attr("d", topLine);
@@ -353,12 +354,12 @@ const plotObject = class {
                 .x(d => this.xscale(d.x))
                 .y(d => this.yscale(d.y));
             compositeElem.select(".composite-path.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#000000")
                 .attr("display", compositeData.hideSense ? "none" : null)
                 .datum(compositeData.swap ? truncatedAnti : truncatedSense)
                 .attr("d", topLine);
             compositeElem.select(".composite-line.top")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#000000")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? primaryColor : "#FFFFFF")
                 .attr("display", compositeData.hideSense ? "none" : null)
                 .datum(compositeData.swap ? truncatedAnti.slice(1, -1) : truncatedSense.slice(1, -1))
                 .attr("d", topLine);
@@ -366,12 +367,12 @@ const plotObject = class {
                 .x(d => this.xscale(d.x))
                 .y(d => this.yscale(-d.y));
             compositeElem.select(".composite-path.bottom")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#FFFFFF")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? null : "#000000")
                 .attr("display", compositeData.hideAnti ? "none" : null)
                 .datum(compositeData.swap ? truncatedSense : truncatedAnti)
                 .attr("d", bottomLine);
             compositeElem.select(".composite-line.bottom")
-                .attr("stroke", dataObj.globalSettings.colorTrace ? secondaryColor : "#000000")
+                .attr("stroke", dataObj.globalSettings.colorTrace ? secondaryColor : "#FFFFFF")
                 .attr("display", compositeData.hideAnti ? "none" : null)
                 .datum(compositeData.swap ? truncatedSense.slice(1, -1) : truncatedAnti.slice(1, -1))
                 .attr("d", bottomLine)
