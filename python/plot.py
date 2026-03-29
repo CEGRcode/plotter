@@ -5,12 +5,33 @@ import math
 import json
 import composite
 
+"""
+This script defines a class Plot that allows the creation of a composite plot with support for scaling, 
+plotting composite data, reference lines, and generating an SVG representation of the plot.The plot supports both combined and 
+individual strand representations of the data.
+
+The key functions in the script (Most of these functions are helper methods for managing SVG elements and data transformations.):
+1. plot_composite
+2. scale axes
+3. autoscale_axes
+4. add_composite_group
+5. plot_composites
+6. plot_reference_line
+7. create_legend 
+8. get_plot
+9. expot
+10. import_data
+11. generateGradients
+
+"""
+
+
 document = dom.Document()
 
 # Class that generates composite and reference lines svg elements
 class Plot:
     def __init__(self, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlabel=None, ylabel=None, 
-                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False):
+                 opacity=None, smoothing=None, bp_shift=None, combined=False, color_trace=False, hide_legend=False, background_color=None):
         # Set variables to defaults if argument passed into constructor was None
         self.title = title if title is not None else "Composite plot"
         self.xmin = xmin if xmin is not None else -500
@@ -25,23 +46,42 @@ class Plot:
         self.combined = combined
         self.color_trace = color_trace
         self.hide_legend = hide_legend
+        self.background_color = background_color if background_color is not None else "none"
         # Set dimensions to same constants as plotter
         self.width = 460
         self.height = 300
         self.margins = {'top': 30, 'right': 170, 'bottom': 35, 'left': 40}
         # Create groups for adding composites and reference lines
         self.plot = document.createElement("g")
+
+        # Add background rectangle if a color is specified
+        self.background_rect = document.createElement("rect")
+        self.background_rect.setAttribute("x", str(self.margins.get("left")))
+        self.background_rect.setAttribute("y", str(self.margins.get("top")))
+        self.background_rect.setAttribute("width", str(self.width - self.margins.get("left") - self.margins.get("right")))
+        self.background_rect.setAttribute("height", str(self.height - self.margins.get("top") - self.margins.get("bottom")))
+        self.background_rect.setAttribute("fill", self.background_color)
+        self.background_rect.setAttribute("opacity", "0.2")
+
+        self.plot.appendChild(self.background_rect) 
+
         self.composite_group = document.createElement("g")
         self.composite_group.setAttribute("class", "composite plotted")
         self.gradients_group = document.createElement("defs")
         self.reference_group = document.createElement("g")
+
         self.xscale = XScale(self)
         self.yscale = YScale(self)
+
         self.num_composites = 0
         self.composites = []
         self.styles ={"dashed" : "5,5",
                       "solid" : "0",
                       "dotted" : "2,1"}
+        
+    def set_background_color(self, color):
+        self.background_color = color
+        self.background_rect.setAttribute("fill", color)
 
     # Creates a composite svg element from separate sense and anti arrays - mimics plot_composite from plotter
     def plot_composite(self, xmin, xmax, sense, anti, scale=1, color=None, secondary_color=None, i=None, opacity=None, smoothing=None, bp_shift=None, hide_sense=False, hide_anti=False, baseline=0):
