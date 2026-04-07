@@ -135,6 +135,4 @@ const referenceLines = class {
                 .attr("display", d => inPlotX(d.x) ? null : "none")
                 .text(d => d.x)
     }
-};
-
-const referenceLinesObj = new referenceLines()
+}

@@ -24,6 +24,4 @@ const enablePlotTooltip = class {
     update() {
         this.checkbox.property("checked", dataObj.globalSettings.enableTooltip)
     }
-};
-
-const enablePlotTooltipObj = new enablePlotTooltip("enable-plot-tooltip")
+}

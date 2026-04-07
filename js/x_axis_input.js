@@ -46,6 +46,4 @@ const xAxisInput = class {
         this.xMinInput.attr("disabled", null);
         this.xMaxInput.attr("disabled", null)
     }
-};
-
-const xAxisInputObj = new xAxisInput("x-axis-input")
+}

@@ -113,6 +113,4 @@ const compositeTable = class {
                 y += this.getBoundingClientRect().height
             })
     }
-};
-
-let tableObj = new compositeTable("composite-table")
+}

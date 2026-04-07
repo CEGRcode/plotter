@@ -25,6 +25,4 @@ const showLegend = class {
     update() {
         this.checkbox.property("checked", dataObj.globalSettings.showLegend)
     }
-};
-
-const showLegendObj = new showLegend("show-legend")
+}

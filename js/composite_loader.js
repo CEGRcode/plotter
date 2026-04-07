@@ -231,6 +231,4 @@ const compositeLoader = class {
             }
         }
     }
-};
-
-const compositeLoaderObj = new compositeLoader();
+}

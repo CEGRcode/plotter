@@ -430,6 +430,4 @@ const plotObject = class {
         this._elements.mainPlot.selectAll(".plot-text").attr("display", null);
         legendObj.updateLegend()
     }
-};
-
-let plotObj = new plotObject("main-plot", 500, 300, {top: 30, right: 190, bottom: 35, left: 60})
+}

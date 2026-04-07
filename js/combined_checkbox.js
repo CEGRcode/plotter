@@ -28,6 +28,4 @@ const combineStrands = class {
     update() {
         this.checkbox.property("checked", dataObj.globalSettings.combined)
     }
-};
-
-const combineStrandsObj = new combineStrands("combine-strands")
+}

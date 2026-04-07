@@ -86,6 +86,4 @@ const opacityInput = class {
         this.slider1.node().value = dataObj.globalSettings.minOpacity * 100;
         this.slider2.node().value = dataObj.globalSettings.maxOpacity * 100
     }
-};
-
-const opacityInputObj = new opacityInput("opacity-input")
+}

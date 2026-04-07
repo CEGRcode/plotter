@@ -25,6 +25,4 @@ const colorTrace = class {
     update() {
         this.checkbox.property("checked", dataObj.globalSettings.colorTrace)
     }
-};
-
-const colorTraceObj = new colorTrace("color-trace")
+}

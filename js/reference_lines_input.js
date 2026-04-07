@@ -299,6 +299,4 @@ const referenceLinesInput = class {
             .attr("stroke-width", 2)
             .attr("stroke-dasharray", lineStyles[style])
     }
-};
-
-const referenceLinesInputObj = new referenceLinesInput("reference-lines-input")
+}

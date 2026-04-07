@@ -32,6 +32,4 @@ const presetDropdown = class {
                 .attr("value", (_, i) => i)
                 .text(d => d.name)
     }
-};
-
-const presetDropdownObj = new presetDropdown("preset-dropdown");
+}

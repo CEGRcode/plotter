@@ -97,6 +97,4 @@ const yAxisInput = class {
         this.yMinInput.attr("disabled", null);
         this.yMaxInput.attr("disabled", null)
     }
-};
-
-const yAxisInputObj = new yAxisInput("y-axis-input")
+}

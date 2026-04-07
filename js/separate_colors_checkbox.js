@@ -28,6 +28,4 @@ const separateColors = class {
         this.checkbox.property("checked", dataObj.globalSettings.separateColors && !dataObj.globalSettings.combined);
         this.checkbox.property("disabled", dataObj.globalSettings.combined)
     }
-};
-
-const separateColorsObj = new separateColors("separate-colors")
+}

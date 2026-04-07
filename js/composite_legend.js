@@ -95,6 +95,4 @@ const legendObject = class {
         
         this.legendElements = elSelect.nodes();
     }
-};
-
-const legendObj = new legendObject();
+}

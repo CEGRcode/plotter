@@ -41,6 +41,4 @@ const smoothingInput = class {
         this.textInput.node().value = dataObj.globalSettings.smoothing;
         this.sliderInput.node().value = dataObj.globalSettings.smoothing
     }
-};
-
-const smoothingInputObj = new smoothingInput("smoothing-input")
+}

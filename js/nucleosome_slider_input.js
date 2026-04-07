@@ -72,6 +72,4 @@ const nucleosomeSliderInput = class {
         this.nucleosomePositionInput.node().value = dataObj.nucleosomeSlider.x;
         this.nucleosomeMarkerInput.node().value = dataObj.nucleosomeSlider.lines.join(",")
     }
-};
-
-const nucleosomeSliderInputObj = new nucleosomeSliderInput("nucleosome-slider-input")
+}

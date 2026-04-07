@@ -136,6 +136,4 @@ const plotTooltip = class {
     hide() {
         this.tooltip.attr("display", "none")
     }
-};
-
-const tooltipObj = new plotTooltip()
+}

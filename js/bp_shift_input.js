@@ -40,6 +40,4 @@ const bpShiftInput = class {
         this.textInput.node().value = dataObj.globalSettings.bpShift;
         this.sliderInput.node().value = dataObj.globalSettings.bpShift
     }
-};
-
-const bpShiftInputObj = new bpShiftInput("bp-shift-input")
+}

@@ -82,6 +82,4 @@ const nucleosomeSlider = class {
             .attr("stroke-width", .5)
             .on("mousedown", function() {self.selectedElement = d3.select(this)});
     }
-};
-
-const nucleosomeSliderObj = new nucleosomeSlider();
+}

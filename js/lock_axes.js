@@ -30,6 +30,4 @@ const lockAxes = class {
             yAxisInputObj.unlockInputs()
         }
     }
-};
-
-const lockAxesObj = new lockAxes("lock-axes")
+}

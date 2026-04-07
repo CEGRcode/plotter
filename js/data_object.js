@@ -290,38 +290,3 @@ const dataObject = class {
         a.dispatchEvent(e)
     }
 }
-
-let dataObj = new dataObject({
-    globalSettings: {
-        xmin: -500,
-        xmax: 500,
-        ymin: -1,
-        ymax: 1,
-        symmetricY: true,
-        lockAxes: false,
-        minOpacity: 0,
-        maxOpacity: 1,
-        smoothing: 7,
-        bpShift: 0,
-        combined: false,
-        separateColors: false,
-        colorTrace: false,
-        enableTooltip: true,
-        showLegend: true,
-        labels: {
-            title: "Composite plot",
-            xlabel: "Position (bp)",
-            ylabel: "Occupancy (AU)"
-        }
-    },
-    fileData: {},
-    compositeData: [],
-    referenceLines: {
-        horizontalLines: [],
-        verticalLines: []
-    },
-    nucleosomeSlider: {
-        x: 0,
-        lines: []
-    }
-})
