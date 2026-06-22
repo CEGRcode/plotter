@@ -1,37 +1,87 @@
-# Quick start
-1. Download the repository labeled “plotter” from [CEGRcode Github](https://github.com/CEGRcode)
-2. Open “plotter” from your device’s local directory.
-3. Right-click the index.html file to open with your device’s home browser.
-4. The locus plotter interface should now be displayed on your screen through your device’s home browser.
-5. Download the provided data to your device and import it onto the interface
-To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Tutorials/chipexo-tutorial.md)
+---
+id: plotter tutorial
+title: Plotter Tutorial
+---
 
-# Important Buttons
-- Import/Export JSON session: allows users to save their current JSON session (export) and import it at a later date to start where they left off
-- Reset Plot: allows users to reset the plot, outputting an empty plot
-- Select a preset: allows users to apply a preset of already-customized inputs to their plot
-- Autoscale axes: allows the system to automatically scale the axes of the plot
-- Lock axes: locks the current axes inputs so that they are not changeable 
+Welcome to Plotter!  
 
-# Tutorial
-1. Click “add entry” to create a new row under IDs
-![Press Add Entry](chitvan/image1.png)
-![Creates a New Row](chitvan/image2.png)
-2. Locate the composite files for lgG. One by one, drag each file pertaining to “lgG” into the empty row. Do the same for Gcn5, Spt7, and Sgf73.
-![Choose Files in Directory](chitvan/image3.png)
-![Highlighted Files in Directory](chitvan/image4.png)
-![Drag Files in Directory](chitvan/image5.png)
-3. Rename “Composite 0” to “lgG”, and respectfully for the other files. Changes should be reflected in the legend on the right of the Composite plot.
-![Rename Composite](chitvan/image6.png)
-![Click to Rename](chitvan/image7.png)
-![Renamed Composite](chitvan/image8.png)
-4. Change colors for each of the file names so that each file is a different color in the plot. After choosing colors in the wheel, press “enter” on your keyboard to save the changes.
-![Choose Color](chitvan/image9.png)
-![Color Wheel](chitvan/image10.png)
-![Press Enter to Save](chitvan/image11.png)
-5. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
-![Renaming Titles](chitvan/image12.png)
-![Retyped Text](chitvan/image13.png)
-![New Title](chitvan/image14.png)
-6. Once completed, download your plot as an SVG
-![Download as SVG](chitvan/image15.png)
+Plotter is a web application made for plotting genomic data. 
+
+# Getting Started 
+1. Download the repository labeled “plotter” from [CEGRcode Github](https://github.com/CEGRcode/plotter/releases)
+2. Open **“plotter”** from your device’s local directory.
+3. Right-click the **"index.html"** file to open with your device’s home browser.
+4. The locus plotter interface should now be displayed on your screen through your device’s home browser. 
+<div style="text-align: center;">
+  <img src="alima_images/interface.png" style="width:70%;" />
+</div>
+
+
+## Important Features 
+**Import/Export JSON session**: Allows users to save their current JSON session (export) and import it at a later date to start where they left off.
+
+**Upload Multi-Composite**: Allows users to upload a more complex multi-composite.
+
+**Autoscale axes**: Allows the system to automatically scale the axes of the plot.
+
+**Lock axes**: Locks the current axes inputs so that they are not changeable. 
+
+### Global Settings Features
+- **Opacity**: Controls the transparency of plotted elements (e.g., composite plots, reference lines).
+- **Smoothing**: Applies a smoothing function to reduce noise in plotted genomic data.
+- **Shift**: Adjusts the alignment of plotted data by shifting values along the x-axis (genomic positions).
+- **Combine Strands**: Merges data from both sense (+) and antisense (-) strands into a single composite plot.
+- **Color Trace**: Color-codes plotted traces
+- **Enable Plot Tooltip**: Enables tooltips that display data values when hovering over the plot.
+- **Show Legend**: Displays plot legend, which identifies different plotted elements. 
+- **Download as SVG**: Allows users to export the plot as a SVG (Scalable Vector Graphics) file. 
+- **Download as minimal SVG**: Allows users to export plot as a minimal SVG (Scalable Vector Graphics) file, which provides users with a minimized and optimized SVG form.m
+
+### Reference Lines Features
+Reference lines are used to highlight specific genomic positions or values for better visualization and interpretation of data.
+- **Horizontal Lines**: Draws a horizontal reference line at a specified y-axis value (occupancy). 
+- **Vertical Lines**: Draws a vertical reference line at a specified x-axis position (genomic position).
+
+### Nucleosome Slider
+These features help analyze nucleosome positioning and dynamics in genomic data.
+- **Nucleosome Position**: Allows users to shift nucleosome data to correct for reference alignment or compare nucleosome shifts under different conditions.
+- **Mark Position in Nucleosome Slider**: Adds a marker at a specific nucleosome position within the slider interface. 
+- **General 3D Visual**: Enables a three-dimensional (3D) visualization of nucleosome positioning and occupancy. 
+
+# Creating a Plot
+1.  Download the provided data to your device. To generate your own data, check out this [tutorial](https://github.com/CEGRcode/scriptmanager-docs/blob/main/docs/Guides/Tutorials/chipexo-tutorial.md)
+
+  * Loaded composite files should be the format of the composite    output of ScriptManager's tag pileup tool. The file name should start with the sample identifier, followed by an underscore ("_composite.out"). 
+
+
+2. Initialize a composite via the "Add Entry" Section.
+<div style="text-align: center;">
+  <img src="alima_images/add_entry.png" style="width:70%;" />
+</div>
+
+  * For each "_composite.out file", make a different entry. 
+
+3. Upload a Composite file into each entry section.
+
+<div style="text-align: center;">
+  <img src="alima_images/upload_file.png" style="width:70%;" />
+</div>
+
+  * Uploading multiple files to a single composite results in a new composite that is the sum of the components.
+
+  <div style="text-align: center;">
+    <img src="alima_images/step3.png" style="width:70%;" />
+  </div>
+
+4. Rename the title and axes to reflect your desired plot. Simply click on the axes to rename, and press enter when done.
+
+<div style="text-align: center;">
+  <img src="alima_images/step4.png" style="width:70%;" />
+</div>
+
+5. Adjust features in Global Settings, Reference Lines, and Nucleosome Slider  if Needed. 
+<div style="text-align: center;">
+  <img src="alima_images/step5.png" style="width:70%;" />
+</div>
+
+

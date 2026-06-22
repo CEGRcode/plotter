@@ -3,6 +3,17 @@ import os
 import numpy as np
 import argparse
 
+"""
+This script processes composite files containing numerical data, extracts sense and anti values, and generates a structured JSON file. 
+It ensures that the numerical range (xmin, xmax) is consistently managed across multiple files and adjusts offsets accordingly.
+
+The key functions in the script:
+1. parse_composite
+2. create_file_data_obj
+3. main
+"""
+
+# Parse a composite file and extract sense and anti-sense data
 def parse_composite(composite_fn):
     xmin = None
     xmax = None
@@ -47,9 +58,11 @@ def parse_composite(composite_fn):
     
     return {'xmin': xmin, 'xmax': xmax, 'sense': list(sense), 'anti': list(anti)}
 
+# create a dictionary of file data by parsing multiple composite files
 def create_file_data_obj(file_list):
     return {os.path.basename(fn): parse_composite(fn) for fn in file_list}
 
+# Adding argparse arguments for user flexibiity
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a file data JSON file')
     parser.add_argument('--composite-files', type=str, nargs='*', required=True, help='List of composite .out files')

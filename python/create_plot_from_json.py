@@ -3,6 +3,24 @@ import xml.dom.minidom as dom
 import numpy as np
 import argparse
 
+"""
+This script processes composite data from a JSON object and generates an SVG plot visualizing the data.
+
+It supports options for customizing plot dimensions, margins, and colors, and it produces an SVG document 
+that can be used in a web browser or other applications. The script can be run directly from the command line, 
+providing options for adjusting the plot's width, height, margins, and output file location.
+
+The key functions in the script:
+1. jsonobj_to_svg
+2. xscale 
+3. update_composite_data
+4. sliding_window
+5. tick_spec
+6. main
+
+"""
+
+# Extracting the global settings features from the data object
 def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom': 35, 'left': 60, 'right': 190}):
     combined = data_obj['globalSettings']['combined']
     symmetric_y = data_obj['globalSettings']['symmetricY']
@@ -13,10 +31,13 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
     ymin = data_obj['globalSettings']['ymin']
     ymax = data_obj['globalSettings']['ymax']
 
+    # Defining the x and y scale boundaries for the plot
     def xscale(x):
+        # Mapping the x-value from data space to pixel space
         return (x - xmin) / (xmax - xmin) * (width - margins['left'] - margins['right']) + margins['left']
     if combined:
         def yscale(y):
+            # Mapping the y-value from data space to pixel space
             return y / (ymax - ymin) * (height - margins['top'] - margins['bottom']) + margins['top']
     elif symmetric_y:
         ylim = max(-ymin, ymax)
@@ -24,9 +45,10 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
             return (y + ylim) / (2 * ylim) * (height - margins['top'] - margins['bottom']) + margins['top']
     else:
         def yscale(y):
+            # Default y-scale transformation
             return (y - ymin) / (ymax - ymin) * (height - margins['top'] - margins['bottom']) + margins['top']
 
-    # Create the svg
+    # Create the svg document
     document = dom.Document()
     svg = document.appendChild(document.createElement('svg'))
     svg.setAttribute('baseProfile', 'full')
@@ -35,11 +57,13 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
     svg.setAttribute('font-family', 'Helvetica')
     svg.setAttribute('viewBox', '0 0 {} {}'.format(width, height))
     
+    # Group for composite data
     composites_group = svg.appendChild(document.createElement('g'))
+    # Creating individual SVG elements
     for i, composite_data in enumerate(reversed(data_obj['compositeData'])):
         if composite_data['filesLoaded'] == 0:
             continue
-
+        # # Apply settings for opacity, colors, smoothing, and shifts from composite data or global settings
         min_opacity = composite_data['minOpacity'] if composite_data['minOpacity'] is not None \
             else data_obj['globalSettings']['minOpacity']
         max_opacity = composite_data['maxOpacity'] if composite_data['maxOpacity'] is not None \
@@ -63,6 +87,7 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
         composite_group = composites_group.appendChild(document.createElement('g'))
         defs = composite_group.appendChild(document.createElement('defs'))
 
+        # Gradients for the composite
         top_gradient = defs.appendChild(document.createElement('linearGradient'))
         top_gradient.setAttribute('id', 'composite-gradient-top-{}'.format(i))
         top_gradient.setAttribute('x1', '0%')
@@ -78,6 +103,7 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
         stop2.setAttribute('stop-color', primary_color)
         stop2.setAttribute('stop-opacity', str(min_opacity))
 
+        # Handling combined data for anti-sense and sense
         if combined:
             if bp_shift > 0:
                 shifted_sense = composite_data['sense'][:-2 * bp_shift]
@@ -87,6 +113,7 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
                 shifted_anti = composite_data['anti'][:len(composite_data['anti']) - 2 * bp_shift]
             combined_occupancy = shifted_sense + shifted_anti
             smoothed_occupancy = sliding_window(combined_occupancy, smoothing)
+            
             smoothed_xmin = composite_xmin + abs(bp_shift) + smooth_shift
             smoothed_xmax = composite_xmax - abs(bp_shift) - smooth_shift
             truncated_xmin = max(xmin, smoothed_xmin)
@@ -111,6 +138,8 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
             composite_line.setAttribute('d', d)
             if hide_sense and hide_anti:
                 composite_path.setAttribute('display', 'none')
+
+        # Handling separate anti-sense and sense data if not combined
         else:
             bottom_gradient = defs.appendChild(document.createElement('linearGradient'))
             bottom_gradient.setAttribute('id', 'composite-gradient-bottom-{}'.format(i))
@@ -163,7 +192,7 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
             if not color_trace:
                 composite_path_top.setAttribute('stroke', '#FFFFFF')
                 composite_path_bottom.setAttribute('stroke', '#FFFFFF')
-
+            # This is meant to determine whether to swap sense and anti-sense data
             if not swap:
                 d_top = ''.join('M {} {} '.format(xscale(truncated_xmin_sense + i), yscale(y)) for i, y in enumerate(truncated_sense))
                 d_bottom = ''.join('M {} {} '.format(xscale(truncated_xmin_anti + i), yscale(-y)) for i, y in enumerate(truncated_anti))
@@ -185,6 +214,7 @@ def jsonobj_to_svg(data_obj, width=500, height=300, margins={'top': 30, 'bottom'
                 
     return document
 
+# Updating composite data with the calculated xmin, xmax, sense and antisense data
 def update_composite_data(data_obj):
     for composite_data in data_obj['compositeData']:
         xmin = min(composite_data['ids'].map(lambda s: data_obj['fileData'][s]['xmin']))
@@ -203,6 +233,7 @@ def update_composite_data(data_obj):
         composite_data['sense'] = sense
         composite_data['anti'] = anti
 
+# Applying a sliding window average over inputed vector 
 def sliding_window(vec, window):
     val = sum(vec[:window]) / window
     new_vec = [val]
@@ -211,6 +242,7 @@ def sliding_window(vec, window):
         new_vec.append(val)
     return np.array(new_vec)
 
+# Generates tick specifications for plotting based on the range (start to stop) and the desired number of ticks (count)
 def tick_spec(start, stop, count=10):
     """
     tickSpec function from d3-array.js adapted to python
@@ -250,6 +282,7 @@ def tick_spec(start, stop, count=10):
         return tick_spec(start, stop, count=count * 2)
     return i1, i2, inc
 
+# Adding argparse arguments for user flexibiity
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a plot from a json file')
     parser.add_argument('json', type=str, help='json file')
@@ -261,4 +294,3 @@ if __name__ == '__main__':
     parser.add_argument('--margin-right', type=int, default=190, help='right margin')
     parser.add_argument('--output', type=str, help='output svg file')
     args = parser.parse_args()
-

@@ -1,3 +1,10 @@
+"""
+This script generates a copy of the sliding window used for plotter.
+
+The key functions in the script:
+1. sliding_window
+"""
+
 # Copy of sliding_window from plotter
 def sliding_window(xdomain, occupancy, window):
     occupancy_val = sum(occupancy[:window]) / window 
